@@ -1,0 +1,25 @@
+{
+    "name": "kambo/asm",
+    "description": "Asm - java bytecode writter",
+    "license": "MIT",
+    "type": "library",    
+    "keywords": [],
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Bohuslav Simek",
+            "email": "bohuslav@simek.si"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },  
+    "require-dev": {
+        "mikey179/vfsStream": "~1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kambo\\Asm\\": "src"
+        }
+    }
+}
