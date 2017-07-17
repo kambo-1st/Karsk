@@ -30,7 +30,17 @@
  */
 namespace Kambo\Asm;
 
-class Item {
+/**
+ * A constant pool item. Constant pool items can be created with the 'newXXX'
+ * methods in the {@link ClassWriter} class.
+ *
+ * @package Kambo\Asm
+ * @author  Eric Bruneton
+ * @author  Bohuslav Simek <bohuslav@simek.si>
+ * @license BSD-3-Clause
+ */
+class Item
+{
 	public $index;	// int
 	public $type;	// int
 	public $intVal;	// int
@@ -57,51 +67,27 @@ class Item {
             }
         }
 
-
-	/*public static function constructor__ ()
-	{
-		$me = new self();
-		return $me;
-	}
-	public static function constructor__I ($index) // [final int index]
-	{
-		$me = new self();
-		$me->index = $index;
-		return $me;
-	}
-	public static function constructor__I_Item ($index, $i) // [final int index, final Item i]
-	{
-		$me = new self();
-		$me->index = $index;
-		$me->type = $i->type;
-		$me->intVal = $i->intVal;
-		$me->longVal = $i->longVal;
-		$me->strVal1 = $i->strVal1;
-		$me->strVal2 = $i->strVal2;
-		$me->strVal3 = $i->strVal3;
-		$me->hashCode = $i->hashCode;
-		return $me;
-	}*/
-
-
 	public function set_I ($intVal) // [final int intVal]
 	{
 		$this->type = ClassWriter::$INT;
 		$this->intVal = $intVal;
 		$this->hashCode = (0x7FFFFFFF & (($this->type + $intVal)));
 	}
+
 	public function set_L ($longVal) // [final long longVal]
 	{
 		$this->type = ClassWriter::$LONG;
 		$this->longVal = $longVal;
 		$this->hashCode = (0x7FFFFFFF & (($this->type + $longVal)));
 	}
+
 	public function set_F ($floatVal) // [final float floatVal]
 	{
 		$this->type = ClassWriter::$FLOAT;
 		$this->intVal = $Float->floatToRawIntBits($floatVal);
 		$this->hashCode = (0x7FFFFFFF & (($this->type + $floatVal)));
 	}
+
 	public function set_D ($doubleVal) // [final double doubleVal]
 	{
 		$this->type = ClassWriter::$DOUBLE;
@@ -109,45 +95,57 @@ class Item {
 		$this->hashCode = (0x7FFFFFFF & (($this->type + $doubleVal)));
 	}
 
-private function hashCode($s) : int {
-    $hash = 0;
-    $len = mb_strlen($s, 'UTF-8');
-    if($len == 0 )
-        return $hash;
-    for ($i = 0; $i < $len; $i++) {
-        $c = mb_substr($s, $i, 1, 'UTF-8');
-        $cc = unpack('V', iconv('UTF-8', 'UCS-4LE', $c))[1];
-        $hash = (($hash << 5) - $hash) + $cc;
-        $hash &= $hash; // 16bit > 32bit
+        private function hashCode($s) : int {
+            $hash = 0;
+            $len = mb_strlen($s, 'UTF-8');
+            if($len == 0 )
+                return $hash;
+            for ($i = 0; $i < $len; $i++) {
+                $c = mb_substr($s, $i, 1, 'UTF-8');
+                $cc = unpack('V', iconv('UTF-8', 'UCS-4LE', $c))[1];
+                $hash = (($hash << 5) - $hash) + $cc;
+                $hash &= $hash; // 16bit > 32bit
+            }
+            return $hash;
+        }
+
+    /**
+     * Sets this item to an item that do not hold a primitive value.
+     *
+     * @param type
+     *            the type of this item.
+     * @param strVal1
+     *            first part of the value of this item.
+     * @param strVal2
+     *            second part of the value of this item.
+     * @param strVal3
+     *            third part of the value of this item.
+     */
+    public function set_I_String_String_String ($type, $strVal1, $strVal2, $strVal3) // [final int type, final String strVal1, final String strVal2, final String strVal3]
+    {
+        $this->type = $type;
+        $this->strVal1 = $strVal1;
+        $this->strVal2 = $strVal2;
+        $this->strVal3 = $strVal3;
+        switch ($type) {
+                case ClassWriter::$CLASS:
+                        $this->intVal = 0;
+                case ClassWriter::$UTF8:
+                case ClassWriter::$STR:
+                case ClassWriter::$MTYPE:
+                case ClassWriter::$TYPE_NORMAL:
+                        $this->hashCode = (0x7FFFFFFF & (($type + $this->hashCode($strVal1))));
+                        return ;
+                case ClassWriter::$NAME_TYPE:
+                {
+                        $this->hashCode = (0x7FFFFFFF & (($type + ($this->hashCode($strVal1) * $this->hashCode($strVal2)))));
+                        return ;
+                }
+                default:
+                        $this->hashCode = (0x7FFFFFFF & (($type + (($this->hashCode($strVal1) * $this->hashCode($strVal2)) * $this->hashCode($strVal3)))));
+        }
     }
-    return $hash;
-}
 
-
-	public function set_I_String_String_String ($type, $strVal1, $strVal2, $strVal3) // [final int type, final String strVal1, final String strVal2, final String strVal3]
-	{
-		$this->type = $type;
-		$this->strVal1 = $strVal1;
-		$this->strVal2 = $strVal2;
-		$this->strVal3 = $strVal3;
-		switch ($type) {
-			case ClassWriter::$CLASS:
-				$this->intVal = 0;
-			case ClassWriter::$UTF8:
-			case ClassWriter::$STR:
-			case ClassWriter::$MTYPE:
-			case ClassWriter::$TYPE_NORMAL:
-				$this->hashCode = (0x7FFFFFFF & (($type + $this->hashCode($strVal1))));
-				return ;
-			case ClassWriter::$NAME_TYPE:
-			{
-				$this->hashCode = (0x7FFFFFFF & (($type + ($this->hashCode($strVal1) * $this->hashCode($strVal2)))));
-				return ;
-			}
-			default:
-				$this->hashCode = (0x7FFFFFFF & (($type + (($this->hashCode($strVal1) * $this->hashCode($strVal2)) * $this->hashCode($strVal3)))));
-		}
-	}
 	public function set_String_String_I ($name, $desc, $bsmIndex) // [String name, String desc, int bsmIndex]
 	{
 		$this->type = ClassWriter::$INDY;

@@ -582,12 +582,21 @@ class MethodWriter extends MethodVisitor
             }
         }
     }
-    public function visitLabel($label) // [final Label label]
+
+    /**
+     * Visits a label. A label designates the instruction that will be visited
+     * just after it.
+     *
+     * @param Label $label
+     *              a {@link Label Label} object.
+     */
+    public function visitLabel(/*Label*/ $label) // [final Label label]
     {
         $this->cw->hasAsmInsns |= $label->resolve($this, count($this->code) /*from: code.length*/, $this->code->data);
-        if (((($label->status & $Label->DEBUG)) != 0)) {
-            return ;
+        if (((($label->status & Label::$DEBUG)) != 0)) {
+            return;
         }
+
         if (($this->compute == self::$FRAMES)) {
             if (($this->currentBlock != null)) {
                 if (($label->position == $this->currentBlock->position)) {
@@ -632,6 +641,7 @@ class MethodWriter extends MethodVisitor
             $this->previousBlock = $label;
         }
     }
+
     public function visitLdcInsn($cst) // [final Object cst]
     {
         $this->lastCodeOffset = count($this->code) /*from: code.length*/;
@@ -851,15 +861,27 @@ class MethodWriter extends MethodVisitor
         }
         return $aw;
     }
+
     public function visitLineNumber($line, $start) // [final int line, final Label start]
     {
         if (($this->lineNumber == null)) {
             $this->lineNumber = new ByteVector();
         }
+
         ++$this->lineNumberCount;
         $this->lineNumber->putShort($start->position);
         $this->lineNumber->putShort($line);
     }
+
+    /**
+     * Visits the maximum stack size and the maximum number of local variables
+     * of the method.
+     *
+     * @param maxStack
+     *            maximum stack size of the method.
+     * @param maxLocals
+     *            maximum number of local variables for the method.
+     */
     public function visitMaxs($maxStack, $maxLocals) // [final int maxStack, final int maxLocals]
     {
         if ((ClassReader::FRAMES && ($this->compute == self::$FRAMES))) {

@@ -77,7 +77,7 @@ namespace Kambo\Asm;
      *            {@link Type#getInternalName() getInternalName}). May be
      *            <tt>null</tt>.
      */
-    public function visit(int $version, int $access, string $name, $signature, string $superName, $interfaces=null)
+    public function visit(int $version, int $access, string $name, string $signature = null, string $superName = null, array $interfaces=null)
     {
         if (($this->cv != null)) {
             $this->cv->visit($version, $access, $name, $signature, $superName, $interfaces);
@@ -135,7 +135,7 @@ namespace Kambo\Asm;
      * @return a visitor to visit the annotation values, or <tt>null</tt> if
      *         this visitor is not interested in visiting this annotation.
      */
-    public function visitAnnotation(string $desc, string $visible)
+    public function visitAnnotation(string $desc, bool $visible)
     {
         if (($this->cv != null)) {
             return $this->cv->visitAnnotation($desc, $visible);
@@ -214,7 +214,7 @@ namespace Kambo\Asm;
         }
     }
 
-    public function visitField($access, $name, $desc, $signature, $value) // [int access, String name, String desc, String signature, Object value]
+    public function visitField(int $access, string $name, string $desc, string $signature = null, $value = null) // [int access, String name, String desc, String signature, Object value]
     {
         if (($this->cv != null)) {
             return $this->cv->visitField($access, $name, $desc, $signature, $value);
@@ -222,7 +222,7 @@ namespace Kambo\Asm;
         return null;
     }
 
-    public function visitMethod($access, $name, $desc, $signature, $exceptions) // [int access, String name, String desc, String signature, String[] exceptions]
+    public function visitMethod(int $access, string $name, string $desc, string $signature = null, array $exceptions = null) // [int access, String name, String desc, String signature, String[] exceptions]
     {
         if (($this->cv != null)) {
             return $this->cv->visitMethod($access, $name, $desc, $signature, $exceptions);
