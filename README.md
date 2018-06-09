@@ -1,6 +1,6 @@
 # Asm
 
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Software License](https://img.shields.io/badge/license-BSD-brightgreen.svg?style=flat-square)](LICENSE)
 
 Asm - write java bytecode in PHP
 
@@ -17,4 +17,4 @@ composer require kambo/asm
 
 
 ## License
-The MIT License (MIT), https://opensource.org/licenses/MIT
+3-Clause BSD, https://opensource.org/licenses/BSD-3-Clause
