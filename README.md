@@ -4,6 +4,8 @@
 
 Asm - write java bytecode in PHP
 
+This is highly experimental and very much work in progress.
+
 ## Install
 
 Prefered way to install framework is with composer:
@@ -12,20 +14,6 @@ composer require kambo/asm
 ```
 
 ## Basic usage
-
-```php
-<?php
-
-require 'vendor/autoload.php';
-
-$app = new Kambo\Matryoshka\App();
-
-$app->get('/hello/{name}', function ($request, $response, $args) {
-    return $response->write("Hello, " . $args['name']);
-});
-
-$app->run();
-```
 
 
 ## License
