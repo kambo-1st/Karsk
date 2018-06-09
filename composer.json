@@ -12,14 +12,21 @@
         }
     ],
     "require": {
-        "php": ">=7.0"
-    },  
+        "php": ">=7.1"
+    },
     "require-dev": {
+        "phpunit/phpunit": "^7.1" ,
+        "symfony/var-dumper": "v3.1.10",
         "mikey179/vfsStream": "~1"
     },
     "autoload": {
         "psr-4": {
             "Kambo\\Asm\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kambo\\Tests\\Asm\\": "tests/"
         }
     }
 }

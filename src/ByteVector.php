@@ -22,6 +22,10 @@ class ByteVector implements \Countable {
 
         public function count()
         {
+            if ($this->data === null) {
+                return 0;
+            }
+
             return count($this->data);
         }
 
