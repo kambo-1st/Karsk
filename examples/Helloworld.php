@@ -7,7 +7,7 @@
     
     /*
     Generates the bytecode corresponding to the following Java class:
-    
+
     public class Example {
         public static void main (String[] args) {
             System.out.println("Hello world!");
@@ -16,7 +16,7 @@
     */
     
     $cw = ClassWriter::constructor__I(0);
-    $cw->visit(Opcodes::V1_1, Opcodes::ACC_PUBLIC, "Example", null, "java/lang/Object", null);
+    $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC, "Example", null, "java/lang/Object", null);
     
     $mw = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
     $mw->visitVarInsn(Opcodes::ALOAD, 0);
