@@ -28,9 +28,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Kambo\Asm;
+namespace Kambo\Karsk;
 
-use Kambo\Asm\Types\Long;
+use Kambo\Karsk\Types\Long;
 
 /**
  * A {@link ClassVisitor} that generates classes in bytecode form. More
@@ -39,7 +39,6 @@ use Kambo\Asm\Types\Long;
  * or with one or more {@link ClassReader ClassReader} and adapter class visitor
  * to generate a modified class from one or more existing Java classes.
  *
- * @package Kambo\Asm
  * @author  Eric Bruneton
  * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause

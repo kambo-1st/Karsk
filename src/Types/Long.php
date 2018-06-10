@@ -1,6 +1,6 @@
 <?php
 
-namespace Kambo\Asm\Types;
+namespace Kambo\Karsk\Types;
 
 /**
  * Description of Long

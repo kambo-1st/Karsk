@@ -28,7 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Kambo\Asm;
+namespace Kambo\Karsk;
 
 /**
  * Defines the JVM opcodes, access flags and array type codes. This interface
@@ -39,7 +39,6 @@ namespace Kambo\Asm;
  * automatically replaced by LDC_W or LDC2_W when necessary, WIDE, GOTO_W and
  * JSR_W.
  *
- * @package Kambo\Asm
  * @author  Eric Bruneton
  * @author  Eugene Kuleshov
  * @author  Bohuslav Simek <bohuslav@simek.si>

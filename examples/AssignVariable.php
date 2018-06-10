@@ -2,8 +2,8 @@
 
     require_once("../vendor/autoload.php");
 
-    use Kambo\Asm\ClassWriter;
-    use Kambo\Asm\Opcodes;
+    use Kambo\Karsk\ClassWriter;
+    use Kambo\Karsk\Opcodes;
 
 /*
 Generates the bytecode corresponding to the following Java class:

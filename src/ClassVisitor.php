@@ -1,6 +1,6 @@
 <?php
 
-namespace Kambo\Asm;
+namespace Kambo\Karsk;
 
 /**
  * A visitor to visit a Java class. The methods of this class must be called in

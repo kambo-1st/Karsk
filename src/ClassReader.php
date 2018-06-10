@@ -1,6 +1,6 @@
 <?php
 
-namespace Kambo\Asm;
+namespace Kambo\Karsk;
 
 class ClassReader
 {

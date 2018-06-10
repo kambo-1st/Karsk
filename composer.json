@@ -1,6 +1,6 @@
 {
-    "name": "kambo/asm",
-    "description": "Asm - java bytecode writer",
+    "name": "kambo/karsk",
+    "description": "Karsk - java bytecode writer",
     "license": "MIT",
     "type": "library",    
     "keywords": [],
@@ -21,12 +21,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Kambo\\Asm\\": "src"
+            "Kambo\\Karsk\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Kambo\\Tests\\Asm\\": "tests/"
+            "Kambo\\Tests\\Karsk\\": "tests/"
         }
     },
     "scripts": {

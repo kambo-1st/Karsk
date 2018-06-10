@@ -1,13 +1,13 @@
 <?php
-namespace Kambo\Tests\Unit\Asm;
+namespace Kambo\Tests\Karsk\Unit;
 
 use PHPUnit\Framework\TestCase;
 
-use Kambo\Asm\ClassWriter;
-use Kambo\Asm\Opcodes;
+use Kambo\Karsk\ClassWriter;
+use Kambo\Karsk\Opcodes;
 
 /**
- * Test for the Kambo\Asm\ClassWriter
+ * Test for the Kambo\Karsk\ClassWriter
  *
  * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license MIT
