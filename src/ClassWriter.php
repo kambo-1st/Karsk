@@ -856,7 +856,7 @@ class ClassWriter extends ClassVisitor
      */
     public function newConstItem($cst)
     {
-        // TODO [SIMEK, a] this must be completly rewritten
+        // TODO [SIMEK, a] this must be rewritten, now there is an naive autodetect
         if ($cst instanceof Long) {
             $val = $cst->getValue(); /*(float)$cst;*/
             return $this->newLong($val);
