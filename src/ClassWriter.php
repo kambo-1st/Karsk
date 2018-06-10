@@ -30,7 +30,6 @@
  */
 namespace Kambo\Asm;
 
-use Kambo\Asm\ClassVisitor;
 use Kambo\Asm\Types\Long;
 
 /**
@@ -179,14 +178,24 @@ class ClassWriter extends ClassVisitor
         self::$BSM = 33;
     }
 
-    public static function constructor__I($flags) // [final int flags]
+    /**
+     * Constructs a new {@link ClassWriter} object.
+     *
+     * @param int $flags
+     *            option flags that can be used to modify the default behavior
+     *            of this class. See {@link #COMPUTE_MAXS},
+     *            {@link #COMPUTE_FRAMES}.
+     *
+     * @return ClassWriter
+     */
+    public static function constructor__I(int $flags)
     {
         $me = new self();
         parent::constructor__I(Opcodes::ASM5);
         $me->index = 1;
         $me->pool  = new ByteVector();
 
-        for ($i = 0; $i <= 255; $i++){
+        for ($i = 0; $i <= 255; $i++) {
             $me->items[] = new Item();
         }
 
@@ -236,6 +245,7 @@ class ClassWriter extends ClassVisitor
      *                    {@link #COMPUTE_FRAMES}.
      *
      * @notYetImplemented
+     * @return ClassWriter
      */
     public static function constructor__ClassReader_I($classReader, int $flags)
     {
@@ -307,16 +317,16 @@ class ClassWriter extends ClassVisitor
      *               the name of the source file from which the class was
      *               compiled. May be <tt>null</tt>.
      * @param string $debug
-     *               additional debug information to compute the correspondance
+     *               additional debug information to compute the correspondence
      *               between source and compiled elements of the class. May be
      *               <tt>null</tt>.
      *
      * @return void
      */
-    public function visitSource(string $file = null, string $debug = null)
+    public function visitSource(string $source = null, string $debug = null)
     {
-        if ($file != null) {
-            $this->sourceFile = $this->newUTF8($file);
+        if ($source != null) {
+            $this->sourceFile = $this->newUTF8($source);
         }
 
         if ($debug != null) {
@@ -532,7 +542,7 @@ class ClassWriter extends ClassVisitor
      *               must be an {@link Integer}, a {@link Float},
      *               a {@link Long}, a {@link Double} or a {@link String}
      *               (for <tt>int</tt>, <tt>float</tt>, <tt>long</tt> or
-     *               <tt>String</tt> fieldsrespectively). <i>This parameter is
+     *               <tt>String</tt> fields respectively). <i>This parameter is
      *               only used for static fields</i>. Its value is ignored for
      *               non static fields, which must be initialized through
      *               bytecode instructions in constructors or methods.

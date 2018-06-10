@@ -47,6 +47,8 @@ namespace Kambo\Asm;
  */
 class Opcodes
 {
+    // ASM API versions
+
     const ASM4 = 4 << 16 | 0 << 8 | 0;
     const ASM5 = 5 << 16 | 0 << 8 | 0;
 

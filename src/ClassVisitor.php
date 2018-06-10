@@ -24,7 +24,7 @@ namespace Kambo\Asm;
      *            the ASM API version implemented by this visitor. Must be one
      *            of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
      */
-    public static function constructor__I($api) // [final int api]
+    public static function constructor__I(int $api) // [final int api]
     {
         $me = new self();
         self::constructor__I_ClassVisitor($api, null);
