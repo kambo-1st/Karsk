@@ -29,7 +29,7 @@
         }
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit",
+        "unit-test": "./vendor/bin/phpunit tests/unit/",
         "checkstyle": "./vendor/bin/phpcs --standard=PSR2 src"
     }
 }
