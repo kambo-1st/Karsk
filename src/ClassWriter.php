@@ -1,6 +1,8 @@
 <?php
 /**
- * ASM: a very small and fast Java bytecode manipulation framework
+ * Karsk - write java bytecode in PHP!
+ * Copyright (c) 2018, Bohuslav Šimek
+ * Based on ASM: a very small and fast Java bytecode manipulation framework
  * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
@@ -180,34 +182,27 @@ class ClassWriter extends ClassVisitor
     /**
      * Constructs a new {@link ClassWriter} object.
      *
-     * @param int $flags
-     *            option flags that can be used to modify the default behavior
-     *            of this class. See {@link #COMPUTE_MAXS},
-     *            {@link #COMPUTE_FRAMES}.
-     *
-     * @return ClassWriter
+     * @param int $flags option flags that can be used to modify the default behavior
+     *                   of this class. See {@link #COMPUTE_MAXS}, {@link #COMPUTE_FRAMES}.
      */
-    public static function constructor__I(int $flags)
+    public function __construct(int $flags)
     {
-        $me = new self();
-        parent::constructor__I(Opcodes::ASM5);
-        $me->index = 1;
-        $me->pool  = new ByteVector();
+        parent::__construct(Opcodes::ASM5);
+        $this->index = 1;
+        $this->pool  = new ByteVector();
 
         for ($i = 0; $i <= 255; $i++) {
-            $me->items[] = new Item();
+            $this->items[] = new Item();
         }
 
-        $me->threshold = (doubleval(0.75) * count($me->items));
+        $this->threshold = (doubleval(0.75) * count($this->items));
 
-        $me->key  = new Item();
-        $me->key2 = new Item();
-        $me->key3 = new Item();
-        $me->key4 = new Item();
+        $this->key  = new Item();
+        $this->key2 = new Item();
+        $this->key3 = new Item();
+        $this->key4 = new Item();
 
-        $me->compute = ( (((($flags & self::$COMPUTE_FRAMES)) != 0)) ? MethodWriter::$FRAMES : (( (((($flags & self::$COMPUTE_MAXS)) != 0)) ? MethodWriter::$MAXS : MethodWriter::$NOTHING )) );
-
-        return $me;
+        $this->compute = ( (((($flags & self::$COMPUTE_FRAMES)) != 0)) ? MethodWriter::$FRAMES : (( (((($flags & self::$COMPUTE_MAXS)) != 0)) ? MethodWriter::$MAXS : MethodWriter::$NOTHING )) );
     }
 
     /**
@@ -233,7 +228,7 @@ class ClassWriter extends ClassVisitor
      *                    the {@link ClassReader} used to read the original
      *                    class. It will be used to copy the entire constant
      *                    pool from the original class and also to copy other
-     *                    ragments of original bytecode where applicable.
+     *                    fragments of original bytecode where applicable.
      * @param int         $flags
      *                    option flags that can be used to modify the default
      *                    behavior of this class. <i>These option flags do not
@@ -246,13 +241,14 @@ class ClassWriter extends ClassVisitor
      * @notYetImplemented
      * @return ClassWriter
      */
-    public static function constructor__ClassReader_I($classReader, int $flags)
+    public static function createFromClass($classReader, int $flags)
     {
-        $me = new self();
-        self::constructor__I($flags);
-        $classReader->copyPool($me);
-        $me->cr = $classReader;
-        return $me;
+        $newInstance = new self($flags);
+
+        $classReader->copyPool($newInstance);
+        $newInstance->cr = $classReader;
+
+        return $newInstance;
     }
 
     /**

@@ -29,7 +29,7 @@ class ClassWriterTest extends TestCase
      */
     public function testGenerateHelloWorld()
     {
-        $cw = ClassWriter::constructor__I(0);
+        $cw = new ClassWriter(0);
         $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC, "Example", null, "java/lang/Object", null);
 
         $mw = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);

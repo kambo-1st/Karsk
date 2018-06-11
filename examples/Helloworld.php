@@ -15,7 +15,7 @@
     }
     */
     
-    $cw = ClassWriter::constructor__I(0);
+    $cw = new ClassWriter(0);
     $cw->visit(
         Opcodes::V1_8,
         Opcodes::ACC_PUBLIC,
