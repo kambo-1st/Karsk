@@ -1,6 +1,8 @@
 <?php
 /***
- * ASM: a very small and fast Java bytecode manipulation framework
+ * Karsk - write java bytecode in PHP!
+ * Copyright (c) 2018, Bohuslav Šimek
+ * Based on ASM: a very small and fast Java bytecode manipulation framework
  * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
