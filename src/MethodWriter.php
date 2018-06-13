@@ -32,6 +32,8 @@
  */
 namespace Kambo\Karsk;
 
+use Kambo\Karsk\Label;
+
 class MethodWriter extends MethodVisitor
 {
     public static $ACC_CONSTRUCTOR;  // int
@@ -582,7 +584,7 @@ class MethodWriter extends MethodVisitor
                 }
             }
         }
-        if ((((($label->status & $Label->RESOLVED)) != 0) && (($label->position - count($this->code) /*from: code.length*/) < $Short->MIN_VALUE))) {
+        if ((((($label->status & Label::$RESOLVED)) != 0) && (($label->position - count($this->code) /*from: code.length*/) < $Short->MIN_VALUE))) {
             if (($opcode == Opcodes::GOTO)) {
                 $this->code->putByte(200);
             } elseif (($opcode == Opcodes::JSR)) {

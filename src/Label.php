@@ -51,7 +51,7 @@ class Label {
     public $status;	// int
     public $line;	// int
     public $position;	// int
-    public $referenceCount;	// int
+    public $referenceCount = 0;	// int
     public $srcAndRefPositions;	// int[]
     public $inputStackTop;	// int
     public $outputStackMax;	// int
@@ -102,7 +102,7 @@ class Label {
 
         return $this->position;
     }
-	protected function put ($owner, $out, $source, $wideOffset) // [final MethodWriter owner, final ByteVector out, final int source, final boolean wideOffset]
+    public function put ($owner, $out, $source, $wideOffset) // [final MethodWriter owner, final ByteVector out, final int source, final boolean wideOffset]
 	{
 		if (((($this->status & self::$RESOLVED)) == 0))
 		{
@@ -129,20 +129,23 @@ class Label {
 			}
 		}
 	}
-	protected function addReference ($sourcePosition, $referencePosition) // [final int sourcePosition, final int referencePosition]
+    public function addReference ($sourcePosition, $referencePosition) // [final int sourcePosition, final int referencePosition]
 	{
-		if (($this->srcAndRefPositions == NULL))
-		{
+		if (($this->srcAndRefPositions == NULL)) {
 			$this->srcAndRefPositions = array();
 		}
-		if (($this->referenceCount >= count($this->srcAndRefPositions) /*from: srcAndRefPositions.length*/))
-		{
+
+		if (($this->referenceCount > count($this->srcAndRefPositions))) {
 			$a = array();
-			foreach (range(0, (count($this->srcAndRefPositions) /*from: srcAndRefPositions.length*/ + 0)) as $_upto) $a[$_upto] = $this->srcAndRefPositions[$_upto - (0) + 0]; /* from: System.arraycopy(srcAndRefPositions, 0, a, 0, srcAndRefPositions.length) */;
+			// TODO STRANGE it is empty...
+			foreach (range(0, (count($this->srcAndRefPositions)  + 0)) as $_upto) {
+                $a[$_upto] = $this->srcAndRefPositions[$_upto - (0) + 0];
+            }
+
 			$this->srcAndRefPositions = $a;
 		}
-		$this->srcAndRefPositions[++$this->referenceCount] = $sourcePosition;
-		$this->srcAndRefPositions[++$this->referenceCount] = $referencePosition;
+		$this->srcAndRefPositions[$this->referenceCount++] = $sourcePosition;
+		$this->srcAndRefPositions[$this->referenceCount++] = $referencePosition;
 	}
 
     /**
@@ -185,8 +188,11 @@ class Label {
 
             if ($source >= 0) {
                 $offset = ($position - $source);
-                var_dump($source);
-                if ((($offset < $Short->MIN_VALUE) || ($offset > $Short->MAX_VALUE))) {
+                // TODO SIMEK, taken from java short...
+                // Use constant for this...
+                // https://docs.oracle.com/javase/7/docs/api/constant-values.html#java.lang.Short.MIN_VALUE
+                //-32768 to 32767
+                if ((($offset < -32768) || ($offset > 32767))) {
                     $opcode = ($data[($reference - 1)] & 0xFF);
                     if (($opcode <= Opcodes::JSR)) {
                         $data[($reference - 1)] = (($opcode + 49));
