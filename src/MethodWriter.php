@@ -36,8 +36,27 @@ use Kambo\Karsk\Label;
 
 class MethodWriter extends MethodVisitor
 {
-    public static $ACC_CONSTRUCTOR;  // int
-    public static $SAME_FRAME;   // int
+    /**
+     * Pseudo access flag used to denote constructors.
+     *
+     * @var int
+     */
+    public static $ACC_CONSTRUCTOR;
+
+    /**
+     * Frame has exactly the same locals as the previous stack map frame and
+     * number of stack items is zero.
+     *
+     * @var int
+     */
+    public static $SAME_FRAME;
+
+    /**
+     * Frame has exactly the same locals as the previous stack map frame and
+     * number of stack items is 1
+     *
+     * @var int
+     */
     public static $SAME_LOCALS_1_STACK_ITEM_FRAME;   // int
     public static $RESERVED; // int
     public static $SAME_LOCALS_1_STACK_ITEM_FRAME_EXTENDED;  // int
@@ -73,6 +92,11 @@ class MethodWriter extends MethodVisitor
     protected $maxLocals;   // int
     protected $currentLocals;   // int
     protected $frameCount;  // int
+
+    /**
+     *
+     * @var ByteVector
+     */
     protected $stackMap;    // ByteVector
     protected $previousFrameOffset; // int
     protected $previousFrame;   // int[]
@@ -254,12 +278,94 @@ class MethodWriter extends MethodVisitor
             $this->attrs = $attr;
         }
     }
-    public function visitCode(){}
-    public function visitFrame_I_I_aObject_I_aObject($type, $nLocal, $local, $nStack, $stack) // [final int type, final int nLocal, final Object[] local, final int nStack, final Object[] stack]
+
+    public function visitCode()
+    {
+
+    }
+
+    /**
+     * Visits the current state of the local variables and operand stack
+     * elements. This method must(*) be called <i>just before</i> any
+     * instruction <b>i</b> that follows an unconditional branch instruction
+     * such as GOTO or THROW, that is the target of a jump instruction, or that
+     * starts an exception handler block. The visited types must describe the
+     * values of the local variables and of the operand stack elements <i>just
+     * before</i> <b>i</b> is executed.<br>
+     * <br>
+     * (*) this is mandatory only for classes whose version is greater than or
+     * equal to {@link Opcodes#V1_6 V1_6}. <br>
+     * <br>
+     * The frames of a method must be given either in expanded form, or in
+     * compressed form (all frames must use the same format, i.e. you must not
+     * mix expanded and compressed frames within a single method):
+     * <ul>
+     * <li>In expanded form, all frames must have the F_NEW type.</li>
+     * <li>In compressed form, frames are basically "deltas" from the state of
+     * the previous frame:
+     * <ul>
+     * <li>{@link Opcodes#F_SAME} representing frame with exactly the same
+     * locals as the previous frame and with the empty stack.</li>
+     * <li>{@link Opcodes#F_SAME1} representing frame with exactly the same
+     * locals as the previous frame and with single value on the stack (
+     * <code>nStack</code> is 1 and <code>stack[0]</code> contains value for the
+     * type of the stack item).</li>
+     * <li>{@link Opcodes#F_APPEND} representing frame with current locals are
+     * the same as the locals in the previous frame, except that additional
+     * locals are defined (<code>nLocal</code> is 1, 2 or 3 and
+     * <code>local</code> elements contains values representing added types).</li>
+     * <li>{@link Opcodes#F_CHOP} representing frame with current locals are the
+     * same as the locals in the previous frame, except that the last 1-3 locals
+     * are absent and with the empty stack (<code>nLocals</code> is 1, 2 or 3).</li>
+     * <li>{@link Opcodes#F_FULL} representing complete frame data.</li>
+     * </ul>
+     * </li>
+     * </ul>
+     * <br>
+     * In both cases the first frame, corresponding to the method's parameters
+     * and access flags, is implicit and must not be visited. Also, it is
+     * illegal to visit two or more frames for the same code location (i.e., at
+     * least one instruction must be visited between two calls to visitFrame).
+     *
+     * @param int $type
+     *            the type of this stack map frame. Must be
+     *            {@link Opcodes#F_NEW} for expanded frames, or
+     *            {@link Opcodes#F_FULL}, {@link Opcodes#F_APPEND},
+     *            {@link Opcodes#F_CHOP}, {@link Opcodes#F_SAME} or
+     *            {@link Opcodes#F_APPEND}, {@link Opcodes#F_SAME1} for
+     *            compressed frames.
+     * @param int $nLocal
+     *            the number of local variables in the visited frame.
+     * @param array $local
+     *            the local variable types in this frame. This array must not be
+     *            modified. Primitive types are represented by
+     *            {@link Opcodes#TOP}, {@link Opcodes#INTEGER},
+     *            {@link Opcodes#FLOAT}, {@link Opcodes#LONG},
+     *            {@link Opcodes#DOUBLE},{@link Opcodes#NULL} or
+     *            {@link Opcodes#UNINITIALIZED_THIS} (long and double are
+     *            represented by a single element). Reference types are
+     *            represented by String objects (representing internal names),
+     *            and uninitialized types by Label objects (this label
+     *            designates the NEW instruction that created this uninitialized
+     *            value).
+     * @param int $nStack
+     *            the number of operand stack elements in the visited frame.
+     * @param array $stack
+     *            the operand stack types in this frame. This array must not be
+     *            modified. Its content has the same format as the "local"
+     *            array.
+     *
+     * @throws IllegalStateException
+     *             if a frame is visited just after another one, without any
+     *             instruction between the two (unless this frame is a
+     *             Opcodes#F_SAME frame, in which case it is silently ignored).
+     */
+    public function visitFrame($type, $nLocal, $local, $nStack, $stack)
     {
         if ((!ClassReader::FRAMES || ($this->compute == self::$FRAMES))) {
             return ;
         }
+
         if (($this->compute == self::$INSERTED_FRAMES)) {
             if (($this->currentBlock->frame == null)) {
                 $this->currentBlock->frame = new CurrentFrame();
@@ -314,6 +420,7 @@ class MethodWriter extends MethodVisitor
                     }
                 }
             }
+
             switch ($type) {
                 case Opcodes::F_FULL:
                     $this->currentLocals = $nLocal;
@@ -353,11 +460,13 @@ class MethodWriter extends MethodVisitor
                     $this->writeFrameType($stack[0]);
                     break;
             }
+
             $this->previousFrameOffset = count($this->code) /*from: code.length*/;
             ++$this->frameCount;
         }
-        $this->maxStack = max([$me->maxStack, $nStack]);
-        $this->maxLocals = max([$me->maxLocals, $me->currentLocals]);
+
+        $this->maxStack  = max([$this->maxStack, $nStack]);
+        $this->maxLocals = max([$this->maxLocals, $this->currentLocals]);
     }
     public function visitInsn($opcode) // [final int opcode]
     {
@@ -1382,14 +1491,16 @@ private function charAt($str, $pos)
     }
     protected function writeFrameType($type) // [final Object type]
     {
-        if ($type instanceof String) {
+        if (is_string($type)) {
             $this->stackMap->putByte(7)->putShort($this->cw->newClass($type));
-        } elseif ($type instanceof Integer) {
-            $this->stackMap->putByte(($type)->intValue());
+        } elseif (is_int($type)/*$type instanceof Integer*/) {
+            $this->stackMap->putByte($type);
         } else {
+            // TODO SIMEK - this is so strange...
             $this->stackMap->putByte(8)->putShort(($type)::$position);
         }
     }
+
     public function getSize()
     {
         if (($this->classReaderOffset != 0)) {
