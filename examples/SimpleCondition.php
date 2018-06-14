@@ -41,12 +41,8 @@
     $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
     $mv->visitCode();
 
-
     $mv->visitIntInsn(Opcodes::BIPUSH, 10);
     $mv->visitVarInsn(Opcodes::ISTORE, 1);
-
-    /*$mv->visitLdcInsn(new Float("5.0"));
-    $mv->visitVarInsn(FSTORE, 2);*/
 
     $mv->visitIntInsn(Opcodes::BIPUSH, 5);
     $mv->visitVarInsn(Opcodes::ISTORE, 2);
