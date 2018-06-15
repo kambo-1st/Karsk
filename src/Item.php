@@ -32,6 +32,8 @@
  */
 namespace Kambo\Karsk;
 
+use Kambo\Karsk\Utils\HashCode;
+
 /**
  * A constant pool item. Constant pool items can be created with the 'newXXX'
  * methods in the {@link ClassWriter} class.
@@ -105,13 +107,21 @@ class Item
     public $next;
 
     /**
+     * Link to another constant pool item, used for collision lists in the
+     * constant pool's hash table.
+     *
+     * @var HashCode
+     */
+    private $hashProvider;
+
+    /**
      * Constructs an uninitialized {@link Item} for constant pool element at
      * given position or copy of given item.
      *
      * @param int  $index index of the item to be constructed.
      * @param Item $i the item that must be copied into the item to be constructed.
      */
-    public function __construct($index = null, Item $i = null)
+    public function __construct($index = null, Item $i = null, $hashProvider=null)
     {
         if ($index !== null) {
             $this->index = $index;
@@ -126,6 +136,12 @@ class Item
             $this->strVal3  = $i->strVal3;
             $this->hashCode = $i->hashCode;
         }
+
+        if ($hashProvider === null) {
+            $hashProvider = new HashCode();
+        }
+
+        $this->hashProvider = $hashProvider;
     }
 
     /**
@@ -200,6 +216,8 @@ class Item
         $this->strVal2 = $strVal2;
         $this->strVal3 = $strVal3;
 
+        $hash = $this->hashProvider;
+
         switch ($type) {
             case ClassWriter::$CLASS:
                 $this->intVal = 0; // intVal of a class must be zero, see visitInnerClass
@@ -207,14 +225,14 @@ class Item
             case ClassWriter::$STR:
             case ClassWriter::$MTYPE:
             case ClassWriter::$TYPE_NORMAL:
-                $this->hashCode = (0x7FFFFFFF & (($type + $this->hashCode($strVal1))));
+                $this->hashCode = (0x7FFFFFFF & ($type + $hash->get($strVal1)));
                 return ;
             case ClassWriter::$NAME_TYPE:
-                $this->hashCode = (0x7FFFFFFF & (($type + ($this->hashCode($strVal1) * $this->hashCode($strVal2)))));
+                $this->hashCode = (0x7FFFFFFF & ($type +($hash->get($strVal1) * $hash->get($strVal2))));
                 return ;
             default:
                 $this->hashCode = (0x7FFFFFFF &
-                    (($type + (($this->hashCode($strVal1) * $this->hashCode($strVal2)) * $this->hashCode($strVal3))))
+                    (($type + (($hash->get($strVal1) * $hash->get($strVal2)) * $hash->get($strVal3))))
                 );
         }
     }
@@ -294,24 +312,5 @@ class Item
                     && ($this->strVal2 == $i->strVal2)
                     && ($this->strVal3 == $i->strVal3);
         }
-    }
-
-    private function hashCode($s) : int
-    {
-        // Taken from https://stackoverflow.com/questions/8804875/php-internal-hashcode-function/40688976#40688976
-        $hash = 0;
-        $len = mb_strlen($s, 'UTF-8');
-        if ($len == 0) {
-            return $hash;
-        }
-
-        for ($i = 0; $i < $len; $i++) {
-            $c = mb_substr($s, $i, 1, 'UTF-8');
-            $cc = unpack('V', iconv('UTF-8', 'UCS-4LE', $c))[1];
-            $hash = (($hash << 5) - $hash) + $cc;
-            $hash &= $hash; // 16bit > 32bit
-        }
-
-        return $hash;
     }
 }
