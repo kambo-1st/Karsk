@@ -3,7 +3,7 @@
 namespace Kambo\Karsk\Exception;
 
 /**
- * IllegalStateException
+ * Illegal state exception
  *
  * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license MIT
