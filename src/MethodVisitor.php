@@ -35,6 +35,9 @@ namespace Kambo\Karsk;
 class MethodVisitor
 {
     public $api; // int
+    /**
+     * @var MethodVisitor
+     */
     public $mv;  // MethodVisitor
     public static function constructor__I($api) // [final int api]
     {

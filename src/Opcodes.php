@@ -153,6 +153,14 @@ class Opcodes
 
     // opcodes // visit method (- = idem)
 
+    const TOP = 0;
+    const INTEGER = 1;
+    const FLOAT = 2;
+    const DOUBLE = 3;
+    const LONG = 4;
+    const NULL = 5;
+    const UNINITIALIZED_THIS = 6;
+
     const NOP = 0; // visitInsn
     const ACONST_NULL = 1; // -
     const ICONST_M1 = 2; // -
