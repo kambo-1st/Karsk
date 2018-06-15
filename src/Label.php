@@ -33,6 +33,7 @@
 namespace Kambo\Karsk;
 
 use Kambo\Karsk\Exception\IllegalStateException;
+use Kambo\Karsk\Exception\NotImplemented;
 
 /**
  * A label represents a position in the bytecode of a method. Labels are used
@@ -47,18 +48,18 @@ use Kambo\Karsk\Exception\IllegalStateException;
  */
 class Label
 {
-    public static $DEBUG = 1;	// int
-    public static $RESOLVED = 2;	// int
-    public static $RESIZED = 4;	// int
-    public static $PUSHED = 8;	// int
-    public static $TARGET = 16;	// int
-    public static $STORE = 32;	// int
-    public static $REACHABLE = 64;	// int
-    public static $JSR = 128;	// int
-    public static $RET = 256;	// int
-    public static $SUBROUTINE = 512;	// int
-    public static $VISITED = 1024;	// int
-    public static $VISITED2 = 2048;	// int
+    public static $DEBUG = 1;   // int
+    public static $RESOLVED = 2;    // int
+    public static $RESIZED = 4; // int
+    public static $PUSHED = 8;  // int
+    public static $TARGET = 16; // int
+    public static $STORE = 32;  // int
+    public static $REACHABLE = 64;  // int
+    public static $JSR = 128;   // int
+    public static $RET = 256;   // int
+    public static $SUBROUTINE = 512;    // int
+    public static $VISITED = 1024;  // int
+    public static $VISITED2 = 2048; // int
 
     public const DEBUG  = 1;
     public const RESOLVED = 2;
@@ -253,55 +254,83 @@ class Label
      */
     public function getOffset()
     {
-        if (((($this->status & self::$RESOLVED)) == 0)) {
-            throw new IllegalStateException('Label offset position has not been resolved yet');
+        if (($this->status & self::$RESOLVED) == 0) {
+            throw new IllegalStateException(
+                'Label offset position has not been resolved yet
+            '
+            );
         }
 
         return $this->position;
     }
 
-    public function put ($owner, $out, $source, $wideOffset) // [final MethodWriter owner, final ByteVector out, final int source, final boolean wideOffset]
-	{
-		if (($this->status & self::$RESOLVED) == 0) {
-			if ($wideOffset)
-			{
-				$this->addReference((-1 - $source), count($out) /*from: out.length*/);
-				$out->putInt(-1);
-			}
-			else
-			{
-				$this->addReference($source, count($out) /*from: out.length*/);
-				$out->putShort(-1);
-			}
-		} else {
-			if ($wideOffset)
-			{
-				$out->putInt(($this->position - $source));
-			}
-			else
-			{
-				$out->putShort(($this->position - $source));
-			}
-		}
-	}
-    public function addReference ($sourcePosition, $referencePosition) // [final int sourcePosition, final int referencePosition]
-	{
-		if (($this->srcAndRefPositions == NULL)) {
-			$this->srcAndRefPositions = array();
-		}
+    /**
+     * Puts a reference to this label in the bytecode of a method. If the
+     * position of the label is known, the offset is computed and written
+     * directly. Otherwise, a null offset is written and a new forward reference
+     * is declared for this label.
+     *
+     * @param MethodWriter $owner
+     *            the code writer that calls this method.
+     * @param ByteVector $out
+     *            the bytecode of the method.
+     * @param int $source
+     *            the position of first byte of the bytecode instruction that
+     *            contains this label.
+     * @param bool $wideOffset
+     *            <tt>true</tt> if the reference must be stored in 4 bytes, or
+     *            <tt>false</tt> if it must be stored with 2 bytes.
+     */
+    public function put(MethodWriter $owner, ByteVector $out, int $source, bool $wideOffset) : void
+    {
+        if (($this->status & self::$RESOLVED) == 0) {
+            if ($wideOffset) {
+                $this->addReference((-1 - $source), count($out));
+                $out->putInt(-1);
+            } else {
+                $this->addReference($source, count($out));
+                $out->putShort(-1);
+            }
+        } else {
+            if ($wideOffset) {
+                $out->putInt(($this->position - $source));
+            } else {
+                $out->putShort(($this->position - $source));
+            }
+        }
+    }
 
-		if (($this->referenceCount > count($this->srcAndRefPositions))) {
-			$a = array();
-			// TODO STRANGE it is empty...
-			foreach (range(0, (count($this->srcAndRefPositions)  + 0)) as $_upto) {
+    /**
+     * Adds a forward reference to this label. This method must be called only
+     * for a true forward reference, i.e. only if this label is not resolved
+     * yet. For backward references, the offset of the reference can be, and
+     * must be, computed and stored directly.
+     *
+     * @param int $sourcePosition
+     *            the position of the referencing instruction. This position
+     *            will be used to compute the offset of this forward reference.
+     * @param int $referencePosition
+     *            the position where the offset for this forward reference must
+     *            be stored.
+     */
+    public function addReference(int $sourcePosition, int $referencePosition)
+    {
+        if (($this->srcAndRefPositions == null)) {
+            $this->srcAndRefPositions = [];
+        }
+
+        if (($this->referenceCount > count($this->srcAndRefPositions))) {
+            $a = [];
+            foreach (range(0, (count($this->srcAndRefPositions)  + 0)) as $_upto) {
                 $a[$_upto] = $this->srcAndRefPositions[$_upto - (0) + 0];
             }
 
-			$this->srcAndRefPositions = $a;
-		}
-		$this->srcAndRefPositions[$this->referenceCount++] = $sourcePosition;
-		$this->srcAndRefPositions[$this->referenceCount++] = $referencePosition;
-	}
+            $this->srcAndRefPositions = $a;
+        }
+
+        $this->srcAndRefPositions[$this->referenceCount++] = $sourcePosition;
+        $this->srcAndRefPositions[$this->referenceCount++] = $referencePosition;
+    }
 
     /**
      * Resolves all forward references to this label. This method must be called
@@ -316,7 +345,7 @@ class Label
      * @param $data
      *            the bytecode of the method.
      *
-     * @return <tt>true</tt> if a blank that was left for this label was to
+     * @return bool <tt>true</tt> if a blank that was left for this label was to
      *         small to store the offset. In such a case the corresponding jump
      *         instruction is replaced with a pseudo instruction (using unused
      *         opcodes) using an unsigned two bytes offset. These pseudo
@@ -327,16 +356,15 @@ class Label
      *             if this label has already been resolved, or if it has not
      *             been created by the given code writer.
      */
-    public function resolve ($owner, $position, &$data) // [final MethodWriter owner, final int position, final byte[] data]
+    public function resolve(MethodWriter $owner, int $position, array &$data) : bool
     {
-        $needUpdate     =  FALSE ;
+        $needUpdate     = false;
         $this->status  |= self::$RESOLVED;
         $this->position = $position;
 
         $i = 0;
 
-        while (($i < $this->referenceCount))
-        {
+        while ($i < $this->referenceCount) {
             $source    = $this->srcAndRefPositions[$i++];
             $reference = $this->srcAndRefPositions[$i++];
             $offset    = null;
@@ -346,16 +374,27 @@ class Label
                 // TODO SIMEK, taken from java short...
                 // Use constant for this...
                 // https://docs.oracle.com/javase/7/docs/api/constant-values.html#java.lang.Short.MIN_VALUE
-                //-32768 to 32767
+                // -32768 to 32767
                 if ((($offset < -32768) || ($offset > 32767))) {
+                    /*
+                     * changes the opcode of the jump instruction, in order to
+                     * be able to find it later (see resizeInstructions in
+                     * MethodWriter). These temporary opcodes are similar to
+                     * jump instruction opcodes, except that the 2 bytes offset
+                     * is unsigned (and can therefore represent values from 0 to
+                     * 65535, which is sufficient since the size of a method is
+                     * limited to 65535 bytes).
+                     */
                     $opcode = ($data[($reference - 1)] & 0xFF);
                     if (($opcode <= Opcodes::JSR)) {
+                        // changes IFEQ ... JSR to opcodes 202 to 217
                         $data[($reference - 1)] = (($opcode + 49));
                     } else {
+                        // changes IFNULL and IFNONNULL to opcodes 218 and 219
                         $data[($reference - 1)] = (($opcode + 20));
                     }
 
-                    $needUpdate = true ;
+                    $needUpdate = true;
                 }
 
                 $data[$reference++] = $this->uRShift($offset, 8);
@@ -374,27 +413,29 @@ class Label
         return $needUpdate;
     }
 
-    private function uRShift($a, $b)
+    /**
+     * Returns the first label of the series to which this label belongs. For an
+     * isolated label or for the first label in a series of successive labels,
+     * this method returns the label itself. For other labels it returns the
+     * first label of the series.
+     *
+     * @return Label the first label of the series to which this label belongs.
+     */
+    public function getFirst() : Label
     {
-        return ($a >> $b & 0xFF);
+        return (!ClassReader::FRAMES || ($this->frame == null)) ? $this : $this->frame->owner;
     }
-
-	protected function getFirst () 
-	{
-		return ( ((!ClassReader::FRAMES || ($this->frame == NULL))) ? $this : $this->frame->owner );
-	}
 
     /**
      * Returns true is this basic block belongs to the given subroutine.
      *
-     * @param int $id
-     *            a subroutine id.
+     * @param int $id a subroutine id.
      *
      * @return bool true is this basic block belongs to the given subroutine.
      */
-    protected function inSubroutine ($id) // [final long id]
+    public function inSubroutine(int $id) : bool
     {
-        if (((($this->status & Label::$VISITED)) != 0)) {
+        if (($this->status & Label::$VISITED) != 0) {
             return ((($this->srcAndRefPositions[$this->uRShift($id, 32)] & $id)) != 0);
         }
 
@@ -411,16 +452,14 @@ class Label
      * @return bool true if this basic block and the given one belong to a common
      *         subroutine.
      */
-    protected function inSameSubroutine(Label $block) // [final Label block]
+    public function inSameSubroutine(Label $block) : bool
     {
-        if ((((($this->status & self::$VISITED)) == 0) || ((($block->status & self::$VISITED)) == 0)))
-        {
+        if ((($this->status & self::$VISITED) == 0) || (($block->status & self::$VISITED) == 0)) {
             return false;
         }
 
-        for ($i = 0; ($i < count($this->srcAndRefPositions) /*from: srcAndRefPositions.length*/); ++$i)
-        {
-            if (((($this->srcAndRefPositions[$i] & $block->srcAndRefPositions[$i])) != 0)) {
+        for ($i = 0; $i < count($this->srcAndRefPositions); ++$i) {
+            if (($this->srcAndRefPositions[$i] & $block->srcAndRefPositions[$i]) != 0) {
                 return true;
             }
         }
@@ -431,79 +470,92 @@ class Label
     /**
      * Marks this basic block as belonging to the given subroutine.
      *
-     * @param int $id
-     *            a subroutine id.
-     * @param int $nbSubroutines
-     *            the total number of subroutines in the method.
+     * @param int $id a subroutine id.
+     *
+     * @return void
      */
-    protected function addToSubroutine ($id, $nbSubroutines) // [final long id, final int nbSubroutines]
+    public function addToSubroutine(int $id) : void
     {
-        if (((($this->status & self::$VISITED)) == 0)) {
+        if (($this->status & self::$VISITED) == 0) {
             $this->status |= self::$VISITED;
-            $this->srcAndRefPositions = array();
+            $this->srcAndRefPositions = [];
         }
 
         $this->srcAndRefPositions[$this->uRShift($id, 32)] |= $id;
     }
 
-	protected function visitSubroutine ($JSR, $id, $nbSubroutines) // [final Label JSR, final long id, final int nbSubroutines]
-	{
-		$stack = $this;
-		while (($stack != NULL)) 
-		{
-			$l = $stack;
-			$stack = $l->next;
-			$l->next = NULL;
-			if (($JSR != NULL))
-			{
-				if (((($l->status & self::$VISITED2)) != 0))
-				{
-					continue;
-				}
-				$l->status |= self::$VISITED2;
-				if (((($l->status & self::$RET)) != 0))
-				{
-					if (!$l->inSameSubroutine($JSR))
-					{
-						$e = new Edge();
-						$e->info = $l->inputStackTop;
-						$e->successor = $JSR->successors->successor;
-						$e->next = $l->successors;
-						$l->successors = $e;
-					}
-				}
-			}
-			else
-			{
-				if ($l->inSubroutine($id))
-				{
-					continue;
-				}
-				$l->addToSubroutine($id, $nbSubroutines);
-			}
-			$e = $l->successors;
-			while (($e != NULL)) 
-			{
-				if ((((($l->status & Label::$JSR)) == 0) || ($e != $l->successors->next)))
-				{
-					if (($e->successor->next == NULL))
-					{
-						$e->successor->next = $stack;
-						$stack = $e->successor;
-					}
-				}
-				$e = $e->next;
-			}
-		}
-	}
+    /**
+     * Finds the basic blocks that belong to a given subroutine, and marks these
+     * blocks as belonging to this subroutine. This method follows the control
+     * flow graph to find all the blocks that are reachable from the current
+     * block WITHOUT following any JSR target.
+     *
+     * @param Label $JSR
+     *            a JSR block that jumps to this subroutine. If this JSR is not
+     *            null it is added to the successor of the RET blocks found in
+     *            the subroutine.
+     * @param Int $id
+     *            the id of this subroutine.
+     * @param Int $nbSubroutines
+     *            the total number of subroutines in the method.
+     *
+     * @return void
+     */
+    protected function visitSubroutine(Label $JSR, int $id, int $nbSubroutines) : void
+    {
+        $stack = $this;
+        while (($stack != null)) {
+            $l = $stack;
+            $stack = $l->next;
+            $l->next = null;
+            if (($JSR != null)) {
+                if (((($l->status & self::$VISITED2)) != 0)) {
+                    continue;
+                }
+
+                $l->status |= self::$VISITED2;
+                if (((($l->status & self::$RET)) != 0)) {
+                    if (!$l->inSameSubroutine($JSR)) {
+                        $e = new Edge();
+                        $e->info = $l->inputStackTop;
+                        $e->successor = $JSR->successors->successor;
+                        $e->next = $l->successors;
+                        $l->successors = $e;
+                    }
+                }
+            } else {
+                if ($l->inSubroutine($id)) {
+                    continue;
+                }
+                $l->addToSubroutine($id, $nbSubroutines);
+            }
+            $e = $l->successors;
+            while (($e != null)) {
+                if ((((($l->status & Label::$JSR)) == 0) || ($e != $l->successors->next))) {
+                    if (($e->successor->next == null)) {
+                        $e->successor->next = $stack;
+                        $stack = $e->successor;
+                    }
+                }
+                $e = $e->next;
+            }
+        }
+    }
 
     /**
      * Returns a string representation of this label.
      *
      * @return a string representation of this label.
+     *
+     * @throws NotImplemented - method is not implemented
      */
     public function toString()
     {
-        return ("L" . $System->identityHashCode($this));
+        throw new NotImplemented('This method is not implemented.');
+    }
+
+    private function uRShift($a, $b)
+    {
+        return ($a >> $b & 0xFF);
     }
 }
