@@ -204,7 +204,6 @@ class ByteVector implements \Countable
         for ($i = 0; ($i < $charLength); ++$i) {
             $c = ord($this->charAt($s, $i));
             if ((($c >= '001') && ($c <= '177'))) {
-                //$data[] = chr($c);
                 $data[] = $c;
             } else {
                 return $this->encodeUTF8($s, $i, 65535);
