@@ -694,7 +694,7 @@ class MethodWriter extends MethodVisitor
             }
         }
 
-        if ((((($label->status & Label::$RESOLVED)) != 0) && (($label->position - count($this->code) /*from: code.length*/) < -32768))) {
+        if ((((($label->status & Label::RESOLVED)) != 0) && (($label->position - count($this->code) /*from: code.length*/) < -32768))) {
             if (($opcode == Opcodes::GOTO)) {
                 $this->code->putByte(200);
             } elseif (($opcode == Opcodes::JSR)) {
@@ -736,7 +736,7 @@ class MethodWriter extends MethodVisitor
     public function visitLabel(/*Label*/ $label) // [final Label label]
     {
         $this->cw->hasAsmInsns |= $label->resolve($this, count($this->code) /*from: code.length*/, $this->code->data);
-        if (((($label->status & Label::$DEBUG)) != 0)) {
+        if (((($label->status & Label::DEBUG)) != 0)) {
             return;
         }
 

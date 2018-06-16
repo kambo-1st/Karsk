@@ -44,23 +44,9 @@ use Kambo\Karsk\Exception\NotImplemented;
  *
  * @author  Eric Bruneton
  * @author  Bohuslav Simek <bohuslav@simek.si>
- * @license BSD-3-Clause
  */
 class Label
 {
-    public static $DEBUG = 1;   // int
-    public static $RESOLVED = 2;    // int
-    public static $RESIZED = 4; // int
-    public static $PUSHED = 8;  // int
-    public static $TARGET = 16; // int
-    public static $STORE = 32;  // int
-    public static $REACHABLE = 64;  // int
-    public static $JSR = 128;   // int
-    public static $RET = 256;   // int
-    public static $SUBROUTINE = 512;    // int
-    public static $VISITED = 1024;  // int
-    public static $VISITED2 = 2048; // int
-
     public const DEBUG  = 1;
     public const RESOLVED = 2;
     public const RESIZED = 4;
@@ -254,7 +240,7 @@ class Label
      */
     public function getOffset()
     {
-        if (($this->status & self::$RESOLVED) == 0) {
+        if (($this->status & self::RESOLVED) == 0) {
             throw new IllegalStateException(
                 'Label offset position has not been resolved yet
             '
@@ -283,7 +269,7 @@ class Label
      */
     public function put(MethodWriter $owner, ByteVector $out, int $source, bool $wideOffset) : void
     {
-        if (($this->status & self::$RESOLVED) == 0) {
+        if (($this->status & self::RESOLVED) == 0) {
             if ($wideOffset) {
                 $this->addReference((-1 - $source), count($out));
                 $out->putInt(-1);
@@ -355,7 +341,7 @@ class Label
     public function resolve(MethodWriter $owner, int $position, array &$data) : bool
     {
         $needUpdate     = false;
-        $this->status  |= self::$RESOLVED;
+        $this->status  |= self::RESOLVED;
         $this->position = $position;
 
         $i = 0;
@@ -431,7 +417,7 @@ class Label
      */
     public function inSubroutine(int $id) : bool
     {
-        if (($this->status & Label::$VISITED) != 0) {
+        if (($this->status & Label::VISITED) != 0) {
             return ((($this->srcAndRefPositions[$this->uRShift($id, 32)] & $id)) != 0);
         }
 
@@ -450,7 +436,7 @@ class Label
      */
     public function inSameSubroutine(Label $block) : bool
     {
-        if ((($this->status & self::$VISITED) == 0) || (($block->status & self::$VISITED) == 0)) {
+        if ((($this->status & self::VISITED) == 0) || (($block->status & self::VISITED) == 0)) {
             return false;
         }
 
@@ -472,8 +458,8 @@ class Label
      */
     public function addToSubroutine(int $id) : void
     {
-        if (($this->status & self::$VISITED) == 0) {
-            $this->status |= self::$VISITED;
+        if (($this->status & self::VISITED) == 0) {
+            $this->status |= self::VISITED;
             $this->srcAndRefPositions = [];
         }
 
@@ -505,12 +491,12 @@ class Label
             $stack = $l->next;
             $l->next = null;
             if (($JSR != null)) {
-                if (((($l->status & self::$VISITED2)) != 0)) {
+                if (((($l->status & self::VISITED2)) != 0)) {
                     continue;
                 }
 
-                $l->status |= self::$VISITED2;
-                if (((($l->status & self::$RET)) != 0)) {
+                $l->status |= self::VISITED2;
+                if (((($l->status & self::RET)) != 0)) {
                     if (!$l->inSameSubroutine($JSR)) {
                         $e = new Edge();
                         $e->info = $l->inputStackTop;
@@ -527,7 +513,7 @@ class Label
             }
             $e = $l->successors;
             while (($e != null)) {
-                if ((((($l->status & Label::$JSR)) == 0) || ($e != $l->successors->next))) {
+                if ((((($l->status & Label::JSR)) == 0) || ($e != $l->successors->next))) {
                     if (($e->successor->next == null)) {
                         $e->successor->next = $stack;
                         $stack = $e->successor;
