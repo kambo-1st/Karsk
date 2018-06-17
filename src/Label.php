@@ -33,7 +33,7 @@
 namespace Kambo\Karsk;
 
 use Kambo\Karsk\Exception\IllegalStateException;
-use Kambo\Karsk\Exception\NotImplemented;
+use Kambo\Karsk\Exception\NotImplementedException;
 
 /**
  * A label represents a position in the bytecode of a method. Labels are used
@@ -529,11 +529,11 @@ class Label
      *
      * @return a string representation of this label.
      *
-     * @throws NotImplemented - method is not implemented
+     * @throws NotImplementedException - method is not yet implemented
      */
     public function toString()
     {
-        throw new NotImplemented('This method is not implemented.');
+        throw new NotImplementedException('This method is not implemented.');
     }
 
     private function uRShift($a, $b)

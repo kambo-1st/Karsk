@@ -33,7 +33,7 @@
 namespace Kambo\Karsk;
 
 use Kambo\Karsk\Type;
-use Kambo\Karsk\Exception\NotImplemented;
+use Kambo\Karsk\Exception\NotImplementedException;
 
 /**
  * A {@link ClassVisitor} that generates classes in bytecode form. More
@@ -1265,6 +1265,9 @@ class ClassWriter extends ClassVisitor
      * @param int $type2 index of an internal name in {@link #typeTable}.
      *
      * @return int the index of the common super type of the two given types.
+     *
+     * @throws NotImplementedException Original code depends on Java class loader
+     *                                 and therefor cannot be easily rewritten.
      */
     public function getMergedType(int $type1, int $type2) : int
     {
@@ -1298,11 +1301,12 @@ class ClassWriter extends ClassVisitor
      * @return string the internal name of the common super class of the two given
      *         classes.
      *
-     * @throws NotImplemented Original code depends on Java class loader and therefor cannot be easily rewritten.
+     * @throws NotImplementedException Original code depends on Java class loader
+     *                                 and therefor cannot be easily rewritten.
      */
     protected function getCommonSuperClass(string $type1, string $type2)
     {
-        throw new NotImplemented();
+        throw new NotImplementedException();
     }
 
     /**
