@@ -32,7 +32,7 @@
  */
 namespace Kambo\Karsk;
 
-use Kambo\Karsk\Types\Long;
+use Kambo\Karsk\Type;
 use Kambo\Karsk\Exception\NotImplemented;
 
 /**
@@ -99,6 +99,10 @@ class ClassWriter extends ClassVisitor
     public $pool;    // ByteVector
     public $items;   // Item[]
     public $threshold;   // int
+
+    /**
+     * @var Item
+     */
     public $key; // Item
     public $key2;    // Item
     public $key3;    // Item
@@ -840,72 +844,98 @@ class ClassWriter extends ClassVisitor
     /**
      * Adds a number or string constant to the constant pool of the class being
      * build. Does nothing if the constant pool already contains a similar item.
+     * Type of the constant is auto detected according if it's provided as a
+     * simple php type. But this is not recommended.
      *
      * @param mixed $cst
      *              the value of the constant to be added to the constant pool.
-     *              This parameter must be an {@link Integer}, a {@link Float},
-     *              a {@link Long}, a {@link Double}, a {@link String} or a
-     *              {@link Type}.
+     *              This parameter can be an {@link Integer}, a {@link Float},
+     *              a {@link Long}, a {@link Double}, a {@link String} a
+     *              {@link Type} or a plain PHP type, in which case the type
+     *              will be auto detected (not recommended).
      *
      * @return Item
      *         a new or already existing constant item with the given value.
      */
-    public function newConstItem($cst)
+    public function newConstItem($cst) : Item
     {
-        // TODO [SIMEK, a] this must be rewritten, now there is an naive autodetect
-        if ($cst instanceof Long) {
-            $val = $cst->getValue(); /*(float)$cst;*/
-            return $this->newLong($val);
-        } elseif (is_integer($cst)) {
-            $val = (int) $cst;
-            return $this->newInteger($val);
-        /*} elseif ($cst instanceof Byte) {
-            $val = (int) $cst; // TODO this is to byte
-            return $this->newInteger($val);*/
-        } elseif ($cst instanceof Character) {
-            $val = (int) $cst; // TODO this is to Character
-            return $this->newInteger($val);
-        } /*elseif ($cst instanceof Short) {
-            $val = (int) $cst; // TODO this is to Short
-            return $this->newInteger($val);
-        }*/ elseif (is_bool($cst)) {
-            $val = (bool)$cst;
-            return $this->newInteger($val);
-        } elseif (is_float($cst)) {
-            $val = (float)$cst;
-            return $this->newFloat($val);
-        } elseif ($cst instanceof Long) {
-            $val = (float)$cst;
-            return $this->newLong($val);
-        } elseif ($cst instanceof Double) {
-            $val = (float)$cst;
-            return $this->newDouble($val);
-        } elseif (is_string($cst)) {
-            return $this->newString($cst);
-        } elseif ($cst instanceof Type) {
-            $t = $cst;
-            $s = $t->getSort();
-            if (($s == $Type->OBJECT)) {
-                return $this->newClassItem($t->getInternalName());
-            } elseif (($s == $Type->METHOD)) {
-                return $this->newMethodTypeItem($t->getDescriptor());
-            } else {
-                return $this->newClassItem($t->getDescriptor());
-            }
-        } elseif ($cst instanceof Handle) {
-            $h = $cst;
-            return $this->newHandleItem($h->tag, $h->owner, $h->name, $h->desc, $h->itf);
-        } else {
-            throw new IllegalArgumentException(("value " . $cst));
+        // If the type is not specified by it's class use naive auto detection
+        if (!is_object($cst)) {
+            return $this->typeAutoDetection($cst);
+        }
+
+        switch(true) {
+            case $cst instanceof Type\Long:
+                $val = (float)$cst->getValue();
+                return $this->newLong($val);
+            case $cst instanceof Type\Integer:
+                $val = (int) $cst->getValue();
+                return $this->newInteger($val);
+            case $cst instanceof Type\Character:
+                $val = ord($cst->getValue()[0]);
+                return $this->newInteger($val);
+            case $cst instanceof Type\Short:
+                $val = (int) $cst->getValue();
+                return $this->newInteger($val);
+            case $cst instanceof Type\Boolean:
+                $val = $cst->getValue() === true ? 1 : 0;
+                return $this->newInteger($val);
+            case $cst instanceof Type\Double:
+                $val = (float)$cst->getValue();
+                return $this->newDouble($val);
+            case $cst instanceof Type\String_:
+                return $this->newString($cst->getValue());
+            case $cst instanceof Type:
+                $t = $cst;
+                $s = $t->getSort();
+                if (($s == Type::OBJECT)) {
+                    return $this->newClassItem($t->getInternalName());
+                } elseif (($s == Type::METHOD)) {
+                    return $this->newMethodTypeItem($t->getDescriptor());
+                } else {
+                    return $this->newClassItem($t->getDescriptor());
+                }
+            case $cst instanceof Handle:
+                $h = $cst;
+                return $this->newHandleItem($h->tag, $h->owner, $h->name, $h->desc, $h->itf);
+            default:
+                throw new IllegalArgumentException("value " . $cst);
         }
     }
 
-    public function newConst($cst) // [final Object cst]
+    /**
+     * Adds a number or string constant to the constant pool of the class being
+     * build. Does nothing if the constant pool already contains a similar item.
+     * <i>This method is intended for {@link Attribute} sub classes, and is
+     * normally not needed by class generators or adapters.</i>
+     *
+     * @param mixed $cst
+     *              the value of the constant to be added to the constant pool.
+     *              This parameter can be an {@link Integer}, a {@link Float},
+     *              a {@link Long}, a {@link Double}, a {@link String} a
+     *              {@link Type} or a plain PHP type, in which case the type
+     *              will be auto detected (not recommended).
+     *
+     * @return int the index of a new or already existing constant item with the
+     *             given value.
+     */
+    public function newConst($cst) : int
     {
         return $this->newConstItem($cst)->index;
     }
 
-    public function newUTF8($value) // [final String value]
+    /**
+     * Adds an UTF8 string to the constant pool of the class being build. Does
+     * nothing if the constant pool already contains a similar item. <i>This
+     * method is intended for {@link Attribute} sub classes, and is normally not
+     * needed by class generators or adapters.</i>
+     *
+     * @param string $value
+     *               the String value.
+     *
+     * @return int the index of a new or already existing UTF8 item.
+     */
+    public function newUTF8(string $value) : int
     {
         $this->key->set_I_String_String_String(self::$UTF8, $value, null, null);
         $result = $this->get($this->key);
@@ -1142,7 +1172,7 @@ class ClassWriter extends ClassVisitor
 
     protected function newDouble($value) // [final double value]
     {
-        $this->key->set($value);
+        $this->key->set_D($value);
         $result = $this->get($this->key);
         if (($result == null)) {
             $this->pool->putByte(self::$DOUBLE)->putLong($this->key->longVal);
@@ -1361,6 +1391,33 @@ class ClassWriter extends ClassVisitor
     protected function put112($b1, $b2, $s) // [final int b1, final int b2, final int s]
     {
         $this->pool->put11($b1, $b2)->putShort($s);
+    }
+
+    /**
+     * Automatically detect java variable type according their PHP value and
+     * Adds into the constant pool of the class being build. Does nothing if
+     * the constant pool already contains a similar item.
+     *
+     * @param mixed $cst the value of the constant to be added to the constant pool.
+     *
+     * @return Item
+     *         a new or already existing constant item with the given value.
+     */
+    private function typeAutoDetection($cst)
+    {
+        switch (gettype($cst)) {
+            case 'boolean':
+                $val = $cst === true ? 1 : 0;
+                return $this->newInteger($val);
+            case 'integer':
+                return $this->newInteger($cst);
+            case 'double': // for historical reasons "double" is returned in case of a float, and not simply "float"
+                return $this->newDouble($cst);
+            case 'string':
+                return $this->newString($cst);
+            default:
+                throw new IllegalArgumentException("value " . $cst);
+        }
     }
 }
 

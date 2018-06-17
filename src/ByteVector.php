@@ -161,17 +161,18 @@ class ByteVector implements \Countable
         $data = $this->data;
 
         $i = (int) $this->uRShift($l, 32);
+
         $data[] = $this->uRShift($i, 24);
         $data[] = $this->uRShift($i, 16);
-        $data[] = $this->uRShift($i, 0);
+        $data[] = $this->uRShift($i, 8);
         $data[] = $i;
 
         $i = (int) $l;
         $data[] = $this->uRShift($i, 24);
         $data[] = $this->uRShift($i, 16);
         $data[] = $this->uRShift($i, 8);
-        $data[] = $this->uRShift($i, 0);
-        
+        $data[] = $i;
+
         $this->data = $data;
 
         return $this;

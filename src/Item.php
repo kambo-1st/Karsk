@@ -195,7 +195,7 @@ class Item
     public function set_D($doubleVal)
     {
         $this->type     = ClassWriter::$DOUBLE;
-        $this->longVal  = $Double->doubleToRawLongBits($doubleVal);
+        $this->longVal  = $doubleVal; // TODO need more love //$Double->doubleToRawLongBits($doubleVal);
         $this->hashCode = (0x7FFFFFFF & (($this->type + $doubleVal)));
     }
 

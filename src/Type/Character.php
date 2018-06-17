@@ -27,26 +27,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Kambo\Karsk\Types;
+namespace Kambo\Karsk\Type;
 
 /**
- * Description of Long
+ * Represents char value
  *
- * Lorem ipsum dolor
- *
- * @package 
- * @author  Bohuslav Simek <bohuslav@simek.si>
- * @license MIT
+ * @author Bohuslav Simek <bohuslav@simek.si>
  */
-class Long
+class Character extends AbstractDataType
 {
-    private $value;
 
-    public function __construct($value) {
-        $this->value = $value;
-    }
-
-    public function getValue() {
-        return $this->value;
-    }
 }

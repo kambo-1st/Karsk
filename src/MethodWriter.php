@@ -785,6 +785,50 @@ class MethodWriter extends MethodVisitor
         }
     }
 
+    /**
+     * Visits a LDC instruction. Note that new constant types may be added in
+     * future versions of the Java Virtual Machine. To easily detect new
+     * constant types, implementations of this method should check for
+     * unexpected constant types, like this:
+     *
+     * <pre>
+     * if (cst instanceof Integer) {
+     *     // ...
+     * } else if (cst instanceof Float) {
+     *     // ...
+     * } else if (cst instanceof Long) {
+     *     // ...
+     * } else if (cst instanceof Double) {
+     *     // ...
+     * } else if (cst instanceof String) {
+     *     // ...
+     * } else if (cst instanceof Type) {
+     *     int sort = ((Type) cst).getSort();
+     *     if (sort == Type.OBJECT) {
+     *         // ...
+     *     } else if (sort == Type.ARRAY) {
+     *         // ...
+     *     } else if (sort == Type.METHOD) {
+     *         // ...
+     *     } else {
+     *         // throw an exception
+     *     }
+     * } else if (cst instanceof Handle) {
+     *     // ...
+     * } else {
+     *     // throw an exception
+     * }
+     * </pre>
+     *
+     * @param cst
+     *            the constant to be loaded on the stack. This parameter must be
+     *            a non null {@link Integer}, a {@link Float}, a {@link Long}, a
+     *            {@link Double}, a {@link String}, a {@link Type} of OBJECT or
+     *            ARRAY sort for <tt>.class</tt> constants, for classes whose
+     *            version is 49.0, a {@link Type} of METHOD sort or a
+     *            {@link Handle} for MethodType and MethodHandle constants, for
+     *            classes whose version is 51.0.
+     */
     public function visitLdcInsn($cst) // [final Object cst]
     {
         $this->lastCodeOffset = count($this->code) /*from: code.length*/;

@@ -7,6 +7,8 @@ use Kambo\Karsk\ClassWriter;
 use Kambo\Karsk\Opcodes;
 use Kambo\Karsk\Label;
 
+use Kambo\Karsk\Type;
+
 /**
  * Test for the Kambo\Karsk\ClassWriter
  *
@@ -820,6 +822,524 @@ class ClassWriterTest extends TestCase
             2, 89, 18, 34, 183, 0, 36, 76, 178, 0, 18, 43, 182, 0, 38, 182, 0, 23, 177, 0, null, 0, 2, 0,
             43, 0, 0, 0, 22, 0, 2, 0, 0, 0, 21, 0, 39, 0, 40, 0, 0, 0, 10, 0, 11, 0, 41, 0, 27, 0, 1, 0,
             44, 0, 0, 0, 14, 0, 3, 0, 0, 0, 17, 0, 10, 0, 19, 0, 20, 0, 20, 0, 1, 0, 45, 0, 0, 0, 2, 0, 5,
+        ];
+
+        $this->assertEquals($expectedClassStructure, $code);
+    }
+
+    /**
+     * Tests generating simple class property and second method
+     *
+     * Generates the bytecode corresponding to the following Java class:
+     *
+     *       public class Variables {
+     *
+     *           public static void main(String[] args) {
+     *               boolean bool = true;
+     *               char c = 'C';
+     *               byte b = 100;
+     *               short s = 10000;
+     *               int i = 100000;
+     *               double d = 3.14;
+     *               int[] anArray = new int[10];
+     *               String string = "im a string";
+     *
+     *               anArray[1] = 42;
+     *
+     *               System.out.println(bool);
+     *               System.out.println(c);
+     *               System.out.println(b);
+     *               System.out.println(s);
+     *               System.out.println(i);
+     *               System.out.println(d);
+     *               System.out.println(string);
+     *               System.out.println(anArray.length);
+     *           }
+     *       }
+     *
+     *
+     * @return void
+     */
+    public function testGenerateVariables() : void
+    {
+        $cw = new ClassWriter(0);
+
+        $cw->visit(
+            Opcodes::V1_8,
+            Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
+            "Variables",
+            null,
+            "java/lang/Object",
+            null
+        );
+
+        $cw->visitSource("Variables.java", null);
+
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv->visitCode();
+        $l0 = new Label();
+        $mv->visitLabel($l0);
+        $mv->visitLineNumber(3, $l0);
+        $mv->visitVarInsn(Opcodes::ALOAD, 0);
+        $mv->visitMethodInsn(
+            Opcodes::INVOKESPECIAL,
+            "java/lang/Object",
+            "<init>",
+            "()V",
+            false
+        );
+        $mv->visitInsn(Opcodes::RETURN_);
+        $l1 = new Label();
+        $mv->visitLabel($l1);
+        $mv->visitLocalVariable("this", "LVariables;", null, $l0, $l1, 0);
+        $mv->visitMaxs(1, 1);
+        $mv->visitEnd();
+
+        $mv = $cw->visitMethod(
+            Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
+            "main",
+            "([Ljava/lang/String;)V",
+            null,
+            null
+        );
+        $mv->visitCode();
+
+        $l0 = new Label();
+        $mv->visitLabel($l0);
+        $mv->visitLineNumber(6, $l0);
+        $mv->visitInsn(Opcodes::ICONST_1);
+        $mv->visitVarInsn(Opcodes::ISTORE, 1);
+
+        $l1 = new Label();
+        $mv->visitLabel($l1);
+        $mv->visitLineNumber(7, $l1);
+        $mv->visitIntInsn(Opcodes::BIPUSH, 67);
+        $mv->visitVarInsn(Opcodes::ISTORE, 2);
+
+        $l2 = new Label();
+        $mv->visitLabel($l2);
+        $mv->visitLineNumber(8, $l2);
+        $mv->visitIntInsn(Opcodes::BIPUSH, 100);
+        $mv->visitVarInsn(Opcodes::ISTORE, 3);
+
+        $l3 = new Label();
+        $mv->visitLabel($l3);
+        $mv->visitLineNumber(9, $l3);
+        $mv->visitIntInsn(Opcodes::SIPUSH, 10000);
+        $mv->visitVarInsn(Opcodes::ISTORE, 4);
+
+        $l4 = new Label();
+        $mv->visitLabel($l4);
+        $mv->visitLineNumber(10, $l4);
+        $mv->visitLdcInsn(new Type\Integer(100000));
+        $mv->visitVarInsn(Opcodes::ISTORE, 5);
+
+        $l5 = new Label();
+        $mv->visitLabel($l5);
+        $mv->visitLineNumber(11, $l5);
+        $mv->visitLdcInsn(new Type\Double("3.14"));
+        $mv->visitVarInsn(Opcodes::DSTORE, 6);
+
+        $l6 = new Label();
+        $mv->visitLabel($l6);
+        $mv->visitLineNumber(12, $l6);
+        $mv->visitIntInsn(Opcodes::BIPUSH, 10);
+        $mv->visitIntInsn(Opcodes::NEWARRAY, Opcodes::T_INT);
+        $mv->visitVarInsn(Opcodes::ASTORE, 8);
+
+        $l7 = new Label();
+        $mv->visitLabel($l7);
+        $mv->visitLineNumber(13, $l7);
+        $mv->visitLdcInsn("im a string");
+        $mv->visitVarInsn(Opcodes::ASTORE, 9);
+
+        $l8 = new Label();
+        $mv->visitLabel($l8);
+        $mv->visitLineNumber(15, $l8);
+        $mv->visitVarInsn(Opcodes::ALOAD, 8);
+        $mv->visitInsn(Opcodes::ICONST_1);
+        $mv->visitIntInsn(Opcodes::BIPUSH, 42);
+        $mv->visitInsn(Opcodes::IASTORE);
+
+        $l9 = new Label();
+        $mv->visitLabel($l9);
+        $mv->visitLineNumber(17, $l9);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ILOAD, 1);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Z)V", false);
+
+        $l10 = new Label();
+        $mv->visitLabel($l10);
+        $mv->visitLineNumber(18, $l10);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ILOAD, 2);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(C)V", false);
+
+        $l11 = new Label();
+        $mv->visitLabel($l11);
+        $mv->visitLineNumber(19, $l11);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ILOAD, 3);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+
+        $l12 = new Label();
+        $mv->visitLabel($l12);
+        $mv->visitLineNumber(20, $l12);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ILOAD, 4);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+
+        $l13 = new Label();
+        $mv->visitLabel($l13);
+        $mv->visitLineNumber(21, $l13);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ILOAD, 5);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+
+        $l14 = new Label();
+        $mv->visitLabel($l14);
+        $mv->visitLineNumber(22, $l14);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::DLOAD, 6);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(D)V", false);
+
+        $l15 = new Label();
+        $mv->visitLabel($l15);
+        $mv->visitLineNumber(23, $l15);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ALOAD, 9);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+
+        $l16 = new Label();
+        $mv->visitLabel($l16);
+        $mv->visitLineNumber(24, $l16);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ALOAD, 8);
+        $mv->visitInsn(Opcodes::ARRAYLENGTH);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+
+        $l17 = new Label();
+        $mv->visitLabel($l17);
+        $mv->visitLineNumber(25, $l17);
+        $mv->visitInsn(Opcodes::RETURN_);
+
+        $l18 = new Label();
+        $mv->visitLabel($l18);
+        $mv->visitLocalVariable("args", "[Ljava/lang/String;", null, $l0, $l18, 0);
+        $mv->visitLocalVariable("bool", "Z", null, $l1, $l18, 1);
+        $mv->visitLocalVariable("c", "C", null, $l2, $l18, 2);
+        $mv->visitLocalVariable("b", "B", null, $l3, $l18, 3);
+        $mv->visitLocalVariable("s", "S", null, $l4, $l18, 4);
+        $mv->visitLocalVariable("i", "I", null, $l5, $l18, 5);
+        $mv->visitLocalVariable("d", "D", null, $l6, $l18, 6);
+        $mv->visitLocalVariable("anArray", "[I", null, $l7, $l18, 8);
+        $mv->visitLocalVariable("string", "Ljava/lang/String;", null, $l8, $l18, 9);
+        $mv->visitMaxs(3, 10);
+        $mv->visitEnd();
+
+        $cw->visitEnd();
+
+        $code = $cw->toByteArray();
+
+        $expectedClassStructure = [
+            202, 254, 186, 190, 0, 0, 0, 52, 0, 65, 1, 0, 9, 86, 97, 114, 105, 97, 98, 108, 101,
+            115, 7, 0, 1, 1, 0, 16, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 79, 98, 106, 101,
+            99, 116, 7, 0, 3, 1, 0, 14, 86, 97, 114, 105, 97, 98, 108, 101, 115, 46, 106, 97, 118,
+            97, 1, 0, 6, 60, 105, 110, 105, 116, 62, 1, 0, 3, 40, 41, 86, 12, 0, 6, 0, 7, 10, 0, 4,
+            0, 8, 1, 0, 4, 116, 104, 105, 115, 1, 0, 11, 76, 86, 97, 114, 105, 97, 98, 108, 101,
+            115, 59, 1, 0, 4, 109, 97, 105, 110, 1, 0, 22, 40, 91, 76, 106, 97, 118, 97, 47, 108,
+            97, 110, 103, 47, 83, 116, 114, 105, 110, 103, 59, 41, 86, 3, 0, 1, 134, 160, 6, 0, 0,
+            0, 0, 0, 0, 0, 3, 1, 0, 11, 105, 109, 32, 97, 32, 115, 116, 114, 105, 110, 103, 8, 0, 17,
+            1, 0, 16, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 121, 115, 116, 101, 109, 7, 0,
+            19, 1, 0, 3, 111, 117, 116, 1, 0, 21, 76, 106, 97, 118, 97, 47, 105, 111, 47, 80, 114,
+            105, 110, 116, 83, 116, 114, 101, 97, 109, 59, 12, 0, 21, 0, 22, 9, 0, 20, 0, 23, 1, 0,
+            19, 106, 97, 118, 97, 47, 105, 111, 47, 80, 114, 105, 110, 116, 83, 116, 114, 101, 97, 109,
+            7, 0, 25, 1, 0, 7, 112, 114, 105, 110, 116, 108, 110, 1, 0, 4, 40, 90, 41, 86, 12, 0, 27,
+            0, 28, 10, 0, 26, 0, 29, 1, 0, 4, 40, 67, 41, 86, 12, 0, 27, 0, 31, 10, 0, 26, 0, 32, 1,
+            0, 4, 40, 73, 41, 86, 12, 0, 27, 0, 34, 10, 0, 26, 0, 35, 1, 0, 4, 40, 68, 41, 86, 12, 0,
+            27, 0, 37, 10, 0, 26, 0, 38, 1, 0, 21, 40, 76, 106, 97, 118, 97, 47, 108, 97, 110, 103,
+            47, 83, 116, 114, 105, 110, 103, 59, 41, 86, 12, 0, 27, 0, 40, 10, 0, 26, 0, 41, 1, 0, 4,
+            97, 114, 103, 115, 1, 0, 19, 91, 76, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 116,
+            114, 105, 110, 103, 59, 1, 0, 4, 98, 111, 111, 108, 1, 0, 1, 90, 1, 0, 1, 99, 1, 0, 1, 67,
+            1, 0, 1, 98, 1, 0, 1, 66, 1, 0, 1, 115, 1, 0, 1, 83, 1, 0, 1, 105, 1, 0, 1, 73, 1, 0, 1, 100,
+            1, 0, 1, 68, 1, 0, 7, 97, 110, 65, 114, 114, 97, 121, 1, 0, 2, 91, 73, 1, 0, 6, 115, 116,
+            114, 105, 110, 103, 1, 0, 18, 76, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 116, 114,
+            105, 110, 103, 59, 1, 0, 4, 67, 111, 100, 101, 1, 0, 18, 76, 111, 99, 97, 108, 86, 97, 114,
+            105, 97, 98, 108, 101, 84, 97, 98, 108, 101, 1, 0, 15, 76, 105, 110, 101, 78, 117, 109, 98,
+            101, 114, 84, 97, 98, 108, 101, 1, 0, 10, 83, 111, 117, 114, 99, 101, 70, 105, 108, 101, 0,
+            33, 0, 2, 0, 4, 0, null, 0, 0, 0, 2, 0, 1, 0, 6, 0, 7, 0, 1, 0, 61, 0, 0, 0, 47, 0, 1, 0, 1,
+            0, 0, 0, 5, 42, 183, 0, 9, 177, 0, null, 0, 2, 0, 62, 0, 0, 0, 12, 0, 1, 0, 0, 0, 5, 0, 10,
+            0, 11, 0, 0, 0, 63, 0, 0, 0, 6, 0, 1, 0, 0, 0, 3, 0, 9, 0, 12, 0, 13, 0, 1, 0, 61, 0, 0, 1,
+            35, 0, 3, 0, 10, 0, 0, 0, 101, 4, 60, 16, 67, 61, 16, 100, 62, 17, 39, 16, 54, 4, 18, 14, 54,
+            5, 20, 0, 15, 57, 6, 16, 10, 188, 10, 58, 8, 18, 18, 58, 9, 25, 8, 4, 16, 42, 79, 178, 0, 24,
+            27, 182, 0, 30, 178, 0, 24, 28, 182, 0, 33, 178, 0, 24, 29, 182, 0, 36, 178, 0, 24, 21, 4, 182,
+            0, 36, 178, 0, 24, 21, 5, 182, 0, 36, 178, 0, 24, 24, 6, 182, 0, 39, 178, 0, 24, 25, 9, 182,
+            0, 42, 178, 0, 24, 25, 8, 190, 182, 0, 36, 177, 0, null, 0, 2, 0, 62, 0, 0, 0, 92, 0, 9, 0, 0,
+            0, 101, 0, 43, 0, 44, 0, 0, 0, 2, 0, 99, 0, 45, 0, 46, 0, 1, 0, 5, 0, 96, 0, 47, 0, 48, 0, 2,
+            0, 8, 0, 93, 0, 49, 0, 50, 0, 3, 0, 13, 0, 88, 0, 51, 0, 52, 0, 4, 0, 17, 0, 84, 0, 53, 0, 54,
+            0, 5, 0, 22, 0, 79, 0, 55, 0, 56, 0, 6, 0, 28, 0, 73, 0, 57, 0, 58, 0, 8, 0, 32, 0, 69, 0, 59,
+            0, 60, 0, 9, 0, 63, 0, 0, 0, 74, 0, 18, 0, 0, 0, 6, 0, 2, 0, 7, 0, 5, 0, 8, 0, 8, 0, 9, 0, 13,
+            0, 10, 0, 17, 0, 11, 0, 22, 0, 12, 0, 28, 0, 13, 0, 32, 0, 15, 0, 38, 0, 17, 0, 45, 0, 18, 0,
+            52, 0, 19, 0, 59, 0, 20, 0, 67, 0, 21, 0, 75, 0, 22, 0, 83, 0, 23, 0, 91, 0, 24, 0, 100, 0,
+            25, 0, 1, 0, 64, 0, 0, 0, 2, 0, 5,
+        ];
+
+        $this->assertEquals($expectedClassStructure, $code);
+    }
+
+    /**
+     * Tests generating simple class property and second method
+     *
+     * Generates the bytecode corresponding to the following Java class:
+     *
+     *       public class Variables {
+     *
+     *           public static void main(String[] args) {
+     *               boolean bool = true;
+     *               char c = 'C';
+     *               byte b = 100;
+     *               short s = 10000;
+     *               int i = 100000;
+     *               double d = 3.14;
+     *               int[] anArray = new int[10];
+     *               String string = "im a string";
+     *
+     *               anArray[1] = 42;
+     *
+     *               System.out.println(bool);
+     *               System.out.println(c);
+     *               System.out.println(b);
+     *               System.out.println(s);
+     *               System.out.println(i);
+     *               System.out.println(d);
+     *               System.out.println(string);
+     *               System.out.println(anArray.length);
+     *           }
+     *       }
+     *
+     *
+     * @return void
+     */
+    public function testGenerateVariablesAlternativeSyntax() : void
+    {
+        $cw = new ClassWriter(0);
+
+        $cw->visit(
+            Opcodes::V1_8,
+            Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
+            "Variables",
+            null,
+            "java/lang/Object",
+            null
+        );
+
+        $cw->visitSource("Variables.java", null);
+
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv->visitCode();
+        $l0 = new Label();
+        $mv->visitLabel($l0);
+        $mv->visitLineNumber(3, $l0);
+        $mv->visitVarInsn(Opcodes::ALOAD, 0);
+        $mv->visitMethodInsn(
+            Opcodes::INVOKESPECIAL,
+            "java/lang/Object",
+            "<init>",
+            "()V",
+            false
+        );
+        $mv->visitInsn(Opcodes::RETURN_);
+        $l1 = new Label();
+        $mv->visitLabel($l1);
+        $mv->visitLocalVariable("this", "LVariables;", null, $l0, $l1, 0);
+        $mv->visitMaxs(1, 1);
+        $mv->visitEnd();
+
+        $mv = $cw->visitMethod(
+            Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
+            "main",
+            "([Ljava/lang/String;)V",
+            null,
+            null
+        );
+        $mv->visitCode();
+
+        $l0 = new Label();
+        $mv->visitLabel($l0);
+        $mv->visitLineNumber(6, $l0);
+        $mv->visitLdcInsn(new Type\Boolean(true));
+        $mv->visitVarInsn(Opcodes::ISTORE, 1);
+
+        $l1 = new Label();
+        $mv->visitLabel($l1);
+        $mv->visitLineNumber(7, $l1);
+        $mv->visitLdcInsn(new Type\Character('C'));
+        $mv->visitVarInsn(Opcodes::ISTORE, 2);
+
+        $l2 = new Label();
+        $mv->visitLabel($l2);
+        $mv->visitLineNumber(8, $l2);
+        $mv->visitIntInsn(Opcodes::BIPUSH, 100); // An integer should be used instead of Byte
+        $mv->visitVarInsn(Opcodes::ISTORE, 3);
+
+        $l3 = new Label();
+        $mv->visitLabel($l3);
+        $mv->visitLineNumber(9, $l3);
+        $mv->visitLdcInsn(new Type\Short(10000));
+        $mv->visitVarInsn(Opcodes::ISTORE, 4);
+
+        $l4 = new Label();
+        $mv->visitLabel($l4);
+        $mv->visitLineNumber(10, $l4);
+        $mv->visitLdcInsn(new Type\Integer(100000));
+        $mv->visitVarInsn(Opcodes::ISTORE, 5);
+
+        $l5 = new Label();
+        $mv->visitLabel($l5);
+        $mv->visitLineNumber(11, $l5);
+        $mv->visitLdcInsn(new Type\Double("3.14"));
+        $mv->visitVarInsn(Opcodes::DSTORE, 6);
+
+        $l6 = new Label();
+        $mv->visitLabel($l6);
+        $mv->visitLineNumber(12, $l6);
+        $mv->visitIntInsn(Opcodes::BIPUSH, 10);
+        $mv->visitIntInsn(Opcodes::NEWARRAY, Opcodes::T_INT);
+        $mv->visitVarInsn(Opcodes::ASTORE, 8);
+
+        $l7 = new Label();
+        $mv->visitLabel($l7);
+        $mv->visitLineNumber(13, $l7);
+        $mv->visitLdcInsn(new Type\String_("im a string"));
+        $mv->visitVarInsn(Opcodes::ASTORE, 9);
+
+        $l8 = new Label();
+        $mv->visitLabel($l8);
+        $mv->visitLineNumber(15, $l8);
+        $mv->visitVarInsn(Opcodes::ALOAD, 8);
+        $mv->visitInsn(Opcodes::ICONST_1);
+        $mv->visitIntInsn(Opcodes::BIPUSH, 42);
+        $mv->visitInsn(Opcodes::IASTORE);
+
+        $l9 = new Label();
+        $mv->visitLabel($l9);
+        $mv->visitLineNumber(17, $l9);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ILOAD, 1);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Z)V", false);
+
+        $l10 = new Label();
+        $mv->visitLabel($l10);
+        $mv->visitLineNumber(18, $l10);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ILOAD, 2);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(C)V", false);
+
+        $l11 = new Label();
+        $mv->visitLabel($l11);
+        $mv->visitLineNumber(19, $l11);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ILOAD, 3);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+
+        $l12 = new Label();
+        $mv->visitLabel($l12);
+        $mv->visitLineNumber(20, $l12);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ILOAD, 4);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+
+        $l13 = new Label();
+        $mv->visitLabel($l13);
+        $mv->visitLineNumber(21, $l13);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ILOAD, 5);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+
+        $l14 = new Label();
+        $mv->visitLabel($l14);
+        $mv->visitLineNumber(22, $l14);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::DLOAD, 6);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(D)V", false);
+
+        $l15 = new Label();
+        $mv->visitLabel($l15);
+        $mv->visitLineNumber(23, $l15);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ALOAD, 9);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+
+        $l16 = new Label();
+        $mv->visitLabel($l16);
+        $mv->visitLineNumber(24, $l16);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitVarInsn(Opcodes::ALOAD, 8);
+        $mv->visitInsn(Opcodes::ARRAYLENGTH);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+
+        $l17 = new Label();
+        $mv->visitLabel($l17);
+        $mv->visitLineNumber(25, $l17);
+        $mv->visitInsn(Opcodes::RETURN_);
+
+        $l18 = new Label();
+        $mv->visitLabel($l18);
+        $mv->visitLocalVariable("args", "[Ljava/lang/String;", null, $l0, $l18, 0);
+        $mv->visitLocalVariable("bool", "Z", null, $l1, $l18, 1);
+        $mv->visitLocalVariable("c", "C", null, $l2, $l18, 2);
+        $mv->visitLocalVariable("b", "B", null, $l3, $l18, 3);
+        $mv->visitLocalVariable("s", "S", null, $l4, $l18, 4);
+        $mv->visitLocalVariable("i", "I", null, $l5, $l18, 5);
+        $mv->visitLocalVariable("d", "D", null, $l6, $l18, 6);
+        $mv->visitLocalVariable("anArray", "[I", null, $l7, $l18, 8);
+        $mv->visitLocalVariable("string", "Ljava/lang/String;", null, $l8, $l18, 9);
+        $mv->visitMaxs(3, 10);
+        $mv->visitEnd();
+
+        $cw->visitEnd();
+
+        $code = $cw->toByteArray();
+        $expectedClassStructure = [
+            202, 254, 186, 190, 0, 0, 0, 52, 0, 68, 1, 0, 9, 86, 97, 114, 105, 97, 98, 108, 101, 115,
+            7, 0, 1, 1, 0, 16, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 79, 98, 106, 101, 99, 116,
+            7, 0, 3, 1, 0, 14, 86, 97, 114, 105, 97, 98, 108, 101, 115, 46, 106, 97, 118, 97, 1, 0, 6,
+            60, 105, 110, 105, 116, 62, 1, 0, 3, 40, 41, 86, 12, 0, 6, 0, 7, 10, 0, 4, 0, 8, 1, 0, 4,
+            116, 104, 105, 115, 1, 0, 11, 76, 86, 97, 114, 105, 97, 98, 108, 101, 115, 59, 1, 0, 4, 109,
+            97, 105, 110, 1, 0, 22, 40, 91, 76, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 116,
+            114, 105, 110, 103, 59, 41, 86, 3, 0, 0, 0, 1, 3, 0, 0, 0, 67, 3, 0, 0, 39, 16, 3, 0, 1, 134,
+            160, 6, 0, 0, 0, 0, 0, 0, 0, 3, 1, 0, 11, 105, 109, 32, 97, 32, 115, 116, 114, 105, 110, 103,
+            8, 0, 20, 1, 0, 16, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 121, 115, 116, 101, 109,
+            7, 0, 22, 1, 0, 3, 111, 117, 116, 1, 0, 21, 76, 106, 97, 118, 97, 47, 105, 111, 47, 80, 114,
+            105, 110, 116, 83, 116, 114, 101, 97, 109, 59, 12, 0, 24, 0, 25, 9, 0, 23, 0, 26, 1, 0, 19,
+            106, 97, 118, 97, 47, 105, 111, 47, 80, 114, 105, 110, 116, 83, 116, 114, 101, 97, 109, 7, 0,
+            28, 1, 0, 7, 112, 114, 105, 110, 116, 108, 110, 1, 0, 4, 40, 90, 41, 86, 12, 0, 30, 0, 31, 10,
+            0, 29, 0, 32, 1, 0, 4, 40, 67, 41, 86, 12, 0, 30, 0, 34, 10, 0, 29, 0, 35, 1, 0, 4, 40, 73, 41,
+            86, 12, 0, 30, 0, 37, 10, 0, 29, 0, 38, 1, 0, 4, 40, 68, 41, 86, 12, 0, 30, 0, 40, 10, 0, 29,
+            0, 41, 1, 0, 21, 40, 76, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 116, 114, 105, 110,
+            103, 59, 41, 86, 12, 0, 30, 0, 43, 10, 0, 29, 0, 44, 1, 0, 4, 97, 114, 103, 115, 1, 0, 19, 91,
+            76, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 116, 114, 105, 110, 103, 59, 1, 0, 4, 98,
+            111, 111, 108, 1, 0, 1, 90, 1, 0, 1, 99, 1, 0, 1, 67, 1, 0, 1, 98, 1, 0, 1, 66, 1, 0, 1, 115,
+            1, 0, 1, 83, 1, 0, 1, 105, 1, 0, 1, 73, 1, 0, 1, 100, 1, 0, 1, 68, 1, 0, 7, 97, 110, 65, 114,
+            114, 97, 121, 1, 0, 2, 91, 73, 1, 0, 6, 115, 116, 114, 105, 110, 103, 1, 0, 18, 76, 106, 97,
+            118, 97, 47, 108, 97, 110, 103, 47, 83, 116, 114, 105, 110, 103, 59, 1, 0, 4, 67, 111, 100,
+            101, 1, 0, 18, 76, 111, 99, 97, 108, 86, 97, 114, 105, 97, 98, 108, 101, 84, 97, 98, 108, 101,
+            1, 0, 15, 76, 105, 110, 101, 78, 117, 109, 98, 101, 114, 84, 97, 98, 108, 101, 1, 0, 10, 83,
+            111, 117, 114, 99, 101, 70, 105, 108, 101, 0, 33, 0, 2, 0, 4, 0, null, 0, 0, 0, 2, 0, 1, 0, 6,
+            0, 7, 0, 1, 0, 64, 0, 0, 0, 47, 0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 9, 177, 0, null, 0, 2, 0,
+            65, 0, 0, 0, 12, 0, 1, 0, 0, 0, 5, 0, 10, 0, 11, 0, 0, 0, 66, 0, 0, 0, 6, 0, 1, 0, 0, 0, 3, 0,
+            9, 0, 12, 0, 13, 0, 1, 0, 64, 0, 0, 1, 35, 0, 3, 0, 10, 0, 0, 0, 101, 18, 14, 60, 18, 15, 61,
+            16, 100, 62, 18, 16, 54, 4, 18, 17, 54, 5, 20, 0, 18, 57, 6, 16, 10, 188, 10, 58, 8, 18, 21,
+            58, 9, 25, 8, 4, 16, 42, 79, 178, 0, 27, 27, 182, 0, 33, 178, 0, 27, 28, 182, 0, 36, 178, 0,
+            27, 29, 182, 0, 39, 178, 0, 27, 21, 4, 182, 0, 39, 178, 0, 27, 21, 5, 182, 0, 39, 178, 0, 27,
+            24, 6, 182, 0, 42, 178, 0, 27, 25, 9, 182, 0, 45, 178, 0, 27, 25, 8, 190, 182, 0, 39, 177, 0,
+            null, 0, 2, 0, 65, 0, 0, 0, 92, 0, 9, 0, 0, 0, 101, 0, 46, 0, 47, 0, 0, 0, 3, 0, 98, 0, 48, 0,
+            49, 0, 1, 0, 6, 0, 95, 0, 50, 0, 51, 0, 2, 0, 9, 0, 92, 0, 52, 0, 53, 0, 3, 0, 13, 0, 88, 0, 54,
+            0, 55, 0, 4, 0, 17, 0, 84, 0, 56, 0, 57, 0, 5, 0, 22, 0, 79, 0, 58, 0, 59, 0, 6, 0, 28, 0, 73, 0,
+            60, 0, 61, 0, 8, 0, 32, 0, 69, 0, 62, 0, 63, 0, 9, 0, 66, 0, 0, 0, 74, 0, 18, 0, 0, 0, 6, 0, 3,
+            0, 7, 0, 6, 0, 8, 0, 9, 0, 9, 0, 13, 0, 10, 0, 17, 0, 11, 0, 22, 0, 12, 0, 28, 0, 13, 0, 32, 0,
+            15, 0, 38, 0, 17, 0, 45, 0, 18, 0, 52, 0, 19, 0, 59, 0, 20, 0, 67, 0, 21, 0, 75, 0, 22, 0, 83,
+            0, 23, 0, 91, 0, 24, 0, 100, 0, 25, 0, 1, 0, 67, 0, 0, 0, 2, 0, 5,
         ];
 
         $this->assertEquals($expectedClassStructure, $code);
