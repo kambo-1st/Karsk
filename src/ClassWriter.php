@@ -980,9 +980,9 @@ class ClassWriter extends ClassVisitor
      *
      * @param string $value the internal name of the class.
      *
-     * @return the index of a new or already existing class reference item.
+     * @return int the index of a new or already existing class reference item.
      */
-    public function newClass($value) // [final String value]
+    public function newClass(string $value) : int
     {
         return $this->newClassItem($value)->index;
     }
@@ -1030,72 +1030,6 @@ class ClassWriter extends ClassVisitor
     public function newHandle_I_String_String_String_b($tag, $owner, $name, $desc, $itf) // [final int tag, final String owner, final String name, final String desc, final boolean itf]
     {
         return $this->newHandleItem($tag, $owner, $name, $desc, $itf)->index;
-    }
-
-    protected function newInvokeDynamicItem($name, $desc, $bsm, $bsmArgs) // [final String name, final String desc, final Handle bsm, final Object... bsmArgs]
-    {
-        $bootstrapMethods = $this->bootstrapMethods;
-        if (($bootstrapMethods == null)) {
-            $bootstrapMethods = $this->bootstrapMethods = new ByteVector();
-        }
-        $position = count($bootstrapMethods) /*from: bootstrapMethods.length*/;
-        $hashCode = $bsm->hashCode();
-            /* match: I_String_String_String_b */
-        $bootstrapMethods->putShort($this->newHandle_I_String_String_String_b($bsm->tag, $bsm->owner, $bsm->name, $bsm->desc, $bsm->isInterface()));
-        $argsLength = count($bsmArgs) /*from: bsmArgs.length*/;
-        $bootstrapMethods->putShort($argsLength);
-        for ($i = 0; ($i < $argsLength); ++$i) {
-            $bsmArg = $bsmArgs[$i];
-            $hashCode ^= $bsmArg->hashCode();
-            $bootstrapMethods->putShort($this->newConst($bsmArg));
-        }
-        $data = $bootstrapMethods->data;
-        $length = ((((1 + 1) + $argsLength)) << 1);
-        $hashCode &= 0x7FFFFFFF;
-        $result = $this->items[($hashCode % count($this->items) /*from: items.length*/)];
-
-        while ($result != null) {
-            if ($result->type != BSM || $result->hashCode != hashCode) {
-                $result = $result->next;
-                continue;
-            }
-
-            $resultPosition = $result->intVal();
-            for ($p = 0; $p < $length; $p++) {
-                if ($data[position + p] != $data[resultPosition + p]) {
-                    $result = $result->next();
-                    continue;
-                }
-            }
-            break;
-        }
-
-        $bootstrapMethodIndex = null;
-        if (($result != null)) {
-            $bootstrapMethodIndex = $result->index;
-            // TODO $bootstrapMethods should be object
-            //count($bootstrapMethods) /*from: bootstrapMethods.length*/ = $position;
-            
-            die;
-        } else {
-            $bootstrapMethodIndex = ++$this->bootstrapMethodsCount;
-            $result = new Item($bootstrapMethodIndex);
-            $result->set($position, $hashCode);
-            $this->put($result);
-        }
-        $this->key3->set($name, $desc, $bootstrapMethodIndex);
-        $result = $this->get($this->key3);
-        if (($result == null)) {
-            $this->put122(self::$INDY, $bootstrapMethodIndex, $this->newNameType($name, $desc));
-            $result = new Item(/*++$this->index*/$this->index++, $this->key3);
-            $this->put($result);
-        }
-        return $result;
-    }
-
-    public function newInvokeDynamic($name, $desc, $bsm, $bsmArgs) // [final String name, final String desc, final Handle bsm, final Object... bsmArgs]
-    {
-        return $this->newInvokeDynamicItem($name, $desc, $bsm, $bsmArgs)->index;
     }
 
     public function newFieldItem($owner, $name, $desc) // [final String owner, final String name, final String desc]

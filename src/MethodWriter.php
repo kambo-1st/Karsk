@@ -639,29 +639,7 @@ class MethodWriter extends MethodVisitor
             $this->code->put12($opcode, $i->index);
         }
     }
-    public function visitInvokeDynamicInsn($name, $desc, $bsm, $bsmArgs) // [final String name, final String desc, final Handle bsm, final Object... bsmArgs]
-    {
-        $this->lastCodeOffset = count($this->code) /*from: code.length*/;
-        $i = $this->cw->newInvokeDynamicItem($name, $desc, $bsm, $bsmArgs);
-        $argSize = $i->intVal;
-        if (($this->currentBlock != null)) {
-            if ((($this->compute == self::$FRAMES) || ($this->compute == self::$INSERTED_FRAMES))) {
-                $this->currentBlock->frame->execute(Opcodes::INVOKEDYNAMIC, 0, $this->cw, $i);
-            } else {
-                if (($argSize == 0)) {
-                    $argSize = $Type->getArgumentsAndReturnSizes($desc);
-                    $i->intVal = $argSize;
-                }
-                $size = ((($this->stackSize - (($argSize >> 2))) + (($argSize & 0x03))) + 1);
-                if (($size > $this->maxStackSize)) {
-                    $this->maxStackSize = $size;
-                }
-                $this->stackSize = $size;
-            }
-        }
-        $this->code->put12(Opcodes::INVOKEDYNAMIC, $i->index);
-        $this->code->putShort(0);
-    }
+
     public function visitJumpInsn($opcode, $label) // [int opcode, final Label label]
     {
         $isWide = ($opcode >= 200);
