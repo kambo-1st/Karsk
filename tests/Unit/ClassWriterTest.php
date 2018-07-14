@@ -1344,4 +1344,295 @@ class ClassWriterTest extends TestCase
 
         $this->assertEquals($expectedClassStructure, $code);
     }
+
+    /**
+     * Tests generating class which contains inner class.
+     *
+     * Generates the bytecode corresponding to the following Java class:
+     *
+     *  public class InnerClass {
+     *      private static class Inner_Demo {
+     *          public void print() {
+     *              System.out.println("This is an inner class");
+     *          }
+     *      }
+     *
+     *      public static void main(String[] args) {
+     *          Inner_Demo inner = new Inner_Demo();
+     *          inner.print();
+     *      }
+     *  }
+     *
+     * @return void
+     */
+    public function testGenerateInnerClass() : void
+    {
+        $cw = new ClassWriter(0);
+
+        $cw->visit(
+            Opcodes::V1_8,
+            Opcodes::ACC_SUPER,
+            'InnerClass$Inner_Demo',
+            null,
+            "java/lang/Object",
+            null
+        );
+        $cw->visitSource("InnerClass.java", null);
+        $cw->visitInnerClass(
+            'InnerClass$Inner_Demo',
+            "InnerClass",
+            "Inner_Demo",
+            Opcodes::ACC_PRIVATE + Opcodes::ACC_STATIC
+        );
+
+        $mv = $cw->visitMethod(Opcodes::ACC_PRIVATE, "<init>", "()V", null, null);
+        $mv->visitCode();
+
+        $l0 = new Label();
+        $mv->visitLabel($l0);
+        $mv->visitLineNumber(4, $l0);
+        $mv->visitVarInsn(Opcodes::ALOAD, 0);
+        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        $mv->visitInsn(Opcodes::RETURN_);
+
+        $l1 = new Label();
+        $mv->visitLabel($l1);
+        $mv->visitLocalVariable("this", 'LInnerClass$Inner_Demo;', null, $l0, $l1, 0);
+        $mv->visitMaxs(1, 1);
+        $mv->visitEnd();
+
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "print", "()V", null, null);
+        $mv->visitCode();
+
+        $l0 = new Label();
+        $mv->visitLabel($l0);
+        $mv->visitLineNumber(6, $l0);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitLdcInsn("This is an inner class");
+        $mv->visitMethodInsn(
+            Opcodes::INVOKEVIRTUAL,
+            "java/io/PrintStream",
+            "println",
+            "(Ljava/lang/String;)V",
+            false
+        );
+
+        $l1 = new Label();
+        $mv->visitLabel($l1);
+        $mv->visitLineNumber(7, $l1);
+        $mv->visitInsn(Opcodes::RETURN_);
+
+        $l2 = new Label();
+        $mv->visitLabel($l2);
+        $mv->visitLocalVariable(
+            "this",
+            'LInnerClass$Inner_Demo;',
+            null,
+            $l0,
+            $l2,
+            0
+        );
+        $mv->visitMaxs(2, 1);
+        $mv->visitEnd();
+
+        $mv = $cw->visitMethod(
+            Opcodes::ACC_SYNTHETIC,
+            "<init>",
+            '(LInnerClass$Inner_Demo;)V',
+            null,
+            null
+        );
+        $mv->visitCode();
+
+        $l0 = new Label();
+        $mv->visitLabel($l0);
+        $mv->visitLineNumber(4, $l0);
+        $mv->visitVarInsn(Opcodes::ALOAD, 0);
+        $mv->visitMethodInsn(
+            Opcodes::INVOKESPECIAL,
+            'InnerClass$Inner_Demo',
+            "<init>",
+            "()V",
+            false
+        );
+        $mv->visitInsn(Opcodes::RETURN_);
+
+        $mv->visitMaxs(1, 2);
+        $mv->visitEnd();
+
+        $cw->visitEnd();
+
+        $code = $cw->toByteArray();
+
+        $expectedClassStructure = [
+            202, 254, 186, 190, 0, 0, 0, 52, 0, 37, 1, 0, 21, 73, 110, 110, 101, 114, 67, 108, 97,
+            115, 115, 36, 73, 110, 110, 101, 114, 95, 68, 101, 109, 111, 7, 0, 1, 1, 0, 16, 106, 97,
+            118, 97, 47, 108, 97, 110, 103, 47, 79, 98, 106, 101, 99, 116, 7, 0, 3, 1, 0, 15, 73,
+            110, 110, 101, 114, 67, 108, 97, 115, 115, 46, 106, 97, 118, 97, 1, 0, 10, 73, 110, 110,
+            101, 114, 67, 108, 97, 115, 115, 7, 0, 6, 1, 0, 10, 73, 110, 110, 101, 114, 95, 68, 101,
+            109, 111, 1, 0, 6, 60, 105, 110, 105, 116, 62, 1, 0, 3, 40, 41, 86, 12, 0, 9, 0, 10, 10,
+            0, 4, 0, 11, 1, 0, 4, 116, 104, 105, 115, 1, 0, 23, 76, 73, 110, 110, 101, 114, 67, 108,
+            97, 115, 115, 36, 73, 110, 110, 101, 114, 95, 68, 101, 109, 111, 59, 1, 0, 5, 112, 114, 105,
+            110, 116, 1, 0, 16, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 121, 115, 116, 101,
+            109, 7, 0, 16, 1, 0, 3, 111, 117, 116, 1, 0, 21, 76, 106, 97, 118, 97, 47, 105, 111, 47,
+            80, 114, 105, 110, 116, 83, 116, 114, 101, 97, 109, 59, 12, 0, 18, 0, 19, 9, 0, 17, 0, 20,
+            1, 0, 22, 84, 104, 105, 115, 32, 105, 115, 32, 97, 110, 32, 105, 110, 110, 101, 114, 32,
+            99, 108, 97, 115, 115, 8, 0, 22, 1, 0, 19, 106, 97, 118, 97, 47, 105, 111, 47, 80, 114, 105,
+            110, 116, 83, 116, 114, 101, 97, 109, 7, 0, 24, 1, 0, 7, 112, 114, 105, 110, 116, 108, 110,
+            1, 0, 21, 40, 76, 106, 97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 116, 114, 105, 110, 103,
+            59, 41, 86, 12, 0, 26, 0, 27, 10, 0, 25, 0, 28, 1, 0, 26, 40, 76, 73, 110, 110, 101, 114, 67,
+            108, 97, 115, 115, 36, 73, 110, 110, 101, 114, 95, 68, 101, 109, 111, 59, 41, 86, 10, 0, 2,
+            0, 11, 1, 0, 4, 67, 111, 100, 101, 1, 0, 18, 76, 111, 99, 97, 108, 86, 97, 114, 105, 97, 98,
+            108, 101, 84, 97, 98, 108, 101, 1, 0, 15, 76, 105, 110, 101, 78, 117, 109, 98, 101, 114, 84,
+            97, 98, 108, 101, 1, 0, 10, 83, 111, 117, 114, 99, 101, 70, 105, 108, 101, 1, 0, 12, 73, 110,
+            110, 101, 114, 67, 108, 97, 115, 115, 101, 115, 0, 32, 0, 2, 0, 4, 0, NULL, 0, 0, 0, 3, 0, 2,
+            0, 9, 0, 10, 0, 1, 0, 32, 0, 0, 0, 47, 0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 12, 177, 0, NULL, 0,
+            2, 0, 33, 0, 0, 0, 12, 0, 1, 0, 0, 0, 5, 0, 13, 0, 14, 0, 0, 0, 34, 0, 0, 0, 6, 0, 1, 0, 0, 0,
+            4, 0, 1, 0, 15, 0, 10, 0, 1, 0, 32, 0, 0, 0, 55, 0, 2, 0, 1, 0, 0, 0, 9, 178, 0, 21, 18, 23,
+            182, 0, 29, 177, 0, NULL, 0, 2, 0, 33, 0, 0, 0, 12, 0, 1, 0, 0, 0, 9, 0, 13, 0, 14, 0, 0, 0,
+            34, 0, 0, 0, 10, 0, 2, 0, 0, 0, 6, 0, 8, 0, 7, 16, 4096, 0, 9, 0, 30, 0, 1, 0, 32, 0, 0, 0, 29,
+            0, 1, 0, 2, 0, 0, 0, 5, 42, 183, 0, 31, 177, 0, NULL, 0, 1, 0, 34, 0, 0, 0, 6, 0, 1, 0, 0, 0,
+            4, 0, 2, 0, 35, 0, 0, 0, 2, 0, 5, 0, 36, 0, 0, 0, 10, 0, 1, 0, 2, 0, 7, 0, 8, 0, 10,
+        ];
+
+        $this->assertEquals($expectedClassStructure, $code);
+
+        /************************* Generate main class ******************************/
+
+        $cw = new ClassWriter(0);
+
+        $cw->visit(
+            Opcodes::V1_8,
+            Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
+            "InnerClass",
+            null,
+            "java/lang/Object",
+            null
+        );
+        $cw->visitSource("InnerClass.java", null);
+        $cw->visitInnerClass(
+            'InnerClass$Inner_Demo',
+            "InnerClass",
+            "Inner_Demo",
+            Opcodes::ACC_PRIVATE + Opcodes::ACC_STATIC
+        );
+
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv->visitCode();
+
+        $l0 = new Label();
+        $mv->visitLabel($l0);
+        $mv->visitLineNumber(3, $l0);
+        $mv->visitVarInsn(Opcodes::ALOAD, 0);
+        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        $mv->visitInsn(Opcodes::RETURN_);
+
+        $l1 = new Label();
+        $mv->visitLabel($l1);
+        $mv->visitLocalVariable("this", "LInnerClass;", null, $l0, $l1, 0);
+        $mv->visitMaxs(1, 1);
+        $mv->visitEnd();
+
+        $mv = $cw->visitMethod(
+            Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
+            "main",
+            "([Ljava/lang/String;)V",
+            null,
+            null
+        );
+        $mv->visitCode();
+
+        $l0 = new Label();
+        $mv->visitLabel($l0);
+        $mv->visitLineNumber(11, $l0);
+        $mv->visitTypeInsn(Opcodes::NEW_, 'InnerClass$Inner_Demo');
+        $mv->visitInsn(Opcodes::DUP);
+        $mv->visitInsn(Opcodes::ACONST_NULL);
+        $mv->visitMethodInsn(
+            Opcodes::INVOKESPECIAL,
+            'InnerClass$Inner_Demo',
+            "<init>",
+            '(LInnerClass$Inner_Demo;)V',
+            false
+        );
+        $mv->visitVarInsn(Opcodes::ASTORE, 1);
+
+        $l1 = new Label();
+        $mv->visitLabel($l1);
+        $mv->visitLineNumber(12, $l1);
+        $mv->visitVarInsn(
+            Opcodes::ALOAD,
+            1
+        );
+        $mv->visitMethodInsn(
+            Opcodes::INVOKEVIRTUAL,
+            'InnerClass$Inner_Demo',
+            "print",
+            "()V",
+            false
+        );
+
+        $l2 = new Label();
+        $mv->visitLabel($l2);
+        $mv->visitLineNumber(13, $l2);
+        $mv->visitInsn(Opcodes::RETURN_);
+
+        $l3 = new Label();
+        $mv->visitLabel($l3);
+        $mv->visitLocalVariable(
+            "args",
+            "[Ljava/lang/String;",
+            null,
+            $l0,
+            $l3,
+            0
+        );
+        $mv->visitLocalVariable(
+            "inner",
+            'LInnerClass$Inner_Demo;',
+            null,
+            $l1,
+            $l3,
+            1
+        );
+
+        $mv->visitMaxs(3, 2);
+        $mv->visitEnd();
+
+        $cw->visitEnd();
+
+        $code = $cw->toByteArray();
+
+        $expectedClassStructure = [
+            202, 254, 186, 190, 0, 0, 0, 52, 0, 32, 1, 0, 10, 73, 110, 110, 101, 114,
+            67, 108, 97, 115, 115, 7, 0, 1, 1, 0, 16, 106, 97, 118, 97, 47, 108, 97, 110,
+            103, 47, 79, 98, 106, 101, 99, 116, 7, 0, 3, 1, 0, 15, 73, 110, 110, 101, 114,
+            67, 108, 97, 115, 115, 46, 106, 97, 118, 97, 1, 0, 21, 73, 110, 110, 101, 114,
+            67, 108, 97, 115, 115, 36, 73, 110, 110, 101, 114, 95, 68, 101, 109, 111, 7,
+            0, 6, 1, 0, 10, 73, 110, 110, 101, 114, 95, 68, 101, 109, 111, 1, 0, 6, 60, 105,
+            110, 105, 116, 62, 1, 0, 3, 40, 41, 86, 12, 0, 9, 0, 10, 10, 0, 4, 0, 11, 1, 0,
+            4, 116, 104, 105, 115, 1, 0, 12, 76, 73, 110, 110, 101, 114, 67, 108, 97, 115, 115,
+            59, 1, 0, 4, 109, 97, 105, 110, 1, 0, 22, 40, 91, 76, 106, 97, 118, 97, 47, 108, 97,
+            110, 103, 47, 83, 116, 114, 105, 110, 103, 59, 41, 86, 1, 0, 26, 40, 76, 73, 110,
+            110, 101, 114, 67, 108, 97, 115, 115, 36, 73, 110, 110, 101, 114, 95, 68, 101, 109,
+            111, 59, 41, 86, 12, 0, 9, 0, 17, 10, 0, 7, 0, 18, 1, 0, 5, 112, 114, 105, 110, 116,
+            12, 0, 20, 0, 10, 10, 0, 7, 0, 21, 1, 0, 4, 97, 114, 103, 115, 1, 0, 19, 91, 76, 106,
+            97, 118, 97, 47, 108, 97, 110, 103, 47, 83, 116, 114, 105, 110, 103, 59, 1, 0, 5, 105,
+            110, 110, 101, 114, 1, 0, 23, 76, 73, 110, 110, 101, 114, 67, 108, 97, 115, 115, 36,
+            73, 110, 110, 101, 114, 95, 68, 101, 109, 111, 59, 1, 0, 4, 67, 111, 100, 101, 1, 0,
+            18, 76, 111, 99, 97, 108, 86, 97, 114, 105, 97, 98, 108, 101, 84, 97, 98, 108, 101, 1,
+            0, 15, 76, 105, 110, 101, 78, 117, 109, 98, 101, 114, 84, 97, 98, 108, 101, 1, 0, 10,
+            83, 111, 117, 114, 99, 101, 70, 105, 108, 101, 1, 0, 12, 73, 110, 110, 101, 114, 67,
+            108, 97, 115, 115, 101, 115, 0, 33, 0, 2, 0, 4, 0, NULL, 0, 0, 0, 2, 0, 1, 0, 9, 0, 10,
+            0, 1, 0, 27, 0, 0, 0, 47, 0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 12, 177, 0, NULL, 0, 2,
+            0, 28, 0, 0, 0, 12, 0, 1, 0, 0, 0, 5, 0, 13, 0, 14, 0, 0, 0, 29, 0, 0, 0, 6, 0, 1, 0,
+            0, 0, 3, 0, 9, 0, 15, 0, 16, 0, 1, 0, 27, 0, 0, 0, 74, 0, 3, 0, 2, 0, 0, 0, 14, 187, 0,
+            7, 89, 1, 183, 0, 19, 76, 43, 182, 0, 22, 177, 0, NULL, 0, 2, 0, 28, 0, 0, 0, 22, 0, 2,
+            0, 0, 0, 14, 0, 23, 0, 24, 0, 0, 0, 9, 0, 5, 0, 25, 0, 26, 0, 1, 0, 29, 0, 0, 0, 14, 0,
+            3, 0, 0, 0, 11, 0, 9, 0, 12, 0, 13, 0, 13, 0, 2, 0, 30, 0, 0, 0, 2, 0, 5, 0, 31, 0, 0,
+            0, 10, 0, 1, 0, 7, 0, 2, 0, 8, 0, 10,
+        ];
+
+        $this->assertEquals($expectedClassStructure, $code);
+    }
 }
