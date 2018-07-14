@@ -635,10 +635,14 @@ class ClassWriter extends ClassVisitor
             throw new \RuntimeException("Class file too large!");
         }
 
+        // Get the basic size
+        $size = (24 + (2 * $this->interfaceCount));
+
         $nbFields = 0;
         $fb = $this->firstField;
         while ($fb != null) {
             ++$nbFields;
+            $size += $fb->getSize();
             $fb = $fb->fv;
         }
 
@@ -646,37 +650,44 @@ class ClassWriter extends ClassVisitor
         $mb = $this->firstMethod;
         while ($mb != null) {
             ++$nbMethods;
+            $size += $mb->getSize();
             $mb = $mb->mv;
         }
 
         $attributeCount = 0;
         if ($this->bootstrapMethods != null) {
             ++$attributeCount;
+            $size += (8 + count($this->bootstrapMethods));
             $this->newUTF8("BootstrapMethods");
         }
 
         if (ClassReader::SIGNATURES && ($this->signature != 0)) {
             ++$attributeCount;
+            $size += 8;
             $this->newUTF8("Signature");
         }
 
         if ($this->sourceFile != 0) {
             ++$attributeCount;
+            $size += 8;
             $this->newUTF8("SourceFile");
         }
 
         if ($this->sourceDebug != null) {
             ++$attributeCount;
+            $size += (count($this->sourceDebug) + 6);
             $this->newUTF8("SourceDebugExtension");
         }
 
         if ($this->enclosingMethodOwner != 0) {
             ++$attributeCount;
+            $size += 10;
             $this->newUTF8("EnclosingMethod");
         }
 
         if (($this->access & Opcodes::ACC_DEPRECATED) != 0) {
             ++$attributeCount;
+            $size += 6;
             $this->newUTF8("Deprecated");
         }
 
@@ -684,42 +695,51 @@ class ClassWriter extends ClassVisitor
             if (((($this->version & 0xFFFF)) < Opcodes::V1_5)
                 || ((($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE)) != 0)) {
                 ++$attributeCount;
+                $size += 6;
                 $this->newUTF8("Synthetic");
             }
         }
 
         if ($this->innerClasses != null) {
             ++$attributeCount;
+            $size += (8 + count($this->innerClasses) /*from: innerClasses.length*/);
             $this->newUTF8("InnerClasses");
         }
 
         if (ClassReader::ANNOTATIONS && ($this->anns != null)) {
             ++$attributeCount;
+            $size += (8 + $this->anns->getSize());
             $this->newUTF8("RuntimeVisibleAnnotations");
         }
 
         if (ClassReader::ANNOTATIONS && ($this->ianns != null)) {
             ++$attributeCount;
+            $size += (8 + $this->ianns->getSize());
             $this->newUTF8("RuntimeInvisibleAnnotations");
         }
 
         if (ClassReader::ANNOTATIONS && ($this->tanns != null)) {
             ++$attributeCount;
+            $size += (8 + $this->tanns->getSize());
             $this->newUTF8("RuntimeVisibleTypeAnnotations");
         }
 
         if (ClassReader::ANNOTATIONS && ($this->itanns != null)) {
             ++$attributeCount;
+            $size += (8 + $this->itanns->getSize());
             $this->newUTF8("RuntimeInvisibleTypeAnnotations");
         }
 
         if ($this->attrs != null) {
             $attributeCount += $this->attrs->getCount();
+            $size += $this->attrs->getSize($this, null, 0, -1, -1);
         }
+
+        $size += count($this->pool);
 
         // Starting building individual bytecode section's
         // There are 10 basic sections to the Java Class File structure.
-        $out = new ByteVector();
+        $out = new ByteVector($size);
         // 4 bytes header (in hexadecimal), magic name: CA FE BA BE
         $out->putInt(0xCAFEBABE);
         // Version of Class File Format (4 bytes) - the minor and major
