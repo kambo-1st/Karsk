@@ -34,6 +34,7 @@ namespace Kambo\Karsk;
 
 use Kambo\Karsk\Type;
 use Kambo\Karsk\Exception\NotImplementedException;
+use Kambo\Karsk\Exception\IllegalArgumentException;
 
 /**
  * A {@link ClassVisitor} that generates classes in bytecode form. More
@@ -631,7 +632,7 @@ class ClassWriter extends ClassVisitor
     public function toByteArray()
     {
         if ($this->index > 0xFFFF) {
-            throw new RuntimeException("Class file too large!");
+            throw new \RuntimeException("Class file too large!");
         }
 
         // Get the basic size
@@ -656,7 +657,7 @@ class ClassWriter extends ClassVisitor
         $attributeCount = 0;
         if ($this->bootstrapMethods != null) {
             ++$attributeCount;
-            $size += (8 + count($this->bootstrapMethods) /*from: bootstrapMethods.length*/);
+            $size += (8 + count($this->bootstrapMethods));
             $this->newUTF8("BootstrapMethods");
         }
 
@@ -674,7 +675,7 @@ class ClassWriter extends ClassVisitor
 
         if ($this->sourceDebug != null) {
             ++$attributeCount;
-            $size += (count($this->sourceDebug) /*from: sourceDebug.length*/ + 6);
+            $size += (count($this->sourceDebug) + 6);
             $this->newUTF8("SourceDebugExtension");
         }
 
@@ -880,6 +881,8 @@ class ClassWriter extends ClassVisitor
      *
      * @return Item
      *         a new or already existing constant item with the given value.
+     *
+     * @throws IllegalArgumentException Thrown if the unsupported type is provided.
      */
     public function newConstItem($cst) : Item
     {
@@ -942,6 +945,8 @@ class ClassWriter extends ClassVisitor
      *
      * @return int the index of a new or already existing constant item with the
      *             given value.
+     *
+     * @throws IllegalArgumentException Thrown if the unsupported type is provided.
      */
     public function newConst($cst) : int
     {
@@ -963,7 +968,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key->set_I_String_String_String(self::$UTF8, $value, null, null);
         $result = $this->get($this->key);
-        if (($result == null)) {
+        if ($result == null) {
             $this->pool->putByte(self::$UTF8)->putUTF8($value);
             $result = new Item(/*++$this->index*/$this->index++, $this->key);
             $this->put($result);
@@ -987,7 +992,7 @@ class ClassWriter extends ClassVisitor
         $this->key2->set_I_String_String_String(self::$CLASS, $value, null, null);
         $result = $this->get($this->key2);
 
-        if (($result == null)) {
+        if ($result == null) {
             $this->pool->put12(self::$CLASS, $this->newUTF8($value));
             $result = new Item($this->index++, $this->key2);
             $this->put($result);
@@ -1015,7 +1020,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key2->set_I_String_String_String(self::$MTYPE, $methodDesc, null, null);
         $result = $this->get($this->key2);
-        if (($result == null)) {
+        if ($result == null) {
             $this->pool->put12(self::$MTYPE, $this->newUTF8($methodDesc));
             $result = new Item(/*++$this->index*/$this->index++, $this->key2);
             $this->put($result);
@@ -1058,7 +1063,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key4->set_I_String_String_String((self::$HANDLE_BASE + $tag), $owner, $name, $desc);
         $result = $this->get($this->key4);
-        if (($result == null)) {
+        if ($result == null) {
             if (($tag <= Opcodes::H_PUTSTATIC)) {
                 $this->put112(self::$HANDLE, $tag, $this->newField($owner, $name, $desc));
             } else {
@@ -1115,7 +1120,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key3->set_I_String_String_String(self::$FIELD, $owner, $name, $desc);
         $result = $this->get($this->key3);
-        if (($result == null)) {
+        if ($result == null) {
             $this->put122(self::$FIELD, $this->newClass($owner), $this->newNameType($name, $desc));
             $result = new Item(/*++$this->index*/$this->index++, $this->key3);
             $this->put($result);
@@ -1149,7 +1154,7 @@ class ClassWriter extends ClassVisitor
         $type = ( ($itf) ? self::$IMETH : self::$METH );
         $this->key3->set_I_String_String_String($type, $owner, $name, $desc);
         $result = $this->get($this->key3);
-        if (($result == null)) {
+        if ($result == null) {
             $this->put122($type, $this->newClass($owner), $this->newNameType($name, $desc));
             $result = new Item(/*++$this->index*/$this->index++, $this->key3);
             $this->put($result);
@@ -1184,7 +1189,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key->set_I($value);
         $result = $this->get($this->key);
-        if (($result == null)) {
+        if ($result == null) {
             $this->pool->putByte(self::$INT)->putInt($value);
             $result = new Item(/*++$this->index*/$this->index++, $this->key);
             $this->put($result);
@@ -1197,7 +1202,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key->set($value);
         $result = $this->get($this->key);
-        if (($result == null)) {
+        if ($result == null) {
             $this->pool->putByte(self::$FLOAT)->putInt($this->key->intVal);
             $result = new Item(/*++$this->index*/$this->index++, $this->key);
             $this->put($result);
@@ -1210,7 +1215,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key->set_L($value);
         $result = $this->get($this->key);
-        if (($result == null)) {
+        if ($result == null) {
             $this->pool->putByte(self::$LONG)->putLong($value);
             $result = new Item($this->index, $this->key);
             $this->index += 2;
@@ -1224,7 +1229,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key->set_D($value);
         $result = $this->get($this->key);
-        if (($result == null)) {
+        if ($result == null) {
             $this->pool->putByte(self::$DOUBLE)->putLong($this->key->longVal);
             $result = new Item($this->index, $this->key);
             $this->index += 2;
@@ -1238,7 +1243,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key2->set_I_String_String_String(self::$STR, $value, null, null);
         $result = $this->get($this->key2);
-        if (($result == null)) {
+        if ($result == null) {
             $this->pool->put12(self::$STR, $this->newUTF8($value));
             $result = new Item(/*++$this->index*/$this->index++, $this->key2);
             $this->put($result);
@@ -1276,7 +1281,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key2->set_I_String_String_String(self::$NAME_TYPE, $name, $desc, null);
         $result = $this->get($this->key2);
-        if (($result == null)) {
+        if ($result == null) {
             $this->put122(self::$NAME_TYPE, $this->newUTF8($name), $this->newUTF8($desc));
             $result = new Item(/*++$this->index*/$this->index++, $this->key2);
             $this->put($result);
@@ -1292,7 +1297,7 @@ class ClassWriter extends ClassVisitor
         $this->key->strVal1 = $type;
         $this->key->hashCode = (0x7FFFFFFF & (((self::$TYPE_UNINIT + $type->hashCode()) + $offset)));
         $result = $this->get($this->key);
-        if (($result == null)) {
+        if ($result == null) {
             $result = $this->addTypeItem($this->key);
         }
 
@@ -1312,7 +1317,7 @@ class ClassWriter extends ClassVisitor
     {
         $this->key->set(self::$TYPE_NORMAL, $type, null, null);
         $result = $this->get($this->key);
-        if (($result == null)) {
+        if ($result == null) {
             $result = $this->addTypeItem($this->key);
         }
 
@@ -1368,7 +1373,7 @@ class ClassWriter extends ClassVisitor
         $this->key2->longVal = ($type1 | ((($type2) << 32)));
         $this->key2->hashCode = (0x7FFFFFFF & (((self::$TYPE_MERGED + $type1) + $type2)));
         $result = $this->get($this->key2);
-        if (($result == null)) {
+        if ($result == null) {
             $t = $this->typeTable[$type1]->strVal1;
             $u = $this->typeTable[$type2]->strVal1;
             $this->key2->intVal = $this->addType($this->getCommonSuperClass($t, $u));
@@ -1499,6 +1504,8 @@ class ClassWriter extends ClassVisitor
      *
      * @return Item
      *         a new or already existing constant item with the given value.
+     *
+     * @throws IllegalArgumentException Thrown if the unsupported type is provided.
      */
     private function typeAutoDetection($cst)
     {

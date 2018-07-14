@@ -156,7 +156,7 @@ abstract class FieldVisitor
      */
     public function visitEnd() : void
     {
-        if (($this->fv != null)) {
+        if ($this->fv != null) {
             $this->fv->visitEnd();
         }
     }
