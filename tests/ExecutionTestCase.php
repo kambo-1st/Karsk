@@ -12,7 +12,7 @@ use Kambo\Tests\Karsk\Constraint\ExecutionResult;
  * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
-class ExecutionTestCase extends TestCase
+abstract class ExecutionTestCase extends TestCase
 {
     static private $disableDisassembler = false;
     static private $disableDisassemblerReason = '';
