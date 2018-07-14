@@ -388,7 +388,7 @@ class MethodWriter extends MethodVisitor
             $frameIndex = $this->startFrame(count($this->code) /*from: code.length*/, $nLocal, $nStack);
             for ($i = 0; ($i < $nLocal); ++$i) {
                 if ($local[$i] instanceof String) {
-                    $this->frame[++$frameIndex] = ($Frame->OBJECT | $this->cw->addType_String($local[$i]));
+                    $this->frame[++$frameIndex] = ($Frame->OBJECT | $this->cw->addType($local[$i]));
                 } elseif ($local[$i] instanceof Integer) {
                     $this->frame[++$frameIndex] = ($local[$i])->intValue();
                 } else {
@@ -397,7 +397,7 @@ class MethodWriter extends MethodVisitor
             }
             for ($i = 0; ($i < $nStack); ++$i) {
                 if ($stack[$i] instanceof String) {
-                    $this->frame[++$frameIndex] = ($Frame->OBJECT | $this->cw->addType_String($stack[$i]));
+                    $this->frame[++$frameIndex] = ($Frame->OBJECT | $this->cw->addType($stack[$i]));
                 } elseif ($stack[$i] instanceof Integer) {
                     $this->frame[++$frameIndex] = ($stack[$i])->intValue();
                 } else {
@@ -1056,7 +1056,7 @@ class MethodWriter extends MethodVisitor
                 $h = $handler->handler->getFirst();
                 $e = $handler->end->getFirst();
                 $t = ( (($handler->desc == null)) ? "java/lang/Throwable" : $handler->desc );
-                $kind = ($Frame->OBJECT | $this->cw->addType_String($t));
+                $kind = ($Frame->OBJECT | $this->cw->addType($t));
                 $h->status |= $Label->TARGET;
                 while (($l != $e)) {
                     $b = new Edge();
@@ -1116,7 +1116,7 @@ class MethodWriter extends MethodVisitor
                         }
                         $this->code->data[$end] = Opcodes::ATHROW;
                         $frameIndex = $this->startFrame($start, 0, 1);
-                        $this->frame[$frameIndex] = ($Frame->OBJECT | $this->cw->addType_String("java/lang/Throwable"));
+                        $this->frame[$frameIndex] = ($Frame->OBJECT | $this->cw->addType("java/lang/Throwable"));
                         $this->endFrame();
                         $this->firstHandler = $Handler->remove($this->firstHandler, $l, $k);
                     }
@@ -1291,7 +1291,7 @@ private function charAt($str, $pos)
         $frameIndex = $this->startFrame(0, ($this->descriptor->length() + 1), 0);
         if (((($this->access & Opcodes::ACC_STATIC)) == 0)) {
             if (((($this->access & self::ACC_CONSTRUCTOR)) == 0)) {
-                $this->frame[++$frameIndex] = ($Frame->OBJECT | $this->cw->addType_Item($this->cw->thisName));
+                $this->frame[++$frameIndex] = ($Frame->OBJECT | $this->cw->addTypeItem($this->cw->thisName));
             } else {
                 $this->frame[++$frameIndex] = 6;
             }

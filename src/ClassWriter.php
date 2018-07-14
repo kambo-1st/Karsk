@@ -207,7 +207,9 @@ class ClassWriter extends ClassVisitor
         $this->key3 = new Item();
         $this->key4 = new Item();
 
-        $this->compute = ( (((($flags & self::$COMPUTE_FRAMES)) != 0)) ? MethodWriter::$FRAMES : (( (((($flags & self::$COMPUTE_MAXS)) != 0)) ? MethodWriter::$MAXS : MethodWriter::$NOTHING )) );
+        $this->compute = ( (((($flags & self::$COMPUTE_FRAMES)) != 0))
+            ? MethodWriter::$FRAMES : (( (((($flags & self::$COMPUTE_MAXS)) != 0))
+                ? MethodWriter::$MAXS : MethodWriter::$NOTHING )) );
     }
 
     /**
@@ -552,7 +554,7 @@ class ClassWriter extends ClassVisitor
      *         <tt>null</tt> if this class visitor is not interested in visiting
      *         these annotations and attributes.
      *
-     * @notYetImplemented
+     * @throws Exception\IllegalArgumentException
      */
     public function visitField(
         int $access,
@@ -598,7 +600,15 @@ class ClassWriter extends ClassVisitor
         string $signature = null,
         array $exceptions = null
     ) {
-        return MethodWriter::constructor__ClassWriter_I_String_String_String_aString_I($this, $access, $name, $desc, $signature, $exceptions, $this->compute);
+        return MethodWriter::constructor__ClassWriter_I_String_String_String_aString_I(
+            $this,
+            $access,
+            $name,
+            $desc,
+            $signature,
+            $exceptions,
+            $this->compute
+        );
     }
 
     /**
@@ -610,7 +620,6 @@ class ClassWriter extends ClassVisitor
      */
     public function visitEnd()
     {
-        
     }
 
     /**
@@ -621,7 +630,7 @@ class ClassWriter extends ClassVisitor
      */
     public function toByteArray()
     {
-        if (($this->index > 0xFFFF)) {
+        if ($this->index > 0xFFFF) {
             throw new RuntimeException("Class file too large!");
         }
 
@@ -630,7 +639,7 @@ class ClassWriter extends ClassVisitor
 
         $nbFields = 0;
         $fb = $this->firstField;
-        while (($fb != null)) {
+        while ($fb != null) {
             ++$nbFields;
             $size += $fb->getSize();
             $fb = $fb->fv;
@@ -638,76 +647,89 @@ class ClassWriter extends ClassVisitor
 
         $nbMethods = 0;
         $mb = $this->firstMethod;
-        while (($mb != null)) {
+        while ($mb != null) {
             ++$nbMethods;
             $size += $mb->getSize();
             $mb = $mb->mv;
         }
 
         $attributeCount = 0;
-        if (($this->bootstrapMethods != null)) {
+        if ($this->bootstrapMethods != null) {
             ++$attributeCount;
             $size += (8 + count($this->bootstrapMethods) /*from: bootstrapMethods.length*/);
             $this->newUTF8("BootstrapMethods");
         }
-        if ((ClassReader::SIGNATURES && ($this->signature != 0))) {
+
+        if (ClassReader::SIGNATURES && ($this->signature != 0)) {
             ++$attributeCount;
             $size += 8;
             $this->newUTF8("Signature");
         }
-        if (($this->sourceFile != 0)) {
+
+        if ($this->sourceFile != 0) {
             ++$attributeCount;
             $size += 8;
             $this->newUTF8("SourceFile");
         }
-        if (($this->sourceDebug != null)) {
+
+        if ($this->sourceDebug != null) {
             ++$attributeCount;
             $size += (count($this->sourceDebug) /*from: sourceDebug.length*/ + 6);
             $this->newUTF8("SourceDebugExtension");
         }
-        if (($this->enclosingMethodOwner != 0)) {
+
+        if ($this->enclosingMethodOwner != 0) {
             ++$attributeCount;
             $size += 10;
             $this->newUTF8("EnclosingMethod");
         }
-        if (((($this->access & Opcodes::ACC_DEPRECATED)) != 0)) {
+
+        if (($this->access & Opcodes::ACC_DEPRECATED) != 0) {
             ++$attributeCount;
             $size += 6;
             $this->newUTF8("Deprecated");
         }
-        if (((($this->access & Opcodes::ACC_SYNTHETIC)) != 0)) {
-            if ((((($this->version & 0xFFFF)) < Opcodes::V1_5) || ((($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))) {
+
+        if (($this->access & Opcodes::ACC_SYNTHETIC) != 0) {
+            if (((($this->version & 0xFFFF)) < Opcodes::V1_5)
+                || ((($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE)) != 0)) {
                 ++$attributeCount;
                 $size += 6;
                 $this->newUTF8("Synthetic");
             }
         }
-        if (($this->innerClasses != null)) {
+
+        if ($this->innerClasses != null) {
             ++$attributeCount;
             $size += (8 + count($this->innerClasses) /*from: innerClasses.length*/);
             $this->newUTF8("InnerClasses");
         }
-        if ((ClassReader::ANNOTATIONS && ($this->anns != null))) {
+
+        if (ClassReader::ANNOTATIONS && ($this->anns != null)) {
             ++$attributeCount;
             $size += (8 + $this->anns->getSize());
             $this->newUTF8("RuntimeVisibleAnnotations");
         }
-        if ((ClassReader::ANNOTATIONS && ($this->ianns != null))) {
+
+        if (ClassReader::ANNOTATIONS && ($this->ianns != null)) {
             ++$attributeCount;
             $size += (8 + $this->ianns->getSize());
             $this->newUTF8("RuntimeInvisibleAnnotations");
         }
-        if ((ClassReader::ANNOTATIONS && ($this->tanns != null))) {
+
+        if (ClassReader::ANNOTATIONS && ($this->tanns != null)) {
             ++$attributeCount;
             $size += (8 + $this->tanns->getSize());
             $this->newUTF8("RuntimeVisibleTypeAnnotations");
         }
-        if ((ClassReader::ANNOTATIONS && ($this->itanns != null))) {
+
+        if (ClassReader::ANNOTATIONS && ($this->itanns != null)) {
             ++$attributeCount;
             $size += (8 + $this->itanns->getSize());
             $this->newUTF8("RuntimeInvisibleTypeAnnotations");
         }
-        if (($this->attrs != null)) {
+
+        if ($this->attrs != null) {
             $attributeCount += $this->attrs->getCount();
             $size += $this->attrs->getSize($this, null, 0, -1, -1);
         }
@@ -725,7 +747,8 @@ class ClassWriter extends ClassVisitor
         // Constant Pool - Pool of constants for the class.
         $out->putShort($this->index)->putByteArray($this->pool->data, 0, count($this->pool));
         // Access Flags for the class - eg. abstract, static, etc.
-        $mask = ((Opcodes::ACC_DEPRECATED | self::$ACC_SYNTHETIC_ATTRIBUTE) | (((($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE)) / self::$TO_ACC_SYNTHETIC)));
+        $mask = ((Opcodes::ACC_DEPRECATED | self::$ACC_SYNTHETIC_ATTRIBUTE)
+            | ((($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE)) / self::$TO_ACC_SYNTHETIC));
         $out->putShort(($this->access & ~$mask));
         // This Class - the name of the current class.
         $out->putShort($this->name);
@@ -740,7 +763,7 @@ class ClassWriter extends ClassVisitor
         // Fields - number of fields in the class + all fields fields.
         $out->putShort($nbFields);
         $fb = $this->firstField;
-        while (($fb != null)) {
+        while ($fb != null) {
             $fb->put($out);
             $fb = $fb->fv;
         }
@@ -748,7 +771,7 @@ class ClassWriter extends ClassVisitor
         // Methods - number of all methods in the class + all method definition.
         $out->putShort($nbMethods);
         $mb = $this->firstMethod;
-        while (($mb != null)) {
+        while ($mb != null) {
             $mb->put($out);
             $mb = $mb->mv;
         }
@@ -756,68 +779,69 @@ class ClassWriter extends ClassVisitor
         // Attributes - number of all attributes + definition all attributes of
         // the class (for example the name of the sourcefile, etc.)
         $out->putShort($attributeCount);
-        if (($this->bootstrapMethods != null)) {
+        if ($this->bootstrapMethods != null) {
             $out->putShort($this->newUTF8("BootstrapMethods"));
-            $out->putInt((count($this->bootstrapMethods) /*from: bootstrapMethods.length*/ + 2))->putShort($this->bootstrapMethodsCount);
-            $out->putByteArray($this->bootstrapMethods->data, 0, count($this->bootstrapMethods) /*from: bootstrapMethods.length*/);
+            $out->putInt((count($this->bootstrapMethods) + 2))->putShort($this->bootstrapMethodsCount);
+            $out->putByteArray($this->bootstrapMethods->data, 0, count($this->bootstrapMethods));
         }
 
-        if ((ClassReader::SIGNATURES && ($this->signature != 0))) {
+        if (ClassReader::SIGNATURES && ($this->signature != 0)) {
             $out->putShort($this->newUTF8("Signature"))->putInt(2)->putShort($this->signature);
         }
 
-        if (($this->sourceFile != 0)) {
+        if ($this->sourceFile != 0) {
             $out->putShort($this->newUTF8("SourceFile"))->putInt(2)->putShort($this->sourceFile);
         }
 
-        if (($this->sourceDebug != null)) {
+        if ($this->sourceDebug != null) {
             $len = count($this->sourceDebug) /*from: sourceDebug.length*/;
             $out->putShort($this->newUTF8("SourceDebugExtension"))->putInt($len);
             $out->putByteArray($this->sourceDebug->data, 0, $len);
         }
 
-        if (($this->enclosingMethodOwner != 0)) {
+        if ($this->enclosingMethodOwner != 0) {
             $out->putShort($this->newUTF8("EnclosingMethod"))->putInt(4);
             $out->putShort($this->enclosingMethodOwner)->putShort($this->enclosingMethod);
         }
 
-        if (((($this->access & Opcodes::ACC_DEPRECATED)) != 0)) {
+        if (($this->access & Opcodes::ACC_DEPRECATED) != 0) {
             $out->putShort($this->newUTF8("Deprecated"))->putInt(0);
         }
 
-        if (((($this->access & Opcodes::ACC_SYNTHETIC)) != 0)) {
-            if ((((($this->version & 0xFFFF)) < Opcodes::V1_5) || ((($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))) {
+        if (($this->access & Opcodes::ACC_SYNTHETIC) != 0) {
+            if (((($this->version & 0xFFFF)) < Opcodes::V1_5)
+                || (($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE) != 0)) {
                 $out->putShort($this->newUTF8("Synthetic"))->putInt(0);
             }
         }
 
-        if (($this->innerClasses != null)) {
+        if ($this->innerClasses != null) {
             $out->putShort($this->newUTF8("InnerClasses"));
-            $out->putInt((count($this->innerClasses) /*from: innerClasses.length*/ + 2))->putShort($this->innerClassesCount);
-            $out->putByteArray($this->innerClasses->data, 0, count($this->innerClasses) /*from: innerClasses.length*/);
+            $out->putInt((count($this->innerClasses) + 2))->putShort($this->innerClassesCount);
+            $out->putByteArray($this->innerClasses->data, 0, count($this->innerClasses));
         }
 
-        if ((ClassReader::ANNOTATIONS && ($this->anns != null))) {
+        if (ClassReader::ANNOTATIONS && ($this->anns != null)) {
             $out->putShort($this->newUTF8("RuntimeVisibleAnnotations"));
             $this->anns->put($out);
         }
 
-        if ((ClassReader::ANNOTATIONS && ($this->ianns != null))) {
+        if (ClassReader::ANNOTATIONS && ($this->ianns != null)) {
             $out->putShort($this->newUTF8("RuntimeInvisibleAnnotations"));
             $this->ianns->put($out);
         }
 
-        if ((ClassReader::ANNOTATIONS && ($this->tanns != null))) {
+        if (ClassReader::ANNOTATIONS && ($this->tanns != null)) {
             $out->putShort($this->newUTF8("RuntimeVisibleTypeAnnotations"));
             $this->tanns->put($out);
         }
 
-        if ((ClassReader::ANNOTATIONS && ($this->itanns != null))) {
+        if (ClassReader::ANNOTATIONS && ($this->itanns != null)) {
             $out->putShort($this->newUTF8("RuntimeInvisibleTypeAnnotations"));
             $this->itanns->put($out);
         }
 
-        if (($this->attrs != null)) {
+        if ($this->attrs != null) {
             $this->attrs->put($this, null, 0, -1, -1, $out);
         }
 
@@ -864,7 +888,7 @@ class ClassWriter extends ClassVisitor
             return $this->typeAutoDetection($cst);
         }
 
-        switch(true) {
+        switch (true) {
             case $cst instanceof Type\Long:
                 $val = (float)$cst->getValue();
                 return $this->newLong($val);
@@ -1005,7 +1029,32 @@ class ClassWriter extends ClassVisitor
         return $this->newMethodTypeItem($methodDesc)->index;
     }
 
-    protected function newHandleItem($tag, $owner, $name, $desc, $itf) // [final int tag, final String owner, final String name, final String desc, final boolean itf]
+    /**
+     * Adds a handle to the constant pool of the class being build. Does nothing
+     * if the constant pool already contains a similar item. <i>This method is
+     * intended for {@link Attribute} sub classes, and is normally not needed by
+     * class generators or adapters.</i>
+     *
+     * @param int    $tag
+     *               the kind of this handle. Must be {@link Opcodes#H_GETFIELD},
+     *               {@link Opcodes#H_GETSTATIC}, {@link Opcodes#H_PUTFIELD},
+     *               {@link Opcodes#H_PUTSTATIC}, {@link Opcodes#H_INVOKEVIRTUAL},
+     *               {@link Opcodes#H_INVOKESTATIC},
+     *               {@link Opcodes#H_INVOKESPECIAL},
+     *               {@link Opcodes#H_NEWINVOKESPECIAL} or
+     *               {@link Opcodes#H_INVOKEINTERFACE}.
+     * @param string $owner
+     *               the internal name of the field or method owner class.
+     * @param string $name
+     *               the name of the field or method.
+     * @param string $desc
+     *               the descriptor of the field or method.
+     * @param bool   $itf
+     *               true if the owner is an interface.
+     *
+     * @return Item a new or an already existing method type reference item.
+     */
+    public function newHandleItem(int $tag, string $owner, string $name, string $desc, bool $itf) : Item
     {
         $this->key4->set_I_String_String_String((self::$HANDLE_BASE + $tag), $owner, $name, $desc);
         $result = $this->get($this->key4);
@@ -1015,20 +1064,50 @@ class ClassWriter extends ClassVisitor
             } else {
                 $this->put112(self::$HANDLE, $tag, $this->newMethod($owner, $name, $desc, $itf));
             }
+
             $result = new Item(/*++$this->index*/$this->index++, $this->key4);
             $this->put($result);
         }
+
         return $result;
     }
 
-    public function newHandle_I_String_String_String($tag, $owner, $name, $desc) // [final int tag, final String owner, final String name, final String desc]
-    {
-            /* match: I_String_String_String_b */
-        return $this->newHandle_I_String_String_String_b($tag, $owner, $name, $desc, ($tag == Opcodes::H_INVOKEINTERFACE));
-    }
+    /**
+     * Adds a handle to the constant pool of the class being build. Does nothing
+     * if the constant pool already contains a similar item. <i>This method is
+     * intended for {@link Attribute} sub classes, and is normally not needed by
+     * class generators or adapters.</i>
+     *
+     * @param int    $tag
+     *               the kind of this handle. Must be {@link Opcodes#H_GETFIELD},
+     *               {@link Opcodes#H_GETSTATIC}, {@link Opcodes#H_PUTFIELD},
+     *               {@link Opcodes#H_PUTSTATIC}, {@link Opcodes#H_INVOKEVIRTUAL},
+     *               {@link Opcodes#H_INVOKESTATIC},
+     *               {@link Opcodes#H_INVOKESPECIAL},
+     *               {@link Opcodes#H_NEWINVOKESPECIAL} or
+     *               {@link Opcodes#H_INVOKEINTERFACE}.
+     * @param string $owner
+     *               the internal name of the field or method owner class.
+     * @param string $name
+     *               the name of the field or method.
+     * @param string $desc
+     *               the descriptor of the field or method.
+     * @param bool   $itf
+     *               true if the owner is an interface.
+     *
+     * @return int the index of a new or already existing method type reference item.
+     */
+    public function newHandle(
+        int $tag,
+        string $owner,
+        string $name,
+        string $desc,
+        bool $itf = null
+    ) : int {
+        if ($itf == null) {
+            $itf = ($tag == Opcodes::H_INVOKEINTERFACE);
+        }
 
-    public function newHandle_I_String_String_String_b($tag, $owner, $name, $desc, $itf) // [final int tag, final String owner, final String name, final String desc, final boolean itf]
-    {
         return $this->newHandleItem($tag, $owner, $name, $desc, $itf)->index;
     }
 
@@ -1041,6 +1120,7 @@ class ClassWriter extends ClassVisitor
             $result = new Item(/*++$this->index*/$this->index++, $this->key3);
             $this->put($result);
         }
+
         return $result;
     }
 
@@ -1049,7 +1129,22 @@ class ClassWriter extends ClassVisitor
         return $this->newFieldItem($owner, $name, $desc)->index;
     }
 
-    public function newMethodItem($owner, $name, $desc, $itf) // [final String owner, final String name, final String desc, final boolean itf]
+    /**
+     * Adds a method reference to the constant pool of the class being build.
+     * Does nothing if the constant pool already contains a similar item.
+     *
+     * @param string $owner
+     *            the internal name of the method's owner class.
+     * @param string $name
+     *            the method's name.
+     * @param string $desc
+     *            the method's descriptor.
+     * @param bool $itf
+     *            <tt>true</tt> if <tt>owner</tt> is an interface.
+     *
+     * @return Item a new or already existing method reference item.
+     */
+    public function newMethodItem(string $owner, string $name, string $desc, bool $itf) : Item
     {
         $type = ( ($itf) ? self::$IMETH : self::$METH );
         $this->key3->set_I_String_String_String($type, $owner, $name, $desc);
@@ -1059,10 +1154,28 @@ class ClassWriter extends ClassVisitor
             $result = new Item(/*++$this->index*/$this->index++, $this->key3);
             $this->put($result);
         }
+
         return $result;
     }
 
-    public function newMethod($owner, $name, $desc, $itf) // [final String owner, final String name, final String desc, final boolean itf]
+    /**
+     * Adds a method reference to the constant pool of the class being build.
+     * Does nothing if the constant pool already contains a similar item.
+     * <i>This method is intended for {@link Attribute} sub classes, and is
+     * normally not needed by class generators or adapters.</i>
+     *
+     * @param string $owner
+     *            the internal name of the method's owner class.
+     * @param string $name
+     *            the method's name.
+     * @param string $desc
+     *            the method's descriptor.
+     * @param bool $itf
+     *            <tt>true</tt> if <tt>owner</tt> is an interface.
+     *
+     * @return int the index of a new or already existing method reference item.
+     */
+    public function newMethod(string $owner, string $name, string $desc, bool $itf) : int
     {
         return $this->newMethodItem($owner, $name, $desc, $itf)->index;
     }
@@ -1076,6 +1189,7 @@ class ClassWriter extends ClassVisitor
             $result = new Item(/*++$this->index*/$this->index++, $this->key);
             $this->put($result);
         }
+
         return $result;
     }
 
@@ -1088,6 +1202,7 @@ class ClassWriter extends ClassVisitor
             $result = new Item(/*++$this->index*/$this->index++, $this->key);
             $this->put($result);
         }
+
         return $result;
     }
 
@@ -1101,6 +1216,7 @@ class ClassWriter extends ClassVisitor
             $this->index += 2;
             $this->put($result);
         }
+
         return $result;
     }
 
@@ -1114,6 +1230,7 @@ class ClassWriter extends ClassVisitor
             $this->index += 2;
             $this->put($result);
         }
+
         return $result;
     }
 
@@ -1126,15 +1243,36 @@ class ClassWriter extends ClassVisitor
             $result = new Item(/*++$this->index*/$this->index++, $this->key2);
             $this->put($result);
         }
+
         return $result;
     }
 
-    public function newNameType($name, $desc) // [final String name, final String desc]
+    /**
+     * Adds a name and type to the constant pool of the class being build. Does
+     * nothing if the constant pool already contains a similar item. <i>This
+     * method is intended for {@link Attribute} sub classes, and is normally not
+     * needed by class generators or adapters.</i>
+     *
+     * @param string $name a name.
+     * @param string $desc a type descriptor.
+     *
+     * @return int the index of a new or already existing name and type item.
+     */
+    public function newNameType(string $name, string $desc) : int
     {
         return $this->newNameTypeItem($name, $desc)->index;
     }
 
-    protected function newNameTypeItem($name, $desc) // [final String name, final String desc]
+    /**
+     * Adds a name and type to the constant pool of the class being build. Does
+     * nothing if the constant pool already contains a similar item.
+     *
+     * @param string $name a name.
+     * @param string $desc a type descriptor.
+     *
+     * @return Item a new or already existing name and type item.
+     */
+    protected function newNameTypeItem(string $name, string $desc) : Item
     {
         $this->key2->set_I_String_String_String(self::$NAME_TYPE, $name, $desc, null);
         $result = $this->get($this->key2);
@@ -1143,17 +1281,8 @@ class ClassWriter extends ClassVisitor
             $result = new Item(/*++$this->index*/$this->index++, $this->key2);
             $this->put($result);
         }
-        return $result;
-    }
 
-    public function addType_String($type) // [final String type]
-    {
-        $this->key->set(self::$TYPE_NORMAL, $type, null, null);
-        $result = $this->get($this->key);
-        if (($result == null)) {
-            $result = $this->addType_Item($this->key);
-        }
-        return $result->index;
+        return $result;
     }
 
     public function addUninitializedType($type, $offset) // [final String type, final int offset]
@@ -1164,28 +1293,58 @@ class ClassWriter extends ClassVisitor
         $this->key->hashCode = (0x7FFFFFFF & (((self::$TYPE_UNINIT + $type->hashCode()) + $offset)));
         $result = $this->get($this->key);
         if (($result == null)) {
-            $result = $this->addType_Item($this->key);
+            $result = $this->addTypeItem($this->key);
         }
 
         return $result->index;
     }
 
-    protected function addType_Item($item) // [final Item item]
+    /**
+     * Adds the given internal name to {@link #typeTable} and returns its index.
+     * Does nothing if the type table already contains this internal name.
+     *
+     * @param string $type
+     *               the internal name to be added to the type table.
+     *
+     * @return int the index of this internal name in the type table.
+     */
+    public function addType(string $type) : int
+    {
+        $this->key->set(self::$TYPE_NORMAL, $type, null, null);
+        $result = $this->get($this->key);
+        if (($result == null)) {
+            $result = $this->addTypeItem($this->key);
+        }
+
+        return $result->index;
+    }
+
+    /**
+     * Adds the given Item to {@link #typeTable}.
+     *
+     * @return Item the added Item, which a new Item instance with the same value as
+     *         the given Item.
+     */
+    public function addTypeItem()
     {
         ++$this->typeCount;
         $result = new Item($this->typeCount, $this->key);
         $this->put($result);
-        if (($this->typeTable == null)) {
+        if ($this->typeTable == null) {
             $this->typeTable = array();
         }
-        if (($this->typeCount == count($this->typeTable) /*from: typeTable.length*/)) {
+
+        if ($this->typeCount == count($this->typeTable)) {
             $newTable = array();
             foreach (range(0, (count($this->typeTable) /*from: typeTable.length*/ + 0)) as $_upto) {
                 $newTable[$_upto] = $this->typeTable[$_upto - (0) + 0];
-            } /* from: System.arraycopy(typeTable, 0, newTable, 0, typeTable.length) */;
+            }
+
             $this->typeTable = $newTable;
         }
+
         $this->typeTable[$this->typeCount] = $result;
+
         return $result;
     }
 
@@ -1212,7 +1371,7 @@ class ClassWriter extends ClassVisitor
         if (($result == null)) {
             $t = $this->typeTable[$type1]->strVal1;
             $u = $this->typeTable[$type2]->strVal1;
-            $this->key2->intVal = $this->addType_String($this->getCommonSuperClass($t, $u));
+            $this->key2->intVal = $this->addType($this->getCommonSuperClass($t, $u));
             $result = new Item(0, $this->key2);
             $this->put($result);
         }
