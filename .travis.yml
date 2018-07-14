@@ -9,6 +9,12 @@ matrix:
   allow_failures:
     - php: nightly
 
+sudo: false
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+
 before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
