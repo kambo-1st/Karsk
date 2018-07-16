@@ -33,21 +33,57 @@ class ClassWriterTest extends TestCase
     public function testGenerateBasicClass()
     {
         $cw = new ClassWriter(0);
-        $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC, "Example", null, "java/lang/Object", null);
+        $cw->visit(
+            Opcodes::V1_8,
+            Opcodes::ACC_PUBLIC,
+            "Example",
+            null,
+            "java/lang/Object",
+            null
+        );
 
-        $mw = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mw = $cw->visitMethod(
+            Opcodes::ACC_PUBLIC,
+            "<init>",
+            "()V",
+            null,
+            null
+        );
         $mw->visitVarInsn(Opcodes::ALOAD, 0);
 
-        $mw->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        $mw->visitMethodInsn(
+            Opcodes::INVOKESPECIAL,
+            "java/lang/Object",
+            "<init>",
+            "()V",
+            false
+        );
         $mw->visitInsn(Opcodes::RETURN_);
         $mw->visitMaxs(1, 1);
         $mw->visitEnd();
 
-        $mw2 = $cw->visitMethod((Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC), "main", "([Ljava/lang/String;)V", null, null);
-        $mw2->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mw2 = $cw->visitMethod(
+            (Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC),
+            "main",
+            "([Ljava/lang/String;)V",
+            null,
+            null
+        );
+        $mw2->visitFieldInsn(
+            Opcodes::GETSTATIC,
+            "java/lang/System",
+            "out",
+            "Ljava/io/PrintStream;"
+        );
         $mw2->visitLdcInsn("Hello world!");
 
-        $mw2->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+        $mw2->visitMethodInsn(
+            Opcodes::INVOKEVIRTUAL,
+            "java/io/PrintStream",
+            "println",
+            "(Ljava/lang/String;)V",
+            false
+        );
         $mw2->visitInsn(Opcodes::RETURN_);
         $mw2->visitMaxs(2, 2);
         $mw2->visitEnd();
@@ -106,17 +142,35 @@ class ClassWriterTest extends TestCase
             null
         );
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv = $cw->visitMethod(
+            Opcodes::ACC_PUBLIC,
+            "<init>",
+            "()V",
+            null,
+            null
+        );
         $mv->visitCode();
 
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
-        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        $mv->visitMethodInsn(
+            Opcodes::INVOKESPECIAL,
+            "java/lang/Object",
+            "<init>",
+            "()V",
+            false
+        );
         $mv->visitInsn(Opcodes::RETURN_);
 
         $mv->visitMaxs(1, 1);
         $mv->visitEnd();
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+        $mv = $cw->visitMethod(
+            Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
+            "main",
+            "([Ljava/lang/String;)V",
+            null,
+            null
+        );
         $mv->visitCode();
 
         $mv->visitIntInsn(Opcodes::BIPUSH, 10);
@@ -184,13 +238,32 @@ class ClassWriterTest extends TestCase
     {
         $cw = new ClassWriter(0);
 
-        $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, "SimpleMath", null, "java/lang/Object", null);
+        $cw->visit(
+            Opcodes::V1_8,
+            Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
+            "SimpleMath",
+            null,
+            "java/lang/Object",
+            null
+        );
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv = $cw->visitMethod(
+            Opcodes::ACC_PUBLIC,
+            "<init>",
+            "()V",
+            null,
+            null
+        );
         $mv->visitCode();
 
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
-        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        $mv->visitMethodInsn(
+            Opcodes::INVOKESPECIAL,
+            "java/lang/Object",
+            "<init>",
+            "()V",
+            false
+        );
         $mv->visitInsn(Opcodes::RETURN_);
 
         $mv->visitMaxs(1, 1);
@@ -279,7 +352,14 @@ class ClassWriterTest extends TestCase
     {
         $cw = new ClassWriter(0);
 
-        $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, "SimpleCondition", null, "java/lang/Object", null);
+        $cw->visit(
+            Opcodes::V1_8,
+            Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
+            "SimpleCondition",
+            null,
+            "java/lang/Object",
+            null
+        );
 
         $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
         $mv->visitCode();
@@ -315,7 +395,7 @@ class ClassWriterTest extends TestCase
         $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
         $mv->visitLabel($l4);
         $mv->visitLineNumber(14, $l4);
-        $mv->visitFrame(Opcodes::F_APPEND,3, [Opcodes::INTEGER, Opcodes::FLOAT, Opcodes::INTEGER], 0, null);
+        $mv->visitFrame(Opcodes::F_APPEND, 3, [Opcodes::INTEGER, Opcodes::FLOAT, Opcodes::INTEGER], 0, null);
         $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         $mv->visitVarInsn(Opcodes::ILOAD, 1);
         $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
@@ -424,7 +504,7 @@ class ClassWriterTest extends TestCase
         $mv->visitTableSwitchInsn(1, 2, $l4, [$l2, $l3]);
         $mv->visitLabel($l2);
         $mv->visitLineNumber(10, $l2);
-        $mv->visitFrame(Opcodes::F_APPEND,1, [Opcodes::INTEGER], 0, null);
+        $mv->visitFrame(Opcodes::F_APPEND, 1, [Opcodes::INTEGER], 0, null);
         $mv->visitLdcInsn("January");
         $mv->visitVarInsn(Opcodes::ASTORE, 2);
 
@@ -453,7 +533,7 @@ class ClassWriterTest extends TestCase
 
         $mv->visitLabel($l6);
         $mv->visitLineNumber(18, $l6);
-        $mv->visitFrame(Opcodes::F_APPEND,1, ["java/lang/String"], 0, null);
+        $mv->visitFrame(Opcodes::F_APPEND, 1, ["java/lang/String"], 0, null);
         $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         $mv->visitVarInsn(Opcodes::ALOAD, 2);
         $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
@@ -590,7 +670,7 @@ class ClassWriterTest extends TestCase
         $l3 = new Label();
         $mv->visitLabel($l3);
         $mv->visitLineNumber(7, $l3);
-        $mv->visitFrame(Opcodes::F_APPEND,1, [Opcodes::INTEGER], 0, null);
+        $mv->visitFrame(Opcodes::F_APPEND, 1, [Opcodes::INTEGER], 0, null);
         $mv->visitFieldInsn(
             Opcodes::GETSTATIC,
             "java/lang/System",
@@ -694,7 +774,14 @@ class ClassWriterTest extends TestCase
     {
         $cw = new ClassWriter(0);
 
-        $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, "SimpleClass", null, "java/lang/Object", null);
+        $cw->visit(
+            Opcodes::V1_8,
+            Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
+            "SimpleClass",
+            null,
+            "java/lang/Object",
+            null
+        );
 
         $cw->visitSource("SimpleClass.java", null);
 
@@ -1485,13 +1572,13 @@ class ClassWriterTest extends TestCase
             0, 11, 1, 0, 4, 67, 111, 100, 101, 1, 0, 18, 76, 111, 99, 97, 108, 86, 97, 114, 105, 97, 98,
             108, 101, 84, 97, 98, 108, 101, 1, 0, 15, 76, 105, 110, 101, 78, 117, 109, 98, 101, 114, 84,
             97, 98, 108, 101, 1, 0, 10, 83, 111, 117, 114, 99, 101, 70, 105, 108, 101, 1, 0, 12, 73, 110,
-            110, 101, 114, 67, 108, 97, 115, 115, 101, 115, 0, 32, 0, 2, 0, 4, 0, NULL, 0, 0, 0, 3, 0, 2,
-            0, 9, 0, 10, 0, 1, 0, 32, 0, 0, 0, 47, 0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 12, 177, 0, NULL, 0,
+            110, 101, 114, 67, 108, 97, 115, 115, 101, 115, 0, 32, 0, 2, 0, 4, 0, null, 0, 0, 0, 3, 0, 2,
+            0, 9, 0, 10, 0, 1, 0, 32, 0, 0, 0, 47, 0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 12, 177, 0, null, 0,
             2, 0, 33, 0, 0, 0, 12, 0, 1, 0, 0, 0, 5, 0, 13, 0, 14, 0, 0, 0, 34, 0, 0, 0, 6, 0, 1, 0, 0, 0,
             4, 0, 1, 0, 15, 0, 10, 0, 1, 0, 32, 0, 0, 0, 55, 0, 2, 0, 1, 0, 0, 0, 9, 178, 0, 21, 18, 23,
-            182, 0, 29, 177, 0, NULL, 0, 2, 0, 33, 0, 0, 0, 12, 0, 1, 0, 0, 0, 9, 0, 13, 0, 14, 0, 0, 0,
+            182, 0, 29, 177, 0, null, 0, 2, 0, 33, 0, 0, 0, 12, 0, 1, 0, 0, 0, 9, 0, 13, 0, 14, 0, 0, 0,
             34, 0, 0, 0, 10, 0, 2, 0, 0, 0, 6, 0, 8, 0, 7, 16, 4096, 0, 9, 0, 30, 0, 1, 0, 32, 0, 0, 0, 29,
-            0, 1, 0, 2, 0, 0, 0, 5, 42, 183, 0, 31, 177, 0, NULL, 0, 1, 0, 34, 0, 0, 0, 6, 0, 1, 0, 0, 0,
+            0, 1, 0, 2, 0, 0, 0, 5, 42, 183, 0, 31, 177, 0, null, 0, 1, 0, 34, 0, 0, 0, 6, 0, 1, 0, 0, 0,
             4, 0, 2, 0, 35, 0, 0, 0, 2, 0, 5, 0, 36, 0, 0, 0, 10, 0, 1, 0, 2, 0, 7, 0, 8, 0, 10,
         ];
 
@@ -1623,11 +1710,11 @@ class ClassWriterTest extends TestCase
             18, 76, 111, 99, 97, 108, 86, 97, 114, 105, 97, 98, 108, 101, 84, 97, 98, 108, 101, 1,
             0, 15, 76, 105, 110, 101, 78, 117, 109, 98, 101, 114, 84, 97, 98, 108, 101, 1, 0, 10,
             83, 111, 117, 114, 99, 101, 70, 105, 108, 101, 1, 0, 12, 73, 110, 110, 101, 114, 67,
-            108, 97, 115, 115, 101, 115, 0, 33, 0, 2, 0, 4, 0, NULL, 0, 0, 0, 2, 0, 1, 0, 9, 0, 10,
-            0, 1, 0, 27, 0, 0, 0, 47, 0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 12, 177, 0, NULL, 0, 2,
+            108, 97, 115, 115, 101, 115, 0, 33, 0, 2, 0, 4, 0, null, 0, 0, 0, 2, 0, 1, 0, 9, 0, 10,
+            0, 1, 0, 27, 0, 0, 0, 47, 0, 1, 0, 1, 0, 0, 0, 5, 42, 183, 0, 12, 177, 0, null, 0, 2,
             0, 28, 0, 0, 0, 12, 0, 1, 0, 0, 0, 5, 0, 13, 0, 14, 0, 0, 0, 29, 0, 0, 0, 6, 0, 1, 0,
             0, 0, 3, 0, 9, 0, 15, 0, 16, 0, 1, 0, 27, 0, 0, 0, 74, 0, 3, 0, 2, 0, 0, 0, 14, 187, 0,
-            7, 89, 1, 183, 0, 19, 76, 43, 182, 0, 22, 177, 0, NULL, 0, 2, 0, 28, 0, 0, 0, 22, 0, 2,
+            7, 89, 1, 183, 0, 19, 76, 43, 182, 0, 22, 177, 0, null, 0, 2, 0, 28, 0, 0, 0, 22, 0, 2,
             0, 0, 0, 14, 0, 23, 0, 24, 0, 0, 0, 9, 0, 5, 0, 25, 0, 26, 0, 1, 0, 29, 0, 0, 0, 14, 0,
             3, 0, 0, 0, 11, 0, 9, 0, 12, 0, 13, 0, 13, 0, 2, 0, 30, 0, 0, 0, 2, 0, 5, 0, 31, 0, 0,
             0, 10, 0, 1, 0, 7, 0, 2, 0, 8, 0, 10,

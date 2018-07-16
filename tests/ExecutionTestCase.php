@@ -150,11 +150,7 @@ abstract class ExecutionTestCase extends TestCase
             self::$disableDisassemblerReason .= implode("\n", $output);
         }
 
-        exec(
-        'awk -V 2>&1',
-            $output,
-            $returnCode
-        );
+        exec('awk -V 2>&1', $output, $returnCode);
 
         if ($returnCode !== 0) {
             self::$disableDisassembler = true;
