@@ -33,6 +33,7 @@ namespace Kambo\Karsk\Type;
  * Represents integer value
  *
  * @author Bohuslav Simek <bohuslav@simek.si>
+ * @license BSD-3-Clause
  */
 class Integer extends AbstractDataType
 {

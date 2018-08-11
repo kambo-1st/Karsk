@@ -30,12 +30,51 @@
 namespace Kambo\Karsk\Type;
 
 /**
- * Represents short value
+ * Class Object_
  *
- * @author Bohuslav Simek <bohuslav@simek.si>
+ * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
-class Short extends AbstractDataType
+class Object_ implements DataType
 {
+    /**
+     * Value of the data type
+     *
+     * @var mixed
+     */
+    protected $value;
 
+    protected $type;
+
+    /**
+     * Constructor
+     *
+     * @param DataType $type  object type
+     * @param mixed    $value simple data type value
+     */
+    public function __construct($type, array $value)
+    {
+        $this->value = $value;
+        $this->type  = $type;
+    }
+
+    /**
+     * Get stored value
+     *
+     * @return mixed Stored value
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Get stored value
+     *
+     * @return mixed Stored value
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
 }

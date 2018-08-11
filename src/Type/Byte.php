@@ -30,12 +30,12 @@
 namespace Kambo\Karsk\Type;
 
 /**
- * Represents short value
+ * Represents byte value
  *
- * @author Bohuslav Simek <bohuslav@simek.si>
+ * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
-class Short extends AbstractDataType
+class Byte extends AbstractDataType
 {
 
 }

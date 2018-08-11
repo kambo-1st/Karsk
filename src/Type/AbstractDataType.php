@@ -33,6 +33,7 @@ namespace Kambo\Karsk\Type;
  * Represent simple data type and it's value
  *
  * @author Bohuslav Simek <bohuslav@simek.si>
+ * @license BSD-3-Clause
  */
 class AbstractDataType implements DataType
 {
@@ -48,7 +49,7 @@ class AbstractDataType implements DataType
      *
      * @param mixed $value simple data type value
      */
-    public function __construct($value)
+    public function __construct($value=null)
     {
         $this->value = $value;
     }
