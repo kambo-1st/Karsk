@@ -178,14 +178,14 @@ class MethodWriter extends MethodVisitor
         }
         $me->compute = $compute;
         if (($compute != self::$NOTHING)) {
-            $size = ($Type->getArgumentsAndReturnSizes($me->descriptor) >> 2);
+            $size = (Type::getArgumentsAndReturnSizesFromDescription($me->descriptor) >> 2);
             if (((($access & Opcodes::ACC_STATIC)) != 0)) {
                 --$size;
             }
             $me->maxLocals = $size;
             $me->currentLocals = $size;
             $me->labels = new Label();
-            $me->labels->status |= $Label->PUSHED;
+            $me->labels->status |= Label::PUSHED;
             $me->visitLabel($me->labels);
         }
         return $me;
@@ -476,7 +476,7 @@ class MethodWriter extends MethodVisitor
             if ((($this->compute == self::$FRAMES) || ($this->compute == self::$INSERTED_FRAMES))) {
                 $this->currentBlock->frame->execute($opcode, 0, null, null);
             } else {
-                $size = ($this->stackSize + $Frame->SIZE[$opcode]);
+                $size = ($this->stackSize + Frame::SIZE[$opcode]);
                 if (($size > $this->maxStackSize)) {
                     $this->maxStackSize = $size;
                 }
@@ -519,7 +519,8 @@ class MethodWriter extends MethodVisitor
                     $this->currentBlock->inputStackTop = $this->stackSize;
                     $this->noSuccessor();
                 } else {
-                    $size = ($this->stackSize + $Frame->SIZE[$opcode]);
+                    //Frame::calculate();
+                    $size = ($this->stackSize + Frame::SIZE[$opcode]);
                     if (($size > $this->maxStackSize)) {
                         $this->maxStackSize = $size;
                     }
@@ -581,19 +582,19 @@ class MethodWriter extends MethodVisitor
                 $this->currentBlock->frame->execute($opcode, 0, $this->cw, $i);
             } else {
                 $size = null;
-                $c = $desc->charAt(0);
+                $c = $this->charAt($desc, 0);
                 switch ($opcode) {
                     case Opcodes::GETSTATIC:
-                        $size = ($this->stackSize + (( ((($c . 'D') || ($c . 'J'))) ? 2 : 1 )));
+                        $size = ($this->stackSize + (( ((($c == 'D') || ($c == 'J'))) ? 2 : 1 )));
                         break;
                     case Opcodes::PUTSTATIC:
-                        $size = ($this->stackSize + (( ((($c . 'D') || ($c . 'J'))) ? -2 : -1 )));
+                        $size = ($this->stackSize + (( ((($c == 'D') || ($c == 'J'))) ? -2 : -1 )));
                         break;
                     case Opcodes::GETFIELD:
-                        $size = ($this->stackSize + (( ((($c . 'D') || ($c . 'J'))) ? 1 : 0 )));
+                        $size = ($this->stackSize + (( ((($c == 'D') || ($c  == 'J'))) ? 1 : 0 )));
                         break;
                     default:
-                        $size = ($this->stackSize + (( ((($c . 'D') || ($c . 'J'))) ? -3 : -2 )));
+                        $size = ($this->stackSize + (( ((($c == 'D') || ($c == 'J'))) ? -3 : -2 )));
                         break;
                 }
                 if (($size > $this->maxStackSize)) {
@@ -614,7 +615,7 @@ class MethodWriter extends MethodVisitor
                 $this->currentBlock->frame->execute($opcode, 0, $this->cw, $i);
             } else {
                 if (($argSize == 0)) {
-                    $argSize = $Type->getArgumentsAndReturnSizes($desc);
+                    $argSize = Type::getArgumentsAndReturnSizesFromDescription($desc);
                     $i->intVal = $argSize;
                 }
                 $size = null;
@@ -631,7 +632,7 @@ class MethodWriter extends MethodVisitor
         }
         if (($opcode == Opcodes::INVOKEINTERFACE)) {
             if (($argSize == 0)) {
-                $argSize = $Type->getArgumentsAndReturnSizes($desc);
+                $argSize = Type::getArgumentsAndReturnSizesFromDescription($desc);
                 $i->intVal = $argSize;
             }
             $this->code->put12(Opcodes::INVOKEINTERFACE, $i->index)->put11(($argSize >> 2), 0);
@@ -985,13 +986,18 @@ class MethodWriter extends MethodVisitor
         ++$this->localVarCount;
         $this->localVar->putShort($start->position)->putShort(($end->position - $start->position))->putShort($this->cw->newUTF8($name))->putShort($this->cw->newUTF8($desc))->putShort($index);
         if (($this->compute != self::$NOTHING)) {
-            $c = $desc->charAt(0);
-            $n = ($index + (( ((($c . 'J') || ($c . 'D'))) ? 2 : 1 )));
+            $c = $this->charAt($desc, 0);
+            $n = ($index + (( ((($c == 'J') || ($c == 'D'))) ? 2 : 1 )));
             if (($n > $this->maxLocals)) {
                 $this->maxLocals = $n;
             }
         }
     }
+
+    /*private static function charAt($str, $pos)
+    {
+        return $str{$pos};
+    }*/
 
         private function uRShift($a, $b)
 {
@@ -1190,14 +1196,14 @@ class MethodWriter extends MethodVisitor
                     $max = $blockMax;
                 }
                 $b = $l->successors;
-                if (((($l->status & $Label->JSR)) != 0)) {
+                if (((($l->status & Label::JSR)) != 0)) {
                     $b = $b->next;
                 }
                 while (($b != null)) {
                     $l = $b->successor;
-                    if (((($l->status & $Label->PUSHED)) == 0)) {
-                        $l->inputStackTop = ( (($b->info == $Edge->EXCEPTION)) ? 1 : ($start + $b->info) );
-                        $l->status |= $Label->PUSHED;
+                    if (((($l->status & Label::PUSHED)) == 0)) {
+                        $l->inputStackTop = ( (($b->info == Edge::EXCEPTION)) ? 1 : ($start + $b->info) );
+                        $l->status |= Label::PUSHED;
                         $l->next = $stack;
                         $stack = $l;
                     }
@@ -1300,7 +1306,7 @@ private function charAt($str, $pos)
 
         while (true) {
             $j = $i;
-            switch ($this->charAt($descriptor, $i++)) {
+            switch ($this->charAt($this->descriptor, $i++)) {
                 case 'Z':
                 case 'C':
                 case 'B':
