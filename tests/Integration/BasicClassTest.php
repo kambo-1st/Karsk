@@ -92,8 +92,6 @@ class BasicClassTest extends ExecutionTestCase
     }
 
     /**
-     * Tests dissa of basic class with "hello world" message
-     *
      * Generates the bytecode corresponding to the following Java class:
      *
      * public class Example {
@@ -102,7 +100,7 @@ class BasicClassTest extends ExecutionTestCase
      *      }
      * }
      *
-     * @return void
+     * @return ClassWriter
      */
     private function getClassWriter() : ClassWriter
     {

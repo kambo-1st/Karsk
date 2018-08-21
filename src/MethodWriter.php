@@ -573,6 +573,7 @@ class MethodWriter extends MethodVisitor
         }
         $this->code->put12($opcode, $i->index);
     }
+
     public function visitFieldInsn($opcode, $owner, $name, $desc) // [final int opcode, final String owner, final String name, final String desc]
     {
         $this->lastCodeOffset = count($this->code) /*from: code.length*/;
@@ -582,7 +583,7 @@ class MethodWriter extends MethodVisitor
                 $this->currentBlock->frame->execute($opcode, 0, $this->cw, $i);
             } else {
                 $size = null;
-                $c = $this->charAt($desc, 0);
+                $c = (int)$this->charAt($desc, 0);
                 switch ($opcode) {
                     case Opcodes::GETSTATIC:
                         $size = ($this->stackSize + (( ((($c == 'D') || ($c == 'J'))) ? 2 : 1 )));
@@ -605,6 +606,7 @@ class MethodWriter extends MethodVisitor
         }
         $this->code->put12($opcode, $i->index);
     }
+
     public function visitMethodInsn($opcode, $owner, $name, $desc, $itf) // [final int opcode, final String owner, final String name, final String desc, final boolean itf]
     {
         $this->lastCodeOffset = count($this->code) /*from: code.length*/;
@@ -667,7 +669,7 @@ class MethodWriter extends MethodVisitor
                     $this->addSuccessor(($this->stackSize + 1), $label);
                     $nextInsn = new Label();
                 } else {
-                    $this->stackSize += $Frame->SIZE[$opcode];
+                    $this->stackSize += Frame::SIZE[$opcode];
                     $this->addSuccessor($this->stackSize, $label);
                 }
             }
@@ -699,7 +701,7 @@ class MethodWriter extends MethodVisitor
             if (($nextInsn != null)) {
                 $this->visitLabel($nextInsn);
             }
-            if (($opcode == Opcodes::GOTO)) {
+            if (($opcode == Opcodes::GOTO_)) {
                 $this->noSuccessor();
             }
         }
