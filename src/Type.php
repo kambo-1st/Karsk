@@ -45,25 +45,25 @@ use Kambo\Karsk\Type as KarskType;
  */
 class Type
 {
-	public const VOID = 0;	// int
-	public const BOOLEAN = 1;	// int
-	public const CHAR = 2;	// int
-	public const BYTE = 3;	// int
-	public const SHORT = 4;	// int
-	public const INT = 5;	// int
-	public const FLOAT = 6;	// int
-	public const LONG = 7;	// int
-	public const DOUBLE = 8;	// int
-	public const ARRAY = 9;	// int
-	public const OBJECT = 10;	// int
-	public const METHOD = 11;	// int
+    public const VOID = 0;  // int
+    public const BOOLEAN = 1;   // int
+    public const CHAR = 2;  // int
+    public const BYTE = 3;  // int
+    public const SHORT = 4; // int
+    public const INT = 5;   // int
+    public const FLOAT = 6; // int
+    public const LONG = 7;  // int
+    public const DOUBLE = 8;    // int
+    public const ARRAY = 9; // int
+    public const OBJECT = 10;   // int
+    public const METHOD = 11;   // int
 
     /**
      * The sort of this Java type.
      *
      * @var int
      */
-	protected $sort;
+    protected $sort;
 
     /**
      * A buffer containing the internal name of this Java type. This field is
@@ -71,7 +71,7 @@ class Type
      *
      * @var array
      */
-	protected $buf;
+    protected $buf;
 
     /**
      * The offset of the internal name of this Java type in {@link #buf buf} or,
@@ -81,14 +81,14 @@ class Type
      *
      * @var int
      */
-	protected $off;
+    protected $off;
 
     /**
      * The length of the internal name of this Java type.
      *
      * @var int
      */
-	protected $len;
+    protected $len;
 
     /**
      * Constructs a reference type.
@@ -113,26 +113,26 @@ class Type
      *
      * @return self the Java type corresponding to the given internal name.
      */
-	public static function getObjectType (string $internalName) : self
-	{
+    public static function getObjectType(string $internalName) : self
+    {
         $buf = str_split($internalName);
-		return new self (
-		    ($buf[0] == '[' ? self::ARRAY : self::OBJECT),
+        return new self(
+            ($buf[0] == '[' ? self::ARRAY : self::OBJECT),
             $buf,
             0,
             count($buf)
         );
-	}
+    }
 
-	public static function getMethodType_String ($methodDescriptor) // [final String methodDescriptor]
-	{
-		return self::getType_aC_I($methodDescriptor->toCharArray(), 0);
-	}
+    public static function getMethodType_String($methodDescriptor) // [final String methodDescriptor]
+    {
+        return self::getType_aC_I($methodDescriptor->toCharArray(), 0);
+    }
 
-	public static function getMethodType_Type_Type($returnType, ...$argumentTypes) // [final Type returnType, final Type... argumentTypes]
-	{
-		return self::getType_String(self::getMethodDescriptor_Type_Type($returnType, ...$argumentTypes));
-	}
+    public static function getMethodType_Type_Type($returnType, ...$argumentTypes)
+    {
+        return self::getType_String(self::getMethodDescriptor_Type_Type($returnType, ...$argumentTypes));
+    }
 
     /**
      * Returns the Java type corresponding to the given type descriptor. For
@@ -149,23 +149,23 @@ class Type
         $len = null;
         switch ($buf[$off]) {
             case 'V':
-                return new self(self::VOID, NULL, (((((ord('V') << 24)) | ((5 << 16))) | ((0 << 8))) | 0), 1);
+                return new self(self::VOID, null, (((((ord('V') << 24)) | ((5 << 16))) | ((0 << 8))) | 0), 1);
             case 'Z':
-                return new self(self::BOOLEAN, NULL, (((((ord ('Z') << 24)) | ((0 << 16))) | ((5 << 8))) | 1), 1);
+                return new self(self::BOOLEAN, null, (((((ord('Z') << 24)) | ((0 << 16))) | ((5 << 8))) | 1), 1);
             case 'C':
-                return new self(self::CHAR, NULL, (((((ord ('C') << 24)) | ((0 << 16))) | ((6 << 8))) | 1), 1);
+                return new self(self::CHAR, null, (((((ord('C') << 24)) | ((0 << 16))) | ((6 << 8))) | 1), 1);
             case 'B':
-                return new self(self::BYTE, NULL, (((((ord ('B') << 24)) | ((0 << 16))) | ((5 << 8))) | 1), 1);
+                return new self(self::BYTE, null, (((((ord('B') << 24)) | ((0 << 16))) | ((5 << 8))) | 1), 1);
             case 'S':
-                return  new self(self::SHORT, NULL, (((((ord ('S') << 24)) | ((0 << 16))) | ((7 << 8))) | 1), 1);
+                return  new self(self::SHORT, null, (((((ord('S') << 24)) | ((0 << 16))) | ((7 << 8))) | 1), 1);
             case 'I':
-                return new self(self::INT, NULL, (((((ord ('I') << 24)) | ((0 << 16))) | ((0 << 8))) | 1), 1);
+                return new self(self::INT, null, (((((ord('I') << 24)) | ((0 << 16))) | ((0 << 8))) | 1), 1);
             case 'F':
-                return new self(self::FLOAT, NULL, (((((ord ('F') << 24)) | ((2 << 16))) | ((2 << 8))) | 1), 1);
+                return new self(self::FLOAT, null, (((((ord('F') << 24)) | ((2 << 16))) | ((2 << 8))) | 1), 1);
             case 'J':
-                return new self(self::LONG, NULL, (((((ord ('J') << 24)) | ((1 << 16))) | ((1 << 8))) | 2), 1);
+                return new self(self::LONG, null, (((((ord('J') << 24)) | ((1 << 16))) | ((1 << 8))) | 2), 1);
             case 'D':
-                return new self(self::DOUBLE, NULL, (((((ord ('D') << 24)) | ((3 << 16))) | ((3 << 8))) | 2), 1);
+                return new self(self::DOUBLE, null, (((((ord('D') << 24)) | ((3 << 16))) | ((3 << 8))) | 2), 1);
             case '[':
                 $len = 1;
                 while (($buf[($off + $len)] == '[')) {
@@ -192,20 +192,20 @@ class Type
         }
     }
 
-    public static function getType_String ($typeDescriptor) // [final String typeDescriptor]
+    public static function getType_String($typeDescriptor) // [final String typeDescriptor]
     {
         return self::getType_aC_I($typeDescriptor->toCharArray(), 0);
     }
 
-	public static function getType_Class($c) // [final Class? c]
-	{
+    public static function getType_Class($c) // [final Class? c]
+    {
         switch (gettype($c)) {
             case 'boolean':
-                return new self(self::BOOLEAN, NULL, (((((ord ('Z') << 24)) | ((0 << 16))) | ((5 << 8))) | 1), 1);
+                return new self(self::BOOLEAN, null, (((((ord('Z') << 24)) | ((0 << 16))) | ((5 << 8))) | 1), 1);
             case 'integer':
-                return new self(self::INT, NULL, (((((ord ('I') << 24)) | ((0 << 16))) | ((0 << 8))) | 1), 1);
+                return new self(self::INT, null, (((((ord('I') << 24)) | ((0 << 16))) | ((0 << 8))) | 1), 1);
             case 'double': // for historical reasons "double" is returned in case of a float, and not simply "float"
-                return new self(self::FLOAT, NULL, (((((ord ('F') << 24)) | ((2 << 16))) | ((2 << 8))) | 1), 1);
+                return new self(self::FLOAT, null, (((((ord('F') << 24)) | ((2 << 16))) | ((2 << 8))) | 1), 1);
             case 'string':
                 return self::getType_String(self::getDescriptor_Class($c));
             case 'object':
@@ -213,58 +213,58 @@ class Type
             default:
                 throw new IllegalArgumentException("value " . var_export($c, true));
         }
-	}
+    }
 
-	public static function getType_Constructor ($c) // [final Constructor? c]
-	{
-		return self::getType_String(self::getConstructorDescriptor($c));
-	}
+    public static function getType_Constructor($c) // [final Constructor? c]
+    {
+        return self::getType_String(self::getConstructorDescriptor($c));
+    }
 
-	public static function getType_Method ($m) // [final Method m]
-	{
-		return self::getType_String(self::getMethodDescriptor_Method($m));
-	}
+    public static function getType_Method($m) // [final Method m]
+    {
+        return self::getType_String(self::getMethodDescriptor_Method($m));
+    }
 
-	public static function getArgumentTypes_String ($methodDescriptor) // [final String methodDescriptor]
-	{
-		$buf = $methodDescriptor->toCharArray();
-		$off = 1;
-		$size = 0;
-		while (true) {
-			$car = $buf[$off++];
-			if (($car == ')')) {
-				break;
-			} else if (($car == 'L')) {
-			    while (($buf[$off++] != ';')) {
+    public static function getArgumentTypes_String($methodDescriptor) // [final String methodDescriptor]
+    {
+        $buf = $methodDescriptor->toCharArray();
+        $off = 1;
+        $size = 0;
+        while (true) {
+            $car = $buf[$off++];
+            if (($car == ')')) {
+                break;
+            } elseif (($car == 'L')) {
+                while (($buf[$off++] != ';')) {
                     ++$size;
                 }
-			} else if (($car != '[')) {
-			    ++$size;
-			}
-		}
+            } elseif (($car != '[')) {
+                ++$size;
+            }
+        }
 
-		$args = [];
-		$off  = 1;
-		$size = 0;
-		while ($buf[$off] != ')') {
-			$args[$size] = self::getType_aC_I($buf, $off);
-			$off += ($args[$size]->len + (( (($args[$size]->sort == self::OBJECT)) ? 2 : 0 )));
-			$size += 1;
-		}
+        $args = [];
+        $off  = 1;
+        $size = 0;
+        while ($buf[$off] != ')') {
+            $args[$size] = self::getType_aC_I($buf, $off);
+            $off += ($args[$size]->len + (( (($args[$size]->sort == self::OBJECT)) ? 2 : 0 )));
+            $size += 1;
+        }
 
-		return $args;
-	}
+        return $args;
+    }
 
-	public static function getArgumentTypes_Method ($method) // [final Method method]
-	{
-		$classes = $method->getParameterTypes();
-		$types   = [];
-		for ($i = (count($classes) - 1); ($i >= 0); --$i) {
-			$types[$i] = self::getType_Constructor($classes[$i]);
-		}
+    public static function getArgumentTypes_Method($method) // [final Method method]
+    {
+        $classes = $method->getParameterTypes();
+        $types   = [];
+        for ($i = (count($classes) - 1); ($i >= 0); --$i) {
+            $types[$i] = self::getType_Constructor($classes[$i]);
+        }
 
-		return $types;
-	}
+        return $types;
+    }
 
     /**
      * Returns the Java type corresponding to the return type of the given
@@ -274,26 +274,25 @@ class Type
      *
      * @return Type the Java type corresponding to the return type of the given method descriptor.
      */
-	public static function getReturnType_String($methodDescriptor) : Type
-	{
+    public static function getReturnType_String($methodDescriptor) : Type
+    {
         $buf = str_split($methodDescriptor);
-		$off = 1;
-		while ( true ) {
-			$car = $buf[++$off];
-			if (($car == ')')) {
-				return self::getType_aC_I($buf, $off);
-			} else if (($car == 'L')) {
-			    while (($buf[++$off] . ';')) {
-
+        $off = 1;
+        while (true) {
+            $car = $buf[++$off];
+            if (($car == ')')) {
+                return self::getType_aC_I($buf, $off);
+            } elseif (($car == 'L')) {
+                while (($buf[++$off] . ';')) {
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 
-	public static function getReturnType_Method ($method) // [final Method method]
-	{
-		return self::getType_Constructor($method->getReturnType());
-	}
+    public static function getReturnType_Method($method) // [final Method method]
+    {
+        return self::getType_Constructor($method->getReturnType());
+    }
 
     /**
      * Returns the size of the arguments and of the return value of methods of
@@ -322,34 +321,35 @@ class Type
      *             <tt>(argSize &lt;&lt; 2) | retSize</tt> (argSize is therefore equal to
      *             <tt>i &gt;&gt; 2</tt>, and retSize to <tt>i &amp; 0x03</tt>).
      */
-	public static function getArgumentsAndReturnSizesFromDescription(string $desc) : int
-	{
-		$n = 1;
-		$c = 1;
-		while (true) {
-			$car = self::charAt($desc, $c++);
-			if (($car == ')')) {
-				$car = self::charAt($desc, $c);
-				return (($n << 2)
+    public static function getArgumentsAndReturnSizesFromDescription(string $desc) : int
+    {
+        $n = 1;
+        $c = 1;
+        while (true) {
+            $car = self::charAt($desc, $c++);
+            if (($car == ')')) {
+                $car = self::charAt($desc, $c);
+                return (($n << 2)
                     | (( (($car == 'V')) ? 0 : (( ((($car == 'D') || ($car == 'J'))) ? 2 : 1 )) )));
-			} else  if (($car == 'L')) {
-					while ((self::charAt($desc,$c++) != ';'))
-					$n += 1;
-			} else if (($car == '[')) {
-			    while ((($car = self::charAt($desc, $c)) == '[')) {
-				    ++$c;
-				}
+            } elseif (($car == 'L')) {
+                while ((self::charAt($desc, $c++) != ';')) {
+                    $n += 1;
+                }
+            } elseif (($car == '[')) {
+                while ((($car = self::charAt($desc, $c)) == '[')) {
+                    ++$c;
+                }
 
-				if ((($car == 'D') || ($car == 'J'))) {
-				    $n -= 1;
-				}
-			} else if ((($car == 'D') || ($car == 'J'))) {
-			    $n += 2;
-			} else {
-			    $n += 1;
-			}
-		}
-	}
+                if ((($car == 'D') || ($car == 'J'))) {
+                    $n -= 1;
+                }
+            } elseif ((($car == 'D') || ($car == 'J'))) {
+                $n += 2;
+            } else {
+                $n += 1;
+            }
+        }
+    }
 
     /**
      * Returns the sort of this Java type.
@@ -359,10 +359,10 @@ class Type
      *             {@link #FLOAT FLOAT}, {@link #LONG LONG}, {@link #DOUBLE DOUBLE},
      *             {@link #ARRAY ARRAY}, {@link #OBJECT OBJECT} or {@link #METHOD METHOD}.
      */
-	public function getSort () : int
-	{
-		return $this->sort;
-	}
+    public function getSort() : int
+    {
+        return $this->sort;
+    }
 
     /**
      * Returns the number of dimensions of this array type. This method should
@@ -370,15 +370,15 @@ class Type
      *
      * @return int the number of dimensions of this array type.
      */
-	public function getDimensions () : int
-	{
-		$i = 1;
-		while ($this->buf[($this->off + $i)] == '[') {
-			++$i;
-		}
+    public function getDimensions() : int
+    {
+        $i = 1;
+        while ($this->buf[($this->off + $i)] == '[') {
+            ++$i;
+        }
 
-		return $i;
-	}
+        return $i;
+    }
 
     /**
      * Returns the type of the elements of this array type. This method should
@@ -386,11 +386,11 @@ class Type
      *
      * @return Type Returns the type of the elements of this array type.
      */
-	public function getElementType () 
-	{
-			/* match: aC_I */
-		return $this->getType_aC_I($this->buf, ($this->off + $this->getDimensions()));
-	}
+    public function getElementType()
+    {
+            /* match: aC_I */
+        return $this->getType_aC_I($this->buf, ($this->off + $this->getDimensions()));
+    }
 
     /**
      * Returns the binary name of the class corresponding to this type. This
@@ -398,41 +398,41 @@ class Type
      *
      * @return string the binary name of the class corresponding to this type.
      */
-	public function getClassName () : ?string
-	{
-		switch ($this->sort) {
-			case self::VOID:
-				return "void";
-			case self::BOOLEAN:
-				return "boolean";
-			case self::CHAR:
-				return "char";
-			case self::BYTE:
-				return "byte";
-			case self::SHORT:
-				return "short";
-			case self::INT:
-				return "int";
-			case self::FLOAT:
-				return "float";
-			case self::LONG:
-				return "long";
-			case self::DOUBLE:
-				return "double";
-			case self::ARRAY:
-				$arrayDefinition = $this->getElementType()->getClassName();
-				for ($i = $this->getDimensions(); ($i > 0); --$i) {
+    public function getClassName() : ?string
+    {
+        switch ($this->sort) {
+            case self::VOID:
+                return "void";
+            case self::BOOLEAN:
+                return "boolean";
+            case self::CHAR:
+                return "char";
+            case self::BYTE:
+                return "byte";
+            case self::SHORT:
+                return "short";
+            case self::INT:
+                return "int";
+            case self::FLOAT:
+                return "float";
+            case self::LONG:
+                return "long";
+            case self::DOUBLE:
+                return "double";
+            case self::ARRAY:
+                $arrayDefinition = $this->getElementType()->getClassName();
+                for ($i = $this->getDimensions(); ($i > 0); --$i) {
                     $arrayDefinition .= "[]";
-				}
+                }
 
-				return $arrayDefinition;
-			case self::OBJECT:
+                return $arrayDefinition;
+            case self::OBJECT:
                 $object = substr($this->buf, $this->off, $this->len);
                 return str_replace('/', '.', $object);
-			default:
-				return null;
-		}
-	}
+            default:
+                return null;
+        }
+    }
 
     /**
      * Returns the internal name of the class corresponding to this object or
@@ -442,10 +442,10 @@ class Type
      *
      * @return string the internal name of the class corresponding to this object type.
      */
-	public function getInternalName () : string
-	{
-		return substr($this->buf, $this->off, $this->len);
-	}
+    public function getInternalName() : string
+    {
+        return substr($this->buf, $this->off, $this->len);
+    }
 
     /**
      * Returns the argument types of methods of this type. This method should
@@ -453,10 +453,10 @@ class Type
      *
      * @return array the argument types of methods of this type.
      */
-	public function getArgumentTypes() : array
-	{
-		return $this->getArgumentTypes_String($this->getDescriptor());
-	}
+    public function getArgumentTypes() : array
+    {
+        return $this->getArgumentTypes_String($this->getDescriptor());
+    }
 
     /**
      * Returns the return type of methods of this type. This method should only
@@ -464,10 +464,10 @@ class Type
      *
      * @return Type the return type of methods of this type.
      */
-	public function getReturnType() : Type
-	{
-		return $this->getReturnType_String($this->getDescriptor());
-	}
+    public function getReturnType() : Type
+    {
+        return $this->getReturnType_String($this->getDescriptor());
+    }
 
     // ------------------------------------------------------------------------
     // Conversion to type descriptors
@@ -478,91 +478,89 @@ class Type
      *
      * @return string the descriptor corresponding to this Java type.
      */
-	public function getDescriptor() : string
-	{
-		$buf = [];
-		$this->getDescriptor_StringBuilder($buf);
+    public function getDescriptor() : string
+    {
+        $buf = [];
+        $this->getDescriptor_StringBuilder($buf);
 
         return implode('', $buf);
-	}
+    }
 
-	public static function getMethodDescriptor_Type_Type (Type $returnType, Type ...$argumentTypes) : string
-	{
-		$buf = new StringBuilder();
-		$buf->append('(');
-		for ($i = 0; ($i < count($argumentTypes)); ++$i) {
-			$argumentTypes[$i]->getDescriptor($buf);
-		}
+    public static function getMethodDescriptor_Type_Type(Type $returnType, Type ...$argumentTypes) : string
+    {
+        $buf = new StringBuilder();
+        $buf->append('(');
+        for ($i = 0; ($i < count($argumentTypes)); ++$i) {
+            $argumentTypes[$i]->getDescriptor($buf);
+        }
 
-		$buf->append(')');
+        $buf->append(')');
         $returnType->getDescriptor_StringBuilder($buf);
 
         return implode('', $buf);
-	}
+    }
 
-	protected function getDescriptor_StringBuilder(&$buf) // [final StringBuilder buf]
-	{
-		if ($this->buf == null) {
+    protected function getDescriptor_StringBuilder(&$buf) // [final StringBuilder buf]
+    {
+        if ($this->buf == null) {
             $buf = str_split((string)$this->uRShift(($this->off & 0xFF000000), 24));
-		} else if ($this->sort == self::OBJECT) {
+        } elseif ($this->sort == self::OBJECT) {
             $buf->append('L');
             $buf->append($this->buf, $this->off, $this->len);
             $buf->append(';');
-		} else {
+        } else {
             $buf->append($this->buf, $this->off, $this->len);
-		}
-	}
+        }
+    }
 
     private function uRShift($a, $b)
     {
         return ($a >> $b & 0xFF);
     }
 
-	public static function getInternalName_Class ($c) // [final Class? c]
-	{
-		return $c->getName()->replace('.', '/');
-	}
+    public static function getInternalName_Class($c) // [final Class? c]
+    {
+        return $c->getName()->replace('.', '/');
+    }
 
-	public static function getDescriptor_Class ($c) // [final Class? c]
-	{
-		$buf = new StringBuilder();
-			/* match: StringBuilder_Class */
-		self::getDescriptor_StringBuilder_Class($buf, $c);
-		return $buf->toString();
-	}
+    public static function getDescriptor_Class($c) // [final Class? c]
+    {
+        $buf = new StringBuilder();
+            /* match: StringBuilder_Class */
+        self::getDescriptor_StringBuilder_Class($buf, $c);
+        return $buf->toString();
+    }
 
-	public static function getConstructorDescriptor ($c) // [final Constructor? c]
-	{
-		$parameters = $c->getParameterTypes();
-		$buf = new StringBuilder();
-		$buf->append('(');
-		for ($i = 0; ($i < count($parameters) /*from: parameters.length*/); ++$i) 
-		{
-			/* match: StringBuilder_Class */
-			self::getDescriptor_StringBuilder_Class($buf, $parameters[$i]);
-		}
+    public static function getConstructorDescriptor($c) // [final Constructor? c]
+    {
+        $parameters = $c->getParameterTypes();
+        $buf = new StringBuilder();
+        $buf->append('(');
+        for ($i = 0; ($i < count($parameters) /*from: parameters.length*/); ++$i) {
+            /* match: StringBuilder_Class */
+            self::getDescriptor_StringBuilder_Class($buf, $parameters[$i]);
+        }
 
-		return $buf->append(")V")->toString();
-	}
+        return $buf->append(")V")->toString();
+    }
 
-	public static function getMethodDescriptor_Method ($m) // [final Method m]
-	{
-		$parameters = $m->getParameterTypes();
-		$buf = new StringBuilder();
-		$buf->append('(');
-		for ($i = 0; ($i < count($parameters) /*from: parameters.length*/); ++$i) 
-		{
-			/* match: StringBuilder_Class */
-			self::getDescriptor_StringBuilder_Class($buf, $parameters[$i]);
-		}
-		$buf->append(')');
-			/* match: StringBuilder_Class */
-		self::getDescriptor_StringBuilder_Class($buf, $m->getReturnType());
-		return $buf->toString();
-	}
+    public static function getMethodDescriptor_Method($m) // [final Method m]
+    {
+        $parameters = $m->getParameterTypes();
+        $buf = new StringBuilder();
+        $buf->append('(');
+        for ($i = 0; ($i < count($parameters) /*from: parameters.length*/); ++$i) {
+            /* match: StringBuilder_Class */
+            self::getDescriptor_StringBuilder_Class($buf, $parameters[$i]);
+        }
+        $buf->append(')');
+            /* match: StringBuilder_Class */
+        self::getDescriptor_StringBuilder_Class($buf, $m->getReturnType());
+        return $buf->toString();
+    }
 
-	protected static function getDescriptor_StringBuilder_Class(&$buf, $c) // [final StringBuilder buf, final Class? c]
-	{
+    protected static function getDescriptor_StringBuilder_Class(&$buf, $c) // [final StringBuilder buf, final Class? c]
+    {
         while (true) {
             switch (true) {
                 case $c instanceof KarskType\Integer:
@@ -595,16 +593,17 @@ class Type
                 case $c instanceof KarskType\Array_:
                     $buf .= '[';
                     $c    = $c->getType();
+                    break;
                 case $c instanceof KarskType\Object_:
                     $buf .= 'L';
-                    str_replace(".","/", $c->getType());
+                    str_replace(".", "/", $c->getType());
                     $buf .= ';';
                     return;
                 default:
                     // scream
             }
         }
-	}
+    }
 
     /**
      * Returns the size of values of this type. This method must not be used for
@@ -613,10 +612,10 @@ class Type
      * @return int the size of values of this type, i.e., 2 for <tt>long</tt> and
      *             <tt>double</tt>, 0 for <tt>void</tt> and 1 otherwise.
      */
-	public function getSize() : int
-	{
-		return $this->buf == null ? ($this->off & 0xFF) : 1;
-	}
+    public function getSize() : int
+    {
+        return $this->buf == null ? ($this->off & 0xFF) : 1;
+    }
 
     /**
      * Returns a JVM instruction opcode adapted to this Java type. This method
@@ -630,18 +629,18 @@ class Type
      *             this Java type. For example, if this type is <tt>float</tt> and
      *             <tt>opcode</tt> is IRETURN, this method returns FRETURN.
      */
-	public function getOpcode(int $opcode) : int
-	{
-		if ((($opcode == Opcodes::IALOAD) || ($opcode == Opcodes::IASTORE))) {
+    public function getOpcode(int $opcode) : int
+    {
+        if ((($opcode == Opcodes::IALOAD) || ($opcode == Opcodes::IASTORE))) {
             // the offset for IALOAD or IASTORE is in byte 1 of 'off' for
             // primitive types (buf == null)
-			return ($opcode + (( (($this->buf == NULL)) ? ((($this->off & 0xFF00)) >> 8) : 4 )));
-		}else {
+            return ($opcode + (( (($this->buf == null)) ? ((($this->off & 0xFF00)) >> 8) : 4 )));
+        } else {
             // the offset for other instructions is in byte 2 of 'off' for
             // primitive types (buf == null)
-			return ($opcode + (( (($this->buf == NULL)) ? ((($this->off & 0xFF0000)) >> 16) : 4 )));
-		}
-	}
+            return ($opcode + (( (($this->buf == null)) ? ((($this->off & 0xFF0000)) >> 16) : 4 )));
+        }
+    }
 
     /**
      * Tests if the given object is equal to this type.
@@ -650,63 +649,62 @@ class Type
      *
      * @return bool <tt>true</tt> if the given object is equal to this type.
      */
-	public function equals($o) : bool
-	{
-		if ($this == $o) {
-			return true;
-		}
+    public function equals($o) : bool
+    {
+        if ($this == $o) {
+            return true;
+        }
 
-		if (!($o instanceof Type)) {
-			return false;
-		}
+        if (!($o instanceof Type)) {
+            return false;
+        }
 
-		$t = $o;
-		if ($this->sort != $t->sort) {
-			return false;
-		}
+        $t = $o;
+        if ($this->sort != $t->sort) {
+            return false;
+        }
 
-		if ($this->sort >= self::ARRAY) {
-			if (($this->len != $t->len)) {
-				return false;
-			}
+        if ($this->sort >= self::ARRAY) {
+            if (($this->len != $t->len)) {
+                return false;
+            }
 
-			for ($i = $this->off, $j = $t->off, $end = ($i + $this->len); ($i < $end); ++$i, ++$j) {
-				if (($this->buf[$i] != $t->buf[$j]))
-				{
-					return false;
-				}
-			}
-		}
+            for ($i = $this->off, $j = $t->off, $end = ($i + $this->len); ($i < $end); ++$i, ++$j) {
+                if (($this->buf[$i] != $t->buf[$j])) {
+                    return false;
+                }
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
     /**
      * Returns a hash code value for this type.
      *
      * @return int a hash code value for this type.
      */
-	public function hashCode() : int
-	{
-		$hc = (13 * $this->sort);
-		if (($this->sort >= self::ARRAY)) {
-			for ($i = $this->off, $end = ($i + $this->len); ($i < $end); ++$i) {
-				$hc = (17 * (($hc + $this->buf[$i])));
-			}
-		}
+    public function hashCode() : int
+    {
+        $hc = (13 * $this->sort);
+        if (($this->sort >= self::ARRAY)) {
+            for ($i = $this->off, $end = ($i + $this->len); ($i < $end); ++$i) {
+                $hc = (17 * (($hc + $this->buf[$i])));
+            }
+        }
 
-		return $hc;
-	}
+        return $hc;
+    }
 
     /**
      * Returns a string representation of this type.
      *
      * @return string the descriptor of this type.
      */
-	public function toString() : string
-	{
-		return $this->getDescriptor();
-	}
+    public function toString() : string
+    {
+        return $this->getDescriptor();
+    }
 
     /**
      * Returns a string representation of this type.

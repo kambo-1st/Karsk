@@ -45,35 +45,35 @@ namespace Kambo\Karsk;
  */
 class TypeReference
 {
-    public const CLASS_TYPE_PARAMETER = 0x00;	// int
-    public const METHOD_TYPE_PARAMETER = 0x01;	// int
-    public const CLASS_EXTENDS = 0x10;	// int
-    public const CLASS_TYPE_PARAMETER_BOUND = 0x11;	// int
-    public const METHOD_TYPE_PARAMETER_BOUND = 0x12;	// int
-    public const FIELD = 0x13;	// int
-    public const METHOD_RETURN = 0x14;	// int
-    public const METHOD_RECEIVER = 0x15;	// int
-    public const METHOD_FORMAL_PARAMETER = 0x16;	// int
-    public const THROWS = 0x17;	// int
-    public const LOCAL_VARIABLE = 0x40;	// int
-    public const RESOURCE_VARIABLE = 0x41;	// int
-    public const EXCEPTION_PARAMETER = 0x42;	// int
-    public const INSTANCEOF = 0x43;	// int
+    public const CLASS_TYPE_PARAMETER = 0x00;   // int
+    public const METHOD_TYPE_PARAMETER = 0x01;  // int
+    public const CLASS_EXTENDS = 0x10;  // int
+    public const CLASS_TYPE_PARAMETER_BOUND = 0x11; // int
+    public const METHOD_TYPE_PARAMETER_BOUND = 0x12;    // int
+    public const FIELD = 0x13;  // int
+    public const METHOD_RETURN = 0x14;  // int
+    public const METHOD_RECEIVER = 0x15;    // int
+    public const METHOD_FORMAL_PARAMETER = 0x16;    // int
+    public const THROWS = 0x17; // int
+    public const LOCAL_VARIABLE = 0x40; // int
+    public const RESOURCE_VARIABLE = 0x41;  // int
+    public const EXCEPTION_PARAMETER = 0x42;    // int
+    public const INSTANCEOF = 0x43; // int
     public const NEW = 0x44;// int
-    public const CONSTRUCTOR_REFERENCE = 0x45;	// int
-    public const METHOD_REFERENCE = 0x46;	// int
-    public const CAST = 0x47;	// int
-    public const CONSTRUCTOR_INVOCATION_TYPE_ARGUMENT = 0x48;	// int
-    public const METHOD_INVOCATION_TYPE_ARGUMENT = 0x49;	// int
-    public const CONSTRUCTOR_REFERENCE_TYPE_ARGUMENT = 0x4A;	// int
-    public const METHOD_REFERENCE_TYPE_ARGUMENT = 0x4B;	// int
+    public const CONSTRUCTOR_REFERENCE = 0x45;  // int
+    public const METHOD_REFERENCE = 0x46;   // int
+    public const CAST = 0x47;   // int
+    public const CONSTRUCTOR_INVOCATION_TYPE_ARGUMENT = 0x48;   // int
+    public const METHOD_INVOCATION_TYPE_ARGUMENT = 0x49;    // int
+    public const CONSTRUCTOR_REFERENCE_TYPE_ARGUMENT = 0x4A;    // int
+    public const METHOD_REFERENCE_TYPE_ARGUMENT = 0x4B; // int
 
     /**
      * The type reference value in Java class file format.
      *
      * @var int
      */
-	protected $value;	// int
+    protected $value;   // int
 
     /**
      * Creates a new TypeReference.
@@ -85,8 +85,8 @@ class TypeReference
      */
     public function __construct(int $typeRef)
     {
-		$this->value = $typeRef;
-	}
+        $this->value = $typeRef;
+    }
 
     /**
      * Returns a type reference of the given sort.
@@ -99,95 +99,95 @@ class TypeReference
      *            {@link #INSTANCEOF INSTANCEOF}, {@link #NEW NEW},
      *            {@link #CONSTRUCTOR_REFERENCE CONSTRUCTOR_REFERENCE}, or
      *            {@link #METHOD_REFERENCE METHOD_REFERENCE}.
-	 *
+     *
      * @return TypeReference a type reference of the given sort.
      */
-	public static function newTypeReference(int $sort) : TypeReference
-	{
-		return new self($sort << 24);
-	}
+    public static function newTypeReference(int $sort) : TypeReference
+    {
+        return new self($sort << 24);
+    }
 
-	public static function newTypeParameterReference(int $sort, int $paramIndex) : TypeReference
-	{
+    public static function newTypeParameterReference(int $sort, int $paramIndex) : TypeReference
+    {
         return new self(($sort << 24) | ($paramIndex << 16));
-	}
+    }
 
-	public static function newTypeParameterBoundReference(int $sort, int $paramIndex, int $boundIndex) : TypeReference
-	{
+    public static function newTypeParameterBoundReference(int $sort, int $paramIndex, int $boundIndex) : TypeReference
+    {
         return new self(($sort << 24) | ($paramIndex << 16) | ($boundIndex << 8));
-	}
+    }
 
-	public static function newSuperTypeReference(int $itfIndex) : TypeReference
-	{
-		$itfIndex &= 0xFFFF;
+    public static function newSuperTypeReference(int $itfIndex) : TypeReference
+    {
+        $itfIndex &= 0xFFFF;
 
         return new self((self::CLASS_EXTENDS << 24) | ($itfIndex << 8));
-	}
+    }
 
-	public static function newFormalParameterReference(int $paramIndex) : TypeReference
-	{
+    public static function newFormalParameterReference(int $paramIndex) : TypeReference
+    {
         return new self((self::METHOD_FORMAL_PARAMETER << 24) | ($paramIndex << 16));
-	}
+    }
 
-	public static function newExceptionReference(int $exceptionIndex) : TypeReference
-	{
+    public static function newExceptionReference(int $exceptionIndex) : TypeReference
+    {
         return new self((self::THROWS << 24) | ($exceptionIndex << 8));
-	}
+    }
 
-	public static function newTryCatchReference(int $tryCatchBlockIndex) : TypeReference
-	{
+    public static function newTryCatchReference(int $tryCatchBlockIndex) : TypeReference
+    {
         return new self((self::EXCEPTION_PARAMETER << 24) | ($tryCatchBlockIndex << 8));
-	}
+    }
 
-	public static function newTypeArgumentReference(int $sort, int $argIndex) : TypeReference
-	{
+    public static function newTypeArgumentReference(int $sort, int $argIndex) : TypeReference
+    {
         return new self(($sort << 24) | $argIndex);
-	}
+    }
 
-	public function getSort()
-	{
-		return $this->uRShift($this->value, 24);
-	}
+    public function getSort()
+    {
+        return $this->uRShift($this->value, 24);
+    }
 
-	public function getTypeParameterIndex()
-	{
-		return (($this->value & 0x00FF0000) >> 16);
-	}
+    public function getTypeParameterIndex()
+    {
+        return (($this->value & 0x00FF0000) >> 16);
+    }
 
-	public function getTypeParameterBoundIndex()
-	{
-		return (($this->value & 0x0000FF00) >> 8);
-	}
+    public function getTypeParameterBoundIndex()
+    {
+        return (($this->value & 0x0000FF00) >> 8);
+    }
 
-	public function getSuperTypeIndex()
-	{
-		return (($this->value & 0x00FFFF00) >> 8);
-	}
+    public function getSuperTypeIndex()
+    {
+        return (($this->value & 0x00FFFF00) >> 8);
+    }
 
-	public function getFormalParameterIndex()
-	{
-		return ((($this->value & 0x00FF0000)) >> 16);
-	}
+    public function getFormalParameterIndex()
+    {
+        return ((($this->value & 0x00FF0000)) >> 16);
+    }
 
-	public function getExceptionIndex()
-	{
-		return ((($this->value & 0x00FFFF00)) >> 8);
-	}
+    public function getExceptionIndex()
+    {
+        return ((($this->value & 0x00FFFF00)) >> 8);
+    }
 
-	public function getTryCatchBlockIndex()
-	{
-		return (($this->value & 0x00FFFF00) >> 8);
-	}
+    public function getTryCatchBlockIndex()
+    {
+        return (($this->value & 0x00FFFF00) >> 8);
+    }
 
-	public function getTypeArgumentIndex()
-	{
-		return ($this->value & 0xFF);
-	}
+    public function getTypeArgumentIndex()
+    {
+        return ($this->value & 0xFF);
+    }
 
-	public function getValue()
-	{
-		return $this->value;
-	}
+    public function getValue()
+    {
+        return $this->value;
+    }
 
     private function uRShift($a, $b)
     {

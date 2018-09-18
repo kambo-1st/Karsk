@@ -121,7 +121,7 @@ class Item
      * @param int  $index index of the item to be constructed.
      * @param Item $i the item that must be copied into the item to be constructed.
      */
-    public function __construct($index = null, Item $i = null, $hashProvider=null)
+    public function __construct($index = null, Item $i = null, $hashProvider = null)
     {
         if ($index !== null) {
             $this->index = $index;

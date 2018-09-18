@@ -49,7 +49,7 @@ class AbstractDataType implements DataType
      *
      * @param mixed $value simple data type value
      */
-    public function __construct($value=null)
+    public function __construct($value = null)
     {
         $this->value = $value;
     }

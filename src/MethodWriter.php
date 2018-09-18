@@ -147,9 +147,8 @@ class MethodWriter extends MethodVisitor
     }
     public static function constructor__ClassWriter_I_String_String_String_aString_I($cw, $access, $name, $desc, $signature, $exceptions, $compute) // [final ClassWriter cw, final int access, final String name, final String desc, final String signature, final String[] exceptions, final int compute]
     {
-        $me = new self();
+        $me = new self(Opcodes::ASM5);
         $me->__init();
-        parent::constructor__I(Opcodes::ASM5);
         if (($cw->firstMethod == null)) {
             $cw->firstMethod = $me;
         } else {
@@ -281,7 +280,6 @@ class MethodWriter extends MethodVisitor
 
     public function visitCode()
     {
-
     }
 
     /**
@@ -1001,11 +999,13 @@ class MethodWriter extends MethodVisitor
         return $str{$pos};
     }*/
 
-        private function uRShift($a, $b)
-{
-    if($b == 0) return $a;
-    return ($a >> $b) & ~(1<<(8*PHP_INT_SIZE-1)>>($b-1));
-}
+    private function uRShift($a, $b)
+    {
+        if ($b == 0) {
+            return $a;
+        }
+        return ($a >> $b) & ~(1<<(8*PHP_INT_SIZE-1)>>($b-1));
+    }
 
     public function visitLocalVariableAnnotation($typeRef, $typePath, $start, $end, $index, $desc, $visible) // [int typeRef, TypePath typePath, Label[] start, Label[] end, int[] index, String desc, boolean visible]
     {
@@ -1218,7 +1218,9 @@ class MethodWriter extends MethodVisitor
             $this->maxLocals = $maxLocals;
         }
     }
-    public function visitEnd() {}
+    public function visitEnd()
+    {
+    }
     protected function addSuccessor($info, $successor) // [final int info, final Label successor]
     {
         $b = new Edge();
@@ -1289,10 +1291,10 @@ class MethodWriter extends MethodVisitor
         $this->endFrame();
     }
 
-private function charAt($str, $pos)
-{
-  return $str{$pos};
-}
+    private function charAt($str, $pos)
+    {
+        return $str{$pos};
+    }
 
     protected function visitImplicitFirstFrame()
     {
@@ -1349,7 +1351,7 @@ private function charAt($str, $pos)
                         ++$i;
                     }
 
-                    $frame[$frameIndex++] = Frame::OBJECT | $this->cw->addType(substr($descriptor, $j+1, $i++) );
+                    $frame[$frameIndex++] = Frame::OBJECT | $this->cw->addType(substr($descriptor, $j+1, $i++));
 
                     break;
                 default:

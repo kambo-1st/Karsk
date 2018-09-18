@@ -45,48 +45,48 @@ class TypePath
     /**
      * A type path step that steps into the element type of an array type. See
      * {@link #getStep getStep}.
-	 *
-	 * @var int
+     *
+     * @var int
      */
-	public const ARRAY_ELEMENT = 0;
+    public const ARRAY_ELEMENT = 0;
 
     /**
      * A type path step that steps into the nested type of a class type. See
      * {@link #getStep getStep}.
-	 *
-	 * @var int
+     *
+     * @var int
      */
-	public const INNER_TYPE = 1;
+    public const INNER_TYPE = 1;
 
     /**
      * A type path step that steps into the bound of a wildcard type. See
      * {@link #getStep getStep}.
-	 *
-	 * @var int
+     *
+     * @var int
      */
-	public const WILDCARD_BOUND = 2;
+    public const WILDCARD_BOUND = 2;
 
     /**
      * A type path step that steps into a type argument of a generic type. See
      * {@link #getStep getStep}.
-	 *
-	 * @var int
+     *
+     * @var int
      */
-	public const TYPE_ARGUMENT = 3;
+    public const TYPE_ARGUMENT = 3;
 
     /**
      * The byte array where the path is stored, in Java class file format.
-	 *
-	 * @var array
+     *
+     * @var array
      */
-	protected $b;
+    protected $b;
 
     /**
      * The offset of the first byte of the type path in 'b'.
-	 *
-	 * @var int
+     *
+     * @var int
      */
-	protected $offset;
+    protected $offset;
 
     /**
      * Creates a new type path.
@@ -97,35 +97,35 @@ class TypePath
      * @param int   $offset
      *              the offset of the first byte of the type path in 'b'.
      */
-	public function __construct(array $b, int $offset)
-	{
-		$this->b = $b;
-		$this->offset = $offset;
-	}
+    public function __construct(array $b, int $offset)
+    {
+        $this->b = $b;
+        $this->offset = $offset;
+    }
 
     /**
      * Returns the length of this path.
      *
      * @return int the length of this path.
      */
-	public function getLength() : int
-	{
-		return $this->b[$this->offset];
-	}
+    public function getLength() : int
+    {
+        return $this->b[$this->offset];
+    }
 
     /**
      * Returns the value of the given step of this path.
      *
      * @param int $index an index between 0 and {@link #getLength()}, exclusive.
-	 *
+     *
      * @return int {@link #ARRAY_ELEMENT ARRAY_ELEMENT}, {@link #INNER_TYPE
      *         INNER_TYPE}, {@link #WILDCARD_BOUND WILDCARD_BOUND}, or
      *         {@link #TYPE_ARGUMENT TYPE_ARGUMENT}.
      */
-	public function getStep(int $index) : int
-	{
-		return $this->b[(($this->offset + (2 * $index)) + 1)];
-	}
+    public function getStep(int $index) : int
+    {
+        return $this->b[(($this->offset + (2 * $index)) + 1)];
+    }
 
     /**
      * Returns the index of the type argument that the given step is stepping
@@ -133,14 +133,14 @@ class TypePath
      * {@link #TYPE_ARGUMENT TYPE_ARGUMENT}.
      *
      * @param int $index an index between 0 and {@link #getLength()}, exclusive.
-	 *
+     *
      * @return int  the index of the type argument that the given step is stepping
      *              into.
      */
-	public function getStepArgument(int $index) : int
-	{
-		return $this->b[(($this->offset + (2 * $index)) + 2)];
-	}
+    public function getStepArgument(int $index) : int
+    {
+        return $this->b[(($this->offset + (2 * $index)) + 2)];
+    }
 
     /**
      * Converts a type path in string form, in the format used by
@@ -148,46 +148,46 @@ class TypePath
      *
      * @param string $typePath a type path in string form, in the format used by
      *                         {@link #toString()}. May be null or empty.
-	 *
+     *
      * @return TypePath the corresponding TypePath object, or null if the path is empty.
      */
-	public static function fromString(string $typePath) : TypePath
-	{
-		if (($typePath === null) || (strlen($typePath) === 0)) {
-			return null;
-		}
+    public static function fromString(string $typePath) : TypePath
+    {
+        if (($typePath === null) || (strlen($typePath) === 0)) {
+            return null;
+        }
 
-		$n   = strlen($typePath);
-		$out = new ByteVector($n);
-		$out->putByte(0);
+        $n   = strlen($typePath);
+        $out = new ByteVector($n);
+        $out->putByte(0);
 
-		for ($i = 0; ($i < $n); ) {
-			$c = self::charAt($typePath, $i++);
-			if (($c == '[')) {
-				$out->put11(self::ARRAY_ELEMENT, 0);
-			} else if (($c == '.')) {
-				$out->put11(self::INNER_TYPE, 0);
-			} else if (($c == '*')) {
-				$out->put11(self::WILDCARD_BOUND, 0);
-			} else if (($c >= '0') && ($c <= '9')) {
-				$typeArg = $c - '0';
-				while (($i < $n) && (($c = $typePath->charAt($i)) >= '0') && ($c <= '9')) {
-					$typeArg = ((($typeArg * 10) + $c) - '0');
-					$i += 1;
-				}
+        for ($i = 0; ($i < $n);) {
+            $c = self::charAt($typePath, $i++);
+            if (($c == '[')) {
+                $out->put11(self::ARRAY_ELEMENT, 0);
+            } elseif (($c == '.')) {
+                $out->put11(self::INNER_TYPE, 0);
+            } elseif (($c == '*')) {
+                $out->put11(self::WILDCARD_BOUND, 0);
+            } elseif (($c >= '0') && ($c <= '9')) {
+                $typeArg = $c - '0';
+                while (($i < $n) && (($c = $typePath->charAt($i)) >= '0') && ($c <= '9')) {
+                    $typeArg = ((($typeArg * 10) + $c) - '0');
+                    $i += 1;
+                }
 
-				if ((($i < $n) && ($typePath->charAt($i) == ';'))) {
-					$i += 1;
-				}
+                if ((($i < $n) && ($typePath->charAt($i) == ';'))) {
+                    $i += 1;
+                }
 
-				$out->put11(self::TYPE_ARGUMENT, $typeArg);
-			}
-		}
+                $out->put11(self::TYPE_ARGUMENT, $typeArg);
+            }
+        }
 
-		$out->data[0] = ((count($out) / 2));
+        $out->data[0] = ((count($out) / 2));
 
-		return new self($out->data, 0);
-	}
+        return new self($out->data, 0);
+    }
 
     /**
      * Returns a string representation of this type path. {@link #ARRAY_ELEMENT
@@ -195,39 +195,39 @@ class TypePath
      * INNER_TYPE} steps with '.', {@link #WILDCARD_BOUND WILDCARD_BOUND} steps
      * with '*' and {@link #TYPE_ARGUMENT TYPE_ARGUMENT} steps with their type
      * argument index in decimal form followed by ';'.
-	 *
-	 * @return string
+     *
+     * @return string
      */
-	public function toString() : string
-	{
-		$length = $this->getLength();
-		$result = '';
-		for ($i = 0; ($i < $length); ++$i) {
-			switch ($this->getStep($i)) {
-				case self::ARRAY_ELEMENT:
+    public function toString() : string
+    {
+        $length = $this->getLength();
+        $result = '';
+        for ($i = 0; ($i < $length); ++$i) {
+            switch ($this->getStep($i)) {
+                case self::ARRAY_ELEMENT:
                     $result .= '[';
-					break;
-				case self::INNER_TYPE:
+                    break;
+                case self::INNER_TYPE:
                     $result .='.';
-					break;
-				case self::WILDCARD_BOUND:
+                    break;
+                case self::WILDCARD_BOUND:
                     $result .='*';
-					break;
-				case self::TYPE_ARGUMENT:
+                    break;
+                case self::TYPE_ARGUMENT:
                     $result .= $this->getStepArgument($i).';';
-					break;
-				default:
+                    break;
+                default:
                     $result .='_';
-			}
-		}
+            }
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 
     public function __toString() : string
-	{
-		return $this->toString();
-	}
+    {
+        return $this->toString();
+    }
 
     private function charAt($str, $pos)
     {

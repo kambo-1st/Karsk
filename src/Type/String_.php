@@ -1,4 +1,6 @@
 <?php
+// phpcs:disable Squiz.Classes.ValidClassName
+
 /***
  * Karsk - write java bytecode in PHP!
  * Copyright (c) 2018, Bohuslav Šimek
