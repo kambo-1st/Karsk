@@ -100,7 +100,7 @@ class FunctionCallTest extends ExecutionTestCase
             '    descriptor: ([Ljava/lang/String;)V',
             '    flags: ACC_PUBLIC, ACC_STATIC',
             '    Code:',
-            '      stack=3, locals=16, args_size=1',
+            '      stack=4, locals=16, args_size=1',
             '         0: getstatic     #19                 // Field java/lang/System.out:Ljava/io/PrintStream;',
             '         3: bipush        10',
             '         5: bipush        10',

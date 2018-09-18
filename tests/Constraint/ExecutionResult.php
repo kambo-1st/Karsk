@@ -121,6 +121,10 @@ class ExecutionResult extends Constraint
             $line = $line. "\n";
         }
 
+        foreach ($other as &$line) {
+            $line = $line. "\n";
+        }
+
         return $differ->diff($other, $this->executionResult);
     }
 }

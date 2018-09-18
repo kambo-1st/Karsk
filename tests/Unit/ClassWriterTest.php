@@ -2348,7 +2348,7 @@ class ClassWriterTest extends TestCase
             471 => 0,
             472 => 60,
             473 => 0,
-            474 => 3,
+            474 => 4,
             475 => 0,
             476 => 16,
             477 => 0,
