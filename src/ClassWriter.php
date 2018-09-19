@@ -966,7 +966,7 @@ class ClassWriter extends ClassVisitor
      */
     public function newUTF8(string $value) : int
     {
-        $this->key->set_I_String_String_String(self::$UTF8, $value, null, null);
+        $this->key->setComplex(self::$UTF8, $value, null, null);
         $result = $this->get($this->key);
         if ($result == null) {
             $this->pool->putByte(self::$UTF8)->putUTF8($value);
@@ -989,7 +989,7 @@ class ClassWriter extends ClassVisitor
      */
     public function newClassItem(string $value) : Item
     {
-        $this->key2->set_I_String_String_String(self::$CLASS, $value, null, null);
+        $this->key2->setComplex(self::$CLASS, $value, null, null);
         $result = $this->get($this->key2);
 
         if ($result == null) {
@@ -1018,7 +1018,7 @@ class ClassWriter extends ClassVisitor
 
     protected function newMethodTypeItem($methodDesc) // [final String methodDesc]
     {
-        $this->key2->set_I_String_String_String(self::$MTYPE, $methodDesc, null, null);
+        $this->key2->setComplex(self::$MTYPE, $methodDesc, null, null);
         $result = $this->get($this->key2);
         if ($result == null) {
             $this->pool->put12(self::$MTYPE, $this->newUTF8($methodDesc));
@@ -1061,7 +1061,7 @@ class ClassWriter extends ClassVisitor
      */
     public function newHandleItem(int $tag, string $owner, string $name, string $desc, bool $itf) : Item
     {
-        $this->key4->set_I_String_String_String((self::$HANDLE_BASE + $tag), $owner, $name, $desc);
+        $this->key4->setComplex((self::$HANDLE_BASE + $tag), $owner, $name, $desc);
         $result = $this->get($this->key4);
         if ($result == null) {
             if (($tag <= Opcodes::H_PUTSTATIC)) {
@@ -1118,7 +1118,7 @@ class ClassWriter extends ClassVisitor
 
     public function newFieldItem($owner, $name, $desc) // [final String owner, final String name, final String desc]
     {
-        $this->key3->set_I_String_String_String(self::$FIELD, $owner, $name, $desc);
+        $this->key3->setComplex(self::$FIELD, $owner, $name, $desc);
         $result = $this->get($this->key3);
         if ($result == null) {
             $this->put122(self::$FIELD, $this->newClass($owner), $this->newNameType($name, $desc));
@@ -1152,7 +1152,7 @@ class ClassWriter extends ClassVisitor
     public function newMethodItem(string $owner, string $name, string $desc, bool $itf) : Item
     {
         $type = ( ($itf) ? self::$IMETH : self::$METH );
-        $this->key3->set_I_String_String_String($type, $owner, $name, $desc);
+        $this->key3->setComplex($type, $owner, $name, $desc);
         $result = $this->get($this->key3);
         if ($result == null) {
             $this->put122($type, $this->newClass($owner), $this->newNameType($name, $desc));
@@ -1187,7 +1187,7 @@ class ClassWriter extends ClassVisitor
 
     protected function newInteger($value) // [final int value]
     {
-        $this->key->set_I($value);
+        $this->key->setInteger($value);
         $result = $this->get($this->key);
         if ($result == null) {
             $this->pool->putByte(self::$INT)->putInt($value);
@@ -1200,7 +1200,7 @@ class ClassWriter extends ClassVisitor
 
     protected function newFloat($value) // [final float value]
     {
-        $this->key->set($value);
+        $this->key->setFloat($value);
         $result = $this->get($this->key);
         if ($result == null) {
             $this->pool->putByte(self::$FLOAT)->putInt($this->key->intVal);
@@ -1213,7 +1213,7 @@ class ClassWriter extends ClassVisitor
 
     protected function newLong($value) // [final long value]
     {
-        $this->key->set_L($value);
+        $this->key->setLong($value);
         $result = $this->get($this->key);
         if ($result == null) {
             $this->pool->putByte(self::$LONG)->putLong($value);
@@ -1227,7 +1227,7 @@ class ClassWriter extends ClassVisitor
 
     protected function newDouble($value) // [final double value]
     {
-        $this->key->set_D($value);
+        $this->key->setDouble($value);
         $result = $this->get($this->key);
         if ($result == null) {
             $this->pool->putByte(self::$DOUBLE)->putLong($this->key->longVal);
@@ -1241,7 +1241,7 @@ class ClassWriter extends ClassVisitor
 
     protected function newString($value) // [final String value]
     {
-        $this->key2->set_I_String_String_String(self::$STR, $value, null, null);
+        $this->key2->setComplex(self::$STR, $value, null, null);
         $result = $this->get($this->key2);
         if ($result == null) {
             $this->pool->put12(self::$STR, $this->newUTF8($value));
@@ -1279,7 +1279,7 @@ class ClassWriter extends ClassVisitor
      */
     protected function newNameTypeItem(string $name, string $desc) : Item
     {
-        $this->key2->set_I_String_String_String(self::$NAME_TYPE, $name, $desc, null);
+        $this->key2->setComplex(self::$NAME_TYPE, $name, $desc, null);
         $result = $this->get($this->key2);
         if ($result == null) {
             $this->put122(self::$NAME_TYPE, $this->newUTF8($name), $this->newUTF8($desc));

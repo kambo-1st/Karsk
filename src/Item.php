@@ -51,6 +51,30 @@ class Item
      */
     public $index;
 
+    /**
+     * Type of this constant pool item. A single class is used to represent all
+     * constant pool item types, in order to minimize the bytecode size of this
+     * package. The value of this field is one of {@link ClassWriter#INT},
+     * {@link ClassWriter#LONG}, {@link ClassWriter#FLOAT},
+     * {@link ClassWriter#DOUBLE}, {@link ClassWriter#UTF8},
+     * {@link ClassWriter#STR}, {@link ClassWriter#CLASS},
+     * {@link ClassWriter#NAME_TYPE}, {@link ClassWriter#FIELD},
+     * {@link ClassWriter#METH}, {@link ClassWriter#IMETH},
+     * {@link ClassWriter#MTYPE}, {@link ClassWriter#INDY}.
+     *
+     * MethodHandle constant 9 variations are stored using a range of 9 values
+     * from {@link ClassWriter#HANDLE_BASE} + 1 to
+     * {@link ClassWriter#HANDLE_BASE} + 9.
+     *
+     * Special Item types are used for Items that are stored in the ClassWriter
+     * {@link ClassWriter#typeTable}, instead of the constant pool, in order to
+     * avoid clashes with normal constant pool items in the ClassWriter constant
+     * pool's hash table. These special item types are
+     * {@link ClassWriter#TYPE_NORMAL}, {@link ClassWriter#TYPE_UNINIT} and
+     * {@link ClassWriter#TYPE_MERGED}.
+     *
+     * @var int
+     */
     public $type;
 
     /**
@@ -118,8 +142,9 @@ class Item
      * Constructs an uninitialized {@link Item} for constant pool element at
      * given position or copy of given item.
      *
-     * @param int  $index index of the item to be constructed.
-     * @param Item $i the item that must be copied into the item to be constructed.
+     * @param int      $index        index of the item to be constructed.
+     * @param Item     $i            the item that must be copied into the item to be constructed.
+     * @param HashCode $hashProvider hashing algorithm provider
      */
     public function __construct($index = null, Item $i = null, $hashProvider = null)
     {
@@ -151,7 +176,7 @@ class Item
      *
      * @return void
      */
-    public function set_I($intVal)
+    public function setInteger($intVal) : void
     {
         $this->type     = ClassWriter::$INT;
         $this->intVal   = $intVal;
@@ -165,7 +190,7 @@ class Item
      *
      * @return void
      */
-    public function set_L($longVal)
+    public function setLong($longVal) : void
     {
         $this->type     = ClassWriter::$LONG;
         $this->longVal  = $longVal;
@@ -179,10 +204,10 @@ class Item
      *
      * @return void
      */
-    public function set_F($floatVal)
+    public function setFloat($floatVal) : void
     {
         $this->type     = ClassWriter::$FLOAT;
-        $this->intVal   = $Float->floatToRawIntBits($floatVal);
+        $this->intVal   = $floatVal; // TODO need more love //$Float->floatToRawIntBits($floatVal);
         $this->hashCode = (0x7FFFFFFF & (($this->type + $floatVal)));
     }
     /**
@@ -192,7 +217,7 @@ class Item
      *
      * @return void
      */
-    public function set_D($doubleVal)
+    public function setDouble($doubleVal) : void
     {
         $this->type     = ClassWriter::$DOUBLE;
         $this->longVal  = $doubleVal; // TODO need more love //$Double->doubleToRawLongBits($doubleVal);
@@ -202,14 +227,14 @@ class Item
     /**
      * Sets this item to an item that do not hold a primitive value.
      *
-     * @param int $type the type of this item.
+     * @param int    $type    the type of this item.
      * @param string $strVal1 first part of the value of this item.
      * @param string $strVal2 second part of the value of this item.
      * @param string $strVal3 third part of the value of this item.
      *
      * @return void
      */
-    public function set_I_String_String_String($type, $strVal1, $strVal2, $strVal3)
+    public function setComplex($type, $strVal1, $strVal2, $strVal3)
     {
         $this->type = $type;
         $this->strVal1 = $strVal1;
@@ -240,20 +265,20 @@ class Item
     /**
      * Sets the item to an InvokeDynamic item.
      *
-     * @param string $name invokedynamic's name.
-     * @param string $desc invokedynamic's desc.
+     * @param string $name     invokedynamic's name.
+     * @param string $desc     invokedynamic's description.
      * @param int    $bsmIndex zero based index into the class attribute BootrapMethods.
      *
      * @return void
      */
-    public function set_String_String_I($name, $desc, $bsmIndex)
+    public function setInvokeDynamic($name, $desc, $bsmIndex) : void
     {
         $this->type     = ClassWriter::$INDY;
         $this->longVal  = $bsmIndex;
         $this->strVal1  = $name;
         $this->strVal2  = $desc;
         $this->hashCode = (0x7FFFFFFF &
-            ((ClassWriter::$INDY + (($bsmIndex * $this->strVal1->hashCode()) * $this->strVal2->hashCode())))
+            (ClassWriter::$INDY + (($bsmIndex * $this->strVal1->hashCode()) * $this->strVal2->hashCode()))
         );
     }
 
@@ -267,7 +292,7 @@ class Item
      *
      * @return void
      */
-    public function set_I_I($position, $hashCode)
+    public function setBootstrapMethod($position, $hashCode)
     {
         $this->type     = ClassWriter::$BSM;
         $this->intVal   = $position;
@@ -283,7 +308,7 @@ class Item
      *
      * @return bool true if the given item if equal to this one, false otherwise.
      */
-    public function isEqualTo($i)
+    public function isEqualTo(Item $i) : bool
     {
         switch ($this->type) {
             case ClassWriter::$UTF8:
