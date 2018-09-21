@@ -1315,7 +1315,7 @@ class ClassWriter extends ClassVisitor
      */
     public function addType(string $type) : int
     {
-        $this->key->set(self::$TYPE_NORMAL, $type, null, null);
+        $this->key->setComplex(self::$TYPE_NORMAL, $type, null, null);
         $result = $this->get($this->key);
         if ($result == null) {
             $result = $this->addTypeItem($this->key);
