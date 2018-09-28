@@ -45,18 +45,89 @@ use Kambo\Karsk\Type as KarskType;
  */
 class Type
 {
-    public const VOID = 0;  // int
-    public const BOOLEAN = 1;   // int
-    public const CHAR = 2;  // int
-    public const BYTE = 3;  // int
-    public const SHORT = 4; // int
-    public const INT = 5;   // int
-    public const FLOAT = 6; // int
-    public const LONG = 7;  // int
-    public const DOUBLE = 8;    // int
-    public const ARRAY = 9; // int
-    public const OBJECT = 10;   // int
-    public const METHOD = 11;   // int
+    /**
+     * The sort of the <tt>void</tt> type. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const VOID = 0;
+
+    /**
+     * The sort of the <tt>boolean</tt> type. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const BOOLEAN = 1;
+
+    /**
+     * The sort of the <tt>char</tt> type. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const CHAR = 2;
+
+    /**
+     * The sort of the <tt>byte</tt> type. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const BYTE = 3;
+
+    /**
+     * The sort of the <tt>short</tt> type. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const SHORT = 4;
+
+    /**
+     * The sort of the <tt>int</tt> type. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const INT = 5;
+
+    /**
+     * The sort of the <tt>float</tt> type. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const FLOAT = 6;
+
+    /**
+     * The sort of the <tt>long</tt> type. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const LONG = 7;
+
+    /**
+     * The sort of the <tt>double</tt> type. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const DOUBLE = 8;
+
+    /**
+     * The sort of array reference types. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const ARRAY = 9;
+
+    /**
+     * The sort of object reference types. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const OBJECT = 10;
+
+    /**
+     * The sort of method types. See {@link #getSort getSort}.
+     *
+     * @var int
+     */
+    public const METHOD = 11;
 
     /**
      * The sort of this Java type.
@@ -124,14 +195,32 @@ class Type
         );
     }
 
-    public static function getMethodType_String($methodDescriptor) // [final String methodDescriptor]
+    /**
+     * Returns the Java type corresponding to the given method descriptor.
+     * Equivalent to <code>Type.getType(methodDescriptor)</code>.
+     *
+     * @param string $methodDescriptor a method descriptor.
+     *
+     * @return Type the Java type corresponding to the given method descriptor.
+     */
+    public static function getMethodTypeFromDescriptor(string $methodDescriptor) : Type
     {
-        return self::getType_aC_I($methodDescriptor->toCharArray(), 0);
+        return self::getTypeFromArray($methodDescriptor->toCharArray(), 0);
     }
 
-    public static function getMethodType_Type_Type($returnType, ...$argumentTypes)
+    /**
+     * Returns the Java method type corresponding to the given argument and
+     * return types.
+     *
+     * @param Type   $returnType    the return type of the method.
+     * @param Type[] $argumentTypes the argument types of the method.
+     *
+     * @return Type the Java type corresponding to the given argument and return
+     *         types.
+     */
+    public static function getMethodType(Type $returnType, Type ...$argumentTypes) : Type
     {
-        return self::getType_String(self::getMethodDescriptor_Type_Type($returnType, ...$argumentTypes));
+        return self::getType_String(self::getMethodDescriptor($returnType, ...$argumentTypes));
     }
 
     /**
@@ -144,7 +233,7 @@ class Type
      *
      * @return Type the Java type corresponding to the given type descriptor.
      */
-    protected static function getType_aC_I(array $buf, int $off) : Type
+    private static function getTypeFromArray(array $buf, int $off) : Type
     {
         $len = null;
         switch ($buf[$off]) {
@@ -192,12 +281,39 @@ class Type
         }
     }
 
-    public static function getType_String($typeDescriptor) // [final String typeDescriptor]
+    /**
+     * Returns the Java type corresponding to the given class/type descriptor/constructor/method.
+     *
+     * @param mixed $type a class/type descriptor/constructor/method
+     *
+     * @return Type the Java type corresponding to the given class.
+     */
+    public static function getType($type) : Type
     {
-        return self::getType_aC_I($typeDescriptor->toCharArray(), 0);
+        switch (true) {
+            case $type instanceof Constructor:
+                $cdesc = self::getConstructorDescriptor($type);
+                return self::getTypeFromArray(str_split($cdesc), 0);
+            case $type instanceof Method:
+                $mDesc = self::getMethodDescriptorFromMethod($type);
+                return self::getTypeFromArray(str_split($mDesc), 0);
+            case is_string($type):
+                return self::getTypeFromArray(str_split($type), 0);
+            case is_object($type):
+                return self::getTypeFromClass(str_split($type), 0);
+        }
+
+        // TODO scream
     }
 
-    public static function getType_Class($c) // [final Class? c]
+    /**
+     * Returns the Java type corresponding to the given class.
+     *
+     * @param object $c a class.
+     *
+     * @return Type the Java type corresponding to the given class.
+     */
+    private static function getTypeFromClass($c) : Type
     {
         switch (gettype($c)) {
             case 'boolean':
@@ -207,63 +323,39 @@ class Type
             case 'double': // for historical reasons "double" is returned in case of a float, and not simply "float"
                 return new self(self::FLOAT, null, (((((ord('F') << 24)) | ((2 << 16))) | ((2 << 8))) | 1), 1);
             case 'string':
-                return self::getType_String(self::getDescriptor_Class($c));
+                return self::getType_String(self::getDescriptorOfClass($c));
             case 'object':
-                return self::getType_String(self::getDescriptor_Class($c));
+                return self::getType_String(self::getDescriptorOfClass($c));
             default:
                 throw new IllegalArgumentException("value " . var_export($c, true));
         }
     }
 
-    public static function getType_Constructor($c) // [final Constructor? c]
+    /**
+     * Returns the Java type corresponding to the return type of the given
+     * method or method descriptor. If the parameter was not provided returns
+     * the return type of methods of this type. This method should only be used
+     * for method types.
+     *
+     * @param $method a method.
+     *
+     * @return Type the return type of methods of this type.
+     */
+    public function getReturnType($method = null) : Type
     {
-        return self::getType_String(self::getConstructorDescriptor($c));
-    }
-
-    public static function getType_Method($m) // [final Method m]
-    {
-        return self::getType_String(self::getMethodDescriptor_Method($m));
-    }
-
-    public static function getArgumentTypes_String($methodDescriptor) // [final String methodDescriptor]
-    {
-        $buf = $methodDescriptor->toCharArray();
-        $off = 1;
-        $size = 0;
-        while (true) {
-            $car = $buf[$off++];
-            if (($car == ')')) {
-                break;
-            } elseif (($car == 'L')) {
-                while (($buf[$off++] != ';')) {
-                    ++$size;
-                }
-            } elseif (($car != '[')) {
-                ++$size;
-            }
+        if ($method instanceof Method) {
+            return self::getType_Constructor($method->getReturnType());
         }
 
-        $args = [];
-        $off  = 1;
-        $size = 0;
-        while ($buf[$off] != ')') {
-            $args[$size] = self::getType_aC_I($buf, $off);
-            $off += ($args[$size]->len + (( (($args[$size]->sort == self::OBJECT)) ? 2 : 0 )));
-            $size += 1;
+        if (is_string($method)) {
+            return $this::getReturnTypeString($method);
         }
 
-        return $args;
-    }
-
-    public static function getArgumentTypes_Method($method) // [final Method method]
-    {
-        $classes = $method->getParameterTypes();
-        $types   = [];
-        for ($i = (count($classes) - 1); ($i >= 0); --$i) {
-            $types[$i] = self::getType_Constructor($classes[$i]);
+        if ($method === null) {
+            return $this::getReturnTypeString($this->getDescriptor());
         }
 
-        return $types;
+        // TODO scream
     }
 
     /**
@@ -274,24 +366,19 @@ class Type
      *
      * @return Type the Java type corresponding to the return type of the given method descriptor.
      */
-    public static function getReturnType_String($methodDescriptor) : Type
+    private static function getReturnTypeString($methodDescriptor) : Type
     {
         $buf = str_split($methodDescriptor);
         $off = 1;
         while (true) {
             $car = $buf[++$off];
             if (($car == ')')) {
-                return self::getType_aC_I($buf, $off);
+                return self::getTypeFromArray($buf, $off);
             } elseif (($car == 'L')) {
                 while (($buf[++$off] . ';')) {
                 }
             }
         }
-    }
-
-    public static function getReturnType_Method($method) // [final Method method]
-    {
-        return self::getType_Constructor($method->getReturnType());
     }
 
     /**
@@ -388,8 +475,7 @@ class Type
      */
     public function getElementType()
     {
-            /* match: aC_I */
-        return $this->getType_aC_I($this->buf, ($this->off + $this->getDimensions()));
+        return $this->getTypeFromArray($this->buf, ($this->off + $this->getDimensions()));
     }
 
     /**
@@ -448,6 +534,21 @@ class Type
     }
 
     /**
+     * Returns the internal name of the given class. The internal name of a
+     * class is its fully qualified name, as returned by Class.getName(), where
+     * '.' are replaced by '/'.
+     *
+     * @param object $c an object or array class.
+     *
+     * @return string the internal name of the given class.
+     */
+    public static function getInternalNameOfClass($c) : string
+    {
+        // TODO Invalid implementation
+        return $c->getName()->replace('.', '/');
+    }
+
+    /**
      * Returns the argument types of methods of this type. This method should
      * only be used for method types.
      *
@@ -456,17 +557,6 @@ class Type
     public function getArgumentTypes() : array
     {
         return $this->getArgumentTypes_String($this->getDescriptor());
-    }
-
-    /**
-     * Returns the return type of methods of this type. This method should only
-     * be used for method types.
-     *
-     * @return Type the return type of methods of this type.
-     */
-    public function getReturnType() : Type
-    {
-        return $this->getReturnType_String($this->getDescriptor());
     }
 
     // ------------------------------------------------------------------------
@@ -481,12 +571,37 @@ class Type
     public function getDescriptor() : string
     {
         $buf = [];
-        $this->getDescriptor_StringBuilder($buf);
+        $this->getDescriptorFromBuf($buf);
 
         return implode('', $buf);
     }
 
-    public static function getMethodDescriptor_Type_Type(Type $returnType, Type ...$argumentTypes) : string
+    /**
+     * Returns the descriptor corresponding to the given Java type.
+     *
+     * @param object $c an object class, a primitive class or an array class.
+     *
+     * @return string the descriptor corresponding to the given class.
+     */
+    public static function getDescriptorOfClass($c)
+    {
+        $buf = [];
+        self::getDescriptorFromClass($buf, $c);
+
+        return implode('', $buf);
+    }
+
+    /**
+     * Returns the descriptor corresponding to the given argument and return
+     * types.
+     *
+     * @param Type   $returnType    the return type of the method.
+     * @param Type[] $argumentTypes the argument types of the method.
+     *
+     * @return string the descriptor corresponding to the given argument and return
+     *         types.
+     */
+    public static function getMethodDescriptor(Type $returnType, Type ...$argumentTypes) : string
     {
         $buf = new StringBuilder();
         $buf->append('(');
@@ -495,12 +610,42 @@ class Type
         }
 
         $buf->append(')');
-        $returnType->getDescriptor_StringBuilder($buf);
+        $returnType->getDescriptorFromBuf($buf);
 
         return implode('', $buf);
     }
 
-    protected function getDescriptor_StringBuilder(&$buf) // [final StringBuilder buf]
+    /**
+     * Returns the descriptor corresponding to the given method.
+     *
+     * @param Method $m a {@link Method Method} object.
+     *
+     * @return string the descriptor of the given method.
+     */
+    public static function getMethodDescriptorFromMethod($m)
+    {
+        $parameters = $m->getParameterTypes();
+        $buf        = new StringBuilder();
+
+        $buf->append('(');
+        for ($i = 0; ($i < count($parameters) /*from: parameters.length*/); ++$i) {
+            /* match: StringBuilder_Class */
+            self::getDescriptorFromClass($buf, $parameters[$i]);
+        }
+
+        $buf->append(')');
+
+        self::getDescriptorFromClass($buf, $m->getReturnType());
+        return $buf->toString();
+    }
+
+    /**
+     * Appends the descriptor corresponding to this Java type to the given
+     * string buffer.
+     *
+     * @param array $buf the string buffer to which the descriptor must be appended.
+     */
+    private function getDescriptorFromBuf(&$buf) // [final StringBuilder buf]
     {
         if ($this->buf == null) {
             $buf = str_split((string)$this->uRShift(($this->off & 0xFF000000), 24));
@@ -513,53 +658,15 @@ class Type
         }
     }
 
-    private function uRShift($a, $b)
-    {
-        return ($a >> $b & 0xFF);
-    }
-
-    public static function getInternalName_Class($c) // [final Class? c]
-    {
-        return $c->getName()->replace('.', '/');
-    }
-
-    public static function getDescriptor_Class($c) // [final Class? c]
-    {
-        $buf = new StringBuilder();
-            /* match: StringBuilder_Class */
-        self::getDescriptor_StringBuilder_Class($buf, $c);
-        return $buf->toString();
-    }
-
-    public static function getConstructorDescriptor($c) // [final Constructor? c]
-    {
-        $parameters = $c->getParameterTypes();
-        $buf = new StringBuilder();
-        $buf->append('(');
-        for ($i = 0; ($i < count($parameters) /*from: parameters.length*/); ++$i) {
-            /* match: StringBuilder_Class */
-            self::getDescriptor_StringBuilder_Class($buf, $parameters[$i]);
-        }
-
-        return $buf->append(")V")->toString();
-    }
-
-    public static function getMethodDescriptor_Method($m) // [final Method m]
-    {
-        $parameters = $m->getParameterTypes();
-        $buf = new StringBuilder();
-        $buf->append('(');
-        for ($i = 0; ($i < count($parameters) /*from: parameters.length*/); ++$i) {
-            /* match: StringBuilder_Class */
-            self::getDescriptor_StringBuilder_Class($buf, $parameters[$i]);
-        }
-        $buf->append(')');
-            /* match: StringBuilder_Class */
-        self::getDescriptor_StringBuilder_Class($buf, $m->getReturnType());
-        return $buf->toString();
-    }
-
-    protected static function getDescriptor_StringBuilder_Class(&$buf, $c) // [final StringBuilder buf, final Class? c]
+    /**
+     * Appends the descriptor of the given class to the given string buffer.
+     *
+     * @param array  $buf the string buffer to which the descriptor must be appended.
+     * @param object $c   the class whose descriptor must be computed.
+     *
+     * @return void
+     */
+    private static function getDescriptorFromClass(&$buf, $c)
     {
         while (true) {
             switch (true) {
@@ -603,6 +710,26 @@ class Type
                     // scream
             }
         }
+    }
+
+    /**
+     * Returns the descriptor corresponding to the given constructor.
+     *
+     * @param object $class a {@link Constructor Constructor} object.
+     *
+     * @return string the descriptor of the given constructor.
+     */
+    public static function getConstructorDescriptor($class) : string
+    {
+        $parameters = $class->getParameterTypes();
+        $buf        = new StringBuilder();
+
+        $buf->append('(');
+        for ($i = 0; ($i < count($parameters)); ++$i) {
+            self::getDescriptorFromClass($buf, $parameters[$i]);
+        }
+
+        return $buf->append(")V")->toString();
     }
 
     /**
@@ -719,5 +846,10 @@ class Type
     private static function charAt($str, $pos)
     {
         return $str{$pos};
+    }
+
+    private function uRShift($a, $b)
+    {
+        return ($a >> $b & 0xFF);
     }
 }

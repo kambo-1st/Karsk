@@ -459,59 +459,27 @@ class MethodVisitor
      *               the method's name.
      * @param string $desc
      *               the method's descriptor (see {@link Type Type}).
-     *
-     * @Deprecated
-     *
-     * @return void
-     */
-    public function visitMethodInsn_I_String_String_String($opcode, $owner, $name, $desc)
-    {
-        if ($this->api >= Opcodes::ASM5) {
-            $itf = ($opcode == Opcodes::INVOKEINTERFACE);
-            /* match: I_String_String_String_b */
-            $this->visitMethodInsn_I_String_String_String_b($opcode, $owner, $name, $desc, $itf);
-            return ;
-        }
-
-        if ($this->mv != null) {
-            /* match: I_String_String_String */
-            $this->mv->visitMethodInsn_I_String_String_String($opcode, $owner, $name, $desc);
-        }
-    }
-
-    /**
-     * Visits a method instruction. A method instruction is an instruction that
-     * invokes a method.
-     *
-     * @param int    $opcode
-     *               the opcode of the type instruction to be visited. This opcode
-     *               is either INVOKEVIRTUAL, INVOKESPECIAL, INVOKESTATIC or
-     *               INVOKEINTERFACE.
-     * @param string $owner
-     *               the internal name of the method's owner class (see
-     *               {@link Type#getInternalName() getInternalName}).
-     * @param string $name
-     *               the method's name.
-     * @param string $desc
-     *               the method's descriptor (see {@link Type Type}).
      * @param bool   $itf
      *               if the method's owner class is an interface.
      *
      * @return void
      */
-    public function visitMethodInsn_I_String_String_String_b($opcode, $owner, $name, $desc, $itf)
+    public function visitMethodInsn($opcode, $owner, $name, $desc, $itf = null)
     {
+        if ($itf == null) {
+            $itf = ($opcode == Opcodes::INVOKEINTERFACE);
+        }
+
         if ($this->api < Opcodes::ASM5) {
             if ($itf != ($opcode == Opcodes::INVOKEINTERFACE)) {
                 throw new \InvalidArgumentException("INVOKESPECIAL/STATIC on interfaces require ASM 5");
             }
-            /* match: I_String_String_String */
-            $this->visitMethodInsn_I_String_String_String($opcode, $owner, $name, $desc);
+
+            $this->visitMethodInsn($opcode, $owner, $name, $desc, $itf);
             return ;
         }
         if ($this->mv != null) {
-            /* match: I_String_String_String_b */
-            $this->mv->visitMethodInsn_I_String_String_String_b($opcode, $owner, $name, $desc, $itf);
+            $this->mv->visitMethodInsn($opcode, $owner, $name, $desc, $itf);
         }
     }
 

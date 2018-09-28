@@ -601,7 +601,7 @@ class ClassWriter extends ClassVisitor
         string $signature = null,
         array $exceptions = null
     ) {
-        return MethodWriter::constructor__ClassWriter_I_String_String_String_aString_I(
+        return new MethodWriter(
             $this,
             $access,
             $name,
