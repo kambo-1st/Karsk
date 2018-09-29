@@ -54,7 +54,7 @@ class Object_ implements DataType
      * @param DataType $type  object type
      * @param mixed    $value simple data type value
      */
-    public function __construct($type, array $value)
+    public function __construct($type, array $value = null)
     {
         $this->value = $value;
         $this->type  = $type;

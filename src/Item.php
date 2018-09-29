@@ -253,7 +253,7 @@ class Item
                 $this->hashCode = (0x7FFFFFFF & ($type + $hash->get($strVal1)));
                 return ;
             case ClassWriter::$NAME_TYPE:
-                $this->hashCode = (0x7FFFFFFF & ($type +($hash->get($strVal1) * $hash->get($strVal2))));
+                $this->hashCode = (0x7FFFFFFF & ($type + ($hash->get($strVal1) * $hash->get($strVal2))));
                 return ;
             default:
                 $this->hashCode = (0x7FFFFFFF &

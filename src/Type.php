@@ -33,6 +33,7 @@
 namespace Kambo\Karsk;
 
 use Kambo\Karsk\Type as KarskType;
+use Kambo\Karsk\Exception\IllegalArgumentException;
 
 /**
  * A Java field or method type. This class can be used to make it easier to
@@ -246,7 +247,7 @@ class Type
             case 'B':
                 return new self(self::BYTE, null, (((((ord('B') << 24)) | ((0 << 16))) | ((5 << 8))) | 1), 1);
             case 'S':
-                return  new self(self::SHORT, null, (((((ord('S') << 24)) | ((0 << 16))) | ((7 << 8))) | 1), 1);
+                return new self(self::SHORT, null, (((((ord('S') << 24)) | ((0 << 16))) | ((7 << 8))) | 1), 1);
             case 'I':
                 return new self(self::INT, null, (((((ord('I') << 24)) | ((0 << 16))) | ((0 << 8))) | 1), 1);
             case 'F':
@@ -287,6 +288,8 @@ class Type
      * @param mixed $type a class/type descriptor/constructor/method
      *
      * @return Type the Java type corresponding to the given class.
+     *
+     * @throws IllegalArgumentException
      */
     public static function getType($type) : Type
     {
@@ -300,10 +303,12 @@ class Type
             case is_string($type):
                 return self::getTypeFromArray(str_split($type), 0);
             case is_object($type):
-                return self::getTypeFromClass(str_split($type), 0);
+                return self::getTypeFromClass($type);
         }
 
-        // TODO scream
+        throw new IllegalArgumentException(
+            'Unsupported input type '. var_export($type, true)
+        );
     }
 
     /**
@@ -323,9 +328,9 @@ class Type
             case 'double': // for historical reasons "double" is returned in case of a float, and not simply "float"
                 return new self(self::FLOAT, null, (((((ord('F') << 24)) | ((2 << 16))) | ((2 << 8))) | 1), 1);
             case 'string':
-                return self::getType_String(self::getDescriptorOfClass($c));
+                return self::getTypeFromArray(str_split(self::getDescriptorOfClass($c)), 0);
             case 'object':
-                return self::getType_String(self::getDescriptorOfClass($c));
+                return self::getTypeFromArray(str_split(self::getDescriptorOfClass($c)), 0);
             default:
                 throw new IllegalArgumentException("value " . var_export($c, true));
         }
@@ -348,14 +353,16 @@ class Type
         }
 
         if (is_string($method)) {
-            return $this::getReturnTypeString($method);
+            return self::getReturnTypeString($method);
         }
 
         if ($method === null) {
-            return $this::getReturnTypeString($this->getDescriptor());
+            return self::getReturnTypeString($this->getDescriptor());
         }
 
-        // TODO scream
+        throw new IllegalArgumentException(
+            'Unsupported method type '. var_export($method, true)
+        );
     }
 
     /**
@@ -371,11 +378,11 @@ class Type
         $buf = str_split($methodDescriptor);
         $off = 1;
         while (true) {
-            $car = $buf[++$off];
-            if (($car == ')')) {
+            $car = $buf[$off++];
+            if ($car == ')') {
                 return self::getTypeFromArray($buf, $off);
-            } elseif (($car == 'L')) {
-                while (($buf[++$off] . ';')) {
+            } elseif ($car == 'L') {
+                while ($buf[$off++] != ';') {
                 }
             }
         }
@@ -513,7 +520,7 @@ class Type
 
                 return $arrayDefinition;
             case self::OBJECT:
-                $object = substr($this->buf, $this->off, $this->len);
+                $object = substr(implode('', $this->buf), $this->off, $this->len);
                 return str_replace('/', '.', $object);
             default:
                 return null;
@@ -530,7 +537,7 @@ class Type
      */
     public function getInternalName() : string
     {
-        return substr($this->buf, $this->off, $this->len);
+        return substr(implode('', $this->buf), $this->off, $this->len);
     }
 
     /**
@@ -544,8 +551,7 @@ class Type
      */
     public static function getInternalNameOfClass($c) : string
     {
-        // TODO Invalid implementation
-        return $c->getName()->replace('.', '/');
+        return str_replace('.', '/', $c->getType());
     }
 
     /**
@@ -579,16 +585,13 @@ class Type
     /**
      * Returns the descriptor corresponding to the given Java type.
      *
-     * @param object $c an object class, a primitive class or an array class.
+     * @param object $class an object class, a primitive class or an array class.
      *
      * @return string the descriptor corresponding to the given class.
      */
-    public static function getDescriptorOfClass($c)
+    public static function getDescriptorOfClass($class)
     {
-        $buf = [];
-        self::getDescriptorFromClass($buf, $c);
-
-        return implode('', $buf);
+        return self::getDescriptorFromClass($class);
     }
 
     /**
@@ -628,8 +631,7 @@ class Type
         $buf        = new StringBuilder();
 
         $buf->append('(');
-        for ($i = 0; ($i < count($parameters) /*from: parameters.length*/); ++$i) {
-            /* match: StringBuilder_Class */
+        for ($i = 0; ($i < count($parameters)); ++$i) {
             self::getDescriptorFromClass($buf, $parameters[$i]);
         }
 
@@ -645,14 +647,15 @@ class Type
      *
      * @param array $buf the string buffer to which the descriptor must be appended.
      */
-    private function getDescriptorFromBuf(&$buf) // [final StringBuilder buf]
+    private function getDescriptorFromBuf(&$buf)
     {
         if ($this->buf == null) {
             $buf = str_split((string)$this->uRShift(($this->off & 0xFF000000), 24));
         } elseif ($this->sort == self::OBJECT) {
-            $buf->append('L');
-            $buf->append($this->buf, $this->off, $this->len);
-            $buf->append(';');
+            $buf[] = 'L';
+            $slice = array_slice($this->buf, $this->off, $this->len);
+            $buf   = array_merge($buf, $slice);
+            $buf[] = ';';
         } else {
             $buf->append($this->buf, $this->off, $this->len);
         }
@@ -661,51 +664,51 @@ class Type
     /**
      * Appends the descriptor of the given class to the given string buffer.
      *
-     * @param array  $buf the string buffer to which the descriptor must be appended.
-     * @param object $c   the class whose descriptor must be computed.
+     * @param object $c the class whose descriptor must be computed.
      *
      * @return void
      */
-    private static function getDescriptorFromClass(&$buf, $c)
+    private static function getDescriptorFromClass($c)
     {
+        $buf = '';
         while (true) {
             switch (true) {
                 case $c instanceof KarskType\Integer:
                     $buf .= 'I';
-                    return;
+                    return $buf;
                 case $c instanceof KarskType\Void_:
                     $buf .= 'V';
-                    return;
+                    return $buf;
                 case $c instanceof KarskType\Boolean:
                     $buf .= 'Z';
-                    return;
+                    return $buf;
                 case $c instanceof KarskType\Byte:
                     $buf .= 'B';
-                    return;
+                    return $buf;
                 case $c instanceof KarskType\Character:
                     $buf .= 'C';
-                    return;
+                    return $buf;
                 case $c instanceof KarskType\Short:
                     $buf .= 'S';
-                    return;
+                    return $buf;
                 case $c instanceof KarskType\Double:
                     $buf .= 'D';
-                    return;
+                    return $buf;
                 case $c instanceof KarskType\Float_:
                     $buf .= 'F';
-                    return;
+                    return $buf;
                 case $c instanceof KarskType\Long:
                     $buf .= 'J';
-                    return;
+                    return $buf;
                 case $c instanceof KarskType\Array_:
                     $buf .= '[';
                     $c    = $c->getType();
                     break;
                 case $c instanceof KarskType\Object_:
                     $buf .= 'L';
-                    str_replace(".", "/", $c->getType());
+                    $buf .= str_replace(".", "/", $c->getType());
                     $buf .= ';';
-                    return;
+                    return $buf;
                 default:
                     // scream
             }
@@ -758,7 +761,7 @@ class Type
      */
     public function getOpcode(int $opcode) : int
     {
-        if ((($opcode == Opcodes::IALOAD) || ($opcode == Opcodes::IASTORE))) {
+        if (($opcode == Opcodes::IALOAD) || ($opcode == Opcodes::IASTORE)) {
             // the offset for IALOAD or IASTORE is in byte 1 of 'off' for
             // primitive types (buf == null)
             return ($opcode + (( (($this->buf == null)) ? ((($this->off & 0xFF00)) >> 8) : 4 )));
@@ -792,12 +795,12 @@ class Type
         }
 
         if ($this->sort >= self::ARRAY) {
-            if (($this->len != $t->len)) {
+            if ($this->len != $t->len) {
                 return false;
             }
 
             for ($i = $this->off, $j = $t->off, $end = ($i + $this->len); ($i < $end); ++$i, ++$j) {
-                if (($this->buf[$i] != $t->buf[$j])) {
+                if ($this->buf[$i] != $t->buf[$j]) {
                     return false;
                 }
             }
@@ -809,14 +812,14 @@ class Type
     /**
      * Returns a hash code value for this type.
      *
-     * @return int a hash code value for this type.
+     * @return float a hash code value for this type.
      */
-    public function hashCode() : int
+    public function hashCode() : float
     {
         $hc = (13 * $this->sort);
-        if (($this->sort >= self::ARRAY)) {
+        if ($this->sort >= self::ARRAY) {
             for ($i = $this->off, $end = ($i + $this->len); ($i < $end); ++$i) {
-                $hc = (17 * (($hc + $this->buf[$i])));
+                $hc = (17 * ($hc + ord($this->buf[$i])));
             }
         }
 

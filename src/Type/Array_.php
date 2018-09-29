@@ -54,7 +54,7 @@ class Array_ implements DataType
      * @param DataType $type  array type
      * @param mixed    $value simple data type value
      */
-    public function __construct(DataType $type, array $value)
+    public function __construct(DataType $type, array $value = null)
     {
         $this->value = $value;
         $this->type  = $type;
