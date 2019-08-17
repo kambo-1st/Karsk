@@ -32,7 +32,7 @@
     "scripts": {
         "unit-test": "./vendor/bin/phpunit tests/Unit/",
         "coverage-html": "./vendor/bin/phpunit --coverage-html coverage tests/Unit/",
-        "coverage-xml": "./vendor/bin/phpunit --coverage-clover=coverage.xml",
+        "coverage-xml": "./vendor/bin/phpunit tests/Unit/ --coverage-clover=coverage.xml",
         "checkstyle": "./vendor/bin/phpcs --standard=PSR2 src",
         "generate-api-document": "./vendor/bin/phpdoc -d ./src -t ./docs/api"
     }
