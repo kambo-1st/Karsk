@@ -8,13 +8,13 @@
 
     /*
     Generates the bytecode corresponding to the following Java class:
-    
+
         public class Switch {
 
             public static void main(String[] args) {
                 int month = 2;
                 String monthString;
-        	    
+
                 switch (month) {
                     case 1:  monthString = "January";
                              break;
@@ -23,7 +23,7 @@
                     default: monthString = "Invalid month";
                              break;
                 }
-        	    
+
                 System.out.println(monthString);
             }
         }
@@ -71,7 +71,7 @@
     $mv->visitTableSwitchInsn(1, 2, $l4, [$l2, $l3]);
     $mv->visitLabel($l2);
     $mv->visitLineNumber(10, $l2);
-    $mv->visitFrame(Opcodes::F_APPEND,1, [Opcodes::INTEGER], 0, null);
+    $mv->visitFrame(Opcodes::F_APPEND, 1, [Opcodes::INTEGER], 0, null);
     $mv->visitLdcInsn("January");
     $mv->visitVarInsn(Opcodes::ASTORE, 2);
 
@@ -100,7 +100,7 @@
 
     $mv->visitLabel($l6);
     $mv->visitLineNumber(18, $l6);
-    $mv->visitFrame(Opcodes::F_APPEND,1, ["java/lang/String"], 0, null);
+    $mv->visitFrame(Opcodes::F_APPEND, 1, ["java/lang/String"], 0, null);
     $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
     $mv->visitVarInsn(Opcodes::ALOAD, 2);
     $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);

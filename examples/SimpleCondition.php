@@ -26,7 +26,14 @@
 
     $cw = new ClassWriter(0);
 
-    $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, "SimpleCondition", null, "java/lang/Object", null);
+    $cw->visit(
+        Opcodes::V1_8,
+        Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
+        "SimpleCondition",
+        null,
+        "java/lang/Object",
+        null
+    );
 
     $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
     $mv->visitCode();
@@ -62,7 +69,7 @@
     $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
     $mv->visitLabel($l4);
     $mv->visitLineNumber(14, $l4);
-    $mv->visitFrame(Opcodes::F_APPEND,3, [Opcodes::INTEGER, Opcodes::INTEGER, Opcodes::INTEGER], 0, null);
+    $mv->visitFrame(Opcodes::F_APPEND, 3, [Opcodes::INTEGER, Opcodes::INTEGER, Opcodes::INTEGER], 0, null);
     $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
     $mv->visitVarInsn(Opcodes::ILOAD, 1);
     $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);

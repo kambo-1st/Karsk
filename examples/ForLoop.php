@@ -58,7 +58,7 @@
     $l3 = new Label();
     $mv->visitLabel($l3);
     $mv->visitLineNumber(7, $l3);
-    $mv->visitFrame(Opcodes::F_APPEND,1, [Opcodes::INTEGER], 0, null);
+    $mv->visitFrame(Opcodes::F_APPEND, 1, [Opcodes::INTEGER], 0, null);
     $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
     $mv->visitVarInsn(Opcodes::ILOAD, 1);
     $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
