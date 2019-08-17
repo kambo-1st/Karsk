@@ -338,15 +338,14 @@ class Type
 
     /**
      * Returns the Java type corresponding to the return type of the given
-     * method or method descriptor. If the parameter was not provided returns
-     * the return type of methods of this type. This method should only be used
+     * method or method descriptor.This method should only be used
      * for method types.
      *
      * @param $method a method.
      *
      * @return Type the return type of methods of this type.
      */
-    public function getReturnType($method = null) : Type
+    public static function getReturnType($method = null) : Type
     {
         if ($method instanceof Method) {
             return self::getType_Constructor($method->getReturnType());
@@ -356,13 +355,22 @@ class Type
             return self::getReturnTypeString($method);
         }
 
-        if ($method === null) {
-            return self::getReturnTypeString($this->getDescriptor());
-        }
-
         throw new IllegalArgumentException(
             'Unsupported method type '. var_export($method, true)
         );
+    }
+
+    /**
+     * Returns the Java type corresponding to the return type of the given
+     * method or method descriptor. If the parameter was not provided returns
+     * the return type of methods of this type. This method should only be used
+     * for method types.
+     *
+     * @return Type the return type of methods of this type.
+     */
+    public function getRetType() : Type
+    {
+        return self::getReturnTypeString($this->getDescriptor());
     }
 
     /**
@@ -848,7 +856,7 @@ class Type
 
     private static function charAt($str, $pos)
     {
-        return $str{$pos};
+        return $str[$pos];
     }
 
     private function uRShift($a, $b)
