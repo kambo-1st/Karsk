@@ -222,7 +222,7 @@ class TypeTest extends TestCase
         $this->assertEquals(3, Type::getType("[[[LI;")->getDimensions());
     }
 
-    public function testGetReturnTypeFromDescriptor() : void
+    public function testGetReturnType() : void
     {
         $this->assertEquals(Type::getType(new Type\Integer()), Type::getReturnType("()I"));
         $this->assertEquals(Type::getType(new Type\Integer()), Type::getReturnType("(Lpkg/classMethod();)I"));
