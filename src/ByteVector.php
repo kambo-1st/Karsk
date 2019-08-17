@@ -301,7 +301,7 @@ class ByteVector implements \Countable
 
     private function charAt($str, $pos)
     {
-        return $str{$pos};
+        return $str[$pos];
     }
 
     private function uRShift($a, $b)

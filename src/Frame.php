@@ -273,6 +273,6 @@ class Frame
 
     private static function charAt($str, $pos)
     {
-        return $str{$pos};
+        return $str[$pos];
     }
 }

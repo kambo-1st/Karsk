@@ -1336,7 +1336,7 @@ class MethodWriter extends MethodVisitor
 
     private function charAt($str, $pos)
     {
-        return $str{$pos};
+        return $str[$pos];
     }
 
     protected function visitImplicitFirstFrame()
