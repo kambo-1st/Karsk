@@ -49,93 +49,551 @@ use Kambo\Karsk\Exception\IllegalArgumentException;
  */
 class ClassWriter extends ClassVisitor
 {
-    public static $COMPUTE_MAXS            = 1;
-    public static $COMPUTE_FRAMES          = 2;
-    public static $ACC_SYNTHETIC_ATTRIBUTE = 0x40000;
-    public static $TO_ACC_SYNTHETIC        = 0x40000 / Opcodes::ACC_SYNTHETIC;
-    public static $NOARG_INSN              = 0;
-    public static $SBYTE_INSN              = 1;
-    public static $SHORT_INSN              = 2;
-    public static $VAR_INSN                = 3;
-    public static $IMPLVAR_INSN            = 4;
-    public static $TYPE_INSN               = 5;
-    public static $FIELDORMETH_INSN        = 6;
-    public static $ITFMETH_INSN            = 7;
-    public static $INDYMETH_INSN           = 8;
-    public static $LABEL_INSN              = 9;
-    public static $LABELW_INSN             = 10;
-    public static $LDC_INSN                = 11;
-    public static $LDCW_INSN               = 12;
-    public static $IINC_INSN               = 13;
-    public static $TABL_INSN               = 14;
-    public static $LOOK_INSN               = 15;
-    public static $MANA_INSN               = 16;
-    public static $WIDE_INSN               = 17;
-    public static $ASM_LABEL_INSN          = 18;
-    public static $F_INSERT                = 256;
-    public static $TYPE;
-    public static $CLASS                   = 7;
-    public static $FIELD                   = 9;
-    public static $METH                    = 10;
-    public static $IMETH                   = 11;
-    public static $STR                     = 8;
-    public static $INT                     = 3;
-    public static $FLOAT                   = 4;
-    public static $LONG                    = 5;
-    public static $DOUBLE                  = 6;
-    public static $NAME_TYPE               = 12;
-    public static $UTF8                    = 1;
-    public static $MTYPE                   = 16;
-    public static $HANDLE                  = 15;
-    public static $INDY                    = 18;
-    public static $HANDLE_BASE             = 20;
-    public static $TYPE_NORMAL             = 30;
-    public static $TYPE_UNINIT             = 31;
-    public static $TYPE_MERGED             = 32;
-    public static $BSM                     = 33;
-
-    public $cr;  // ClassReader
-    public $version; // int
-    public $index;   // int
-    public $pool;    // ByteVector
-    public $items;   // Item[]
-    public $threshold;   // int
+    /**
+     * Flag to automatically compute the maximum stack size and the maximum
+     * number of local variables of methods. If this flag is set, then the
+     * arguments of the {@link MethodVisitor#visitMaxs visitMaxs} method of the
+     * {@link MethodVisitor} returned by the {@link #visitMethod visitMethod}
+     * method will be ignored, and computed automatically from the signature and
+     * the bytecode of each method.
+     *
+     * @see #ClassWriter(int)
+     */
+    public static $COMPUTE_MAXS = 1;
 
     /**
+     * Flag to automatically compute the stack map frames of methods from
+     * scratch. If this flag is set, then the calls to the
+     * {@link MethodVisitor#visitFrame} method are ignored, and the stack map
+     * frames are recomputed from the methods bytecode. The arguments of the
+     * {@link MethodVisitor#visitMaxs visitMaxs} method are also ignored and
+     * recomputed from the bytecode. In other words, COMPUTE_FRAMES implies
+     * COMPUTE_MAXS.
+     *
+     * @see #ClassWriter(int)
+     */
+    public static $COMPUTE_FRAMES = 2;
+
+    /**
+     * Pseudo access flag to distinguish between the synthetic attribute and the
+     * synthetic access flag.
+     */
+    public static $ACC_SYNTHETIC_ATTRIBUTE = 0x40000;
+    /**
+     * Factor to convert from ACC_SYNTHETIC_ATTRIBUTE to Opcode::ACC_SYNTHETIC.
+     */
+    public static $TO_ACC_SYNTHETIC = 0x40000 / Opcodes::ACC_SYNTHETIC;
+
+    /**
+     * The type of instructions without any argument.
+     */
+    public static $NOARG_INSN = 0;
+
+    /**
+     * The type of instructions with an signed byte argument.
+     */
+    public static $SBYTE_INSN = 1;
+
+    /**
+     * The type of instructions with an signed short argument.
+     */
+    public static $SHORT_INSN = 2;
+
+    /**
+     * The type of instructions with a local variable index argument.
+     */
+    public static $VAR_INSN = 3;
+
+    /**
+     * The type of instructions with an implicit local variable index argument.
+     */
+    public static $IMPLVAR_INSN = 4;
+
+    /**
+     * The type of instructions with a type descriptor argument.
+     */
+    public static $TYPE_INSN = 5;
+
+    /**
+     * The type of field and method invocations instructions.
+     */
+    public static $FIELDORMETH_INSN = 6;
+    /**
+     * The type of the INVOKEINTERFACE/INVOKEDYNAMIC instruction.
+     */
+    public static $ITFMETH_INSN = 7;
+
+    /**
+     * The type of the INVOKEDYNAMIC instruction.
+     */
+    public static $INDYMETH_INSN = 8;
+
+    /**
+     * The type of instructions with a 2 bytes bytecode offset label.
+     */
+    public static $LABEL_INSN = 9;
+
+    /**
+     * The type of instructions with a 4 bytes bytecode offset label.
+     */
+    public static $LABELW_INSN = 10;
+
+    /**
+     * The type of the LDC instruction.
+     */
+    public static $LDC_INSN = 11;
+
+    /**
+     * The type of the LDC_W and LDC2_W instructions.
+     */
+    public static $LDCW_INSN = 12;
+
+    /**
+     * The type of the IINC instruction.
+     */
+    public static $IINC_INSN = 13;
+
+    /**
+     * The type of the TABLESWITCH instruction.
+     */
+    public static $TABL_INSN = 14;
+
+    /**
+     * The type of the LOOKUPSWITCH instruction.
+     */
+    public static $LOOK_INSN = 15;
+
+    /**
+     * The type of the MULTIANEWARRAY instruction.
+     */
+    public static $MANA_INSN = 16;
+
+    /**
+     * The type of the WIDE instruction.
+     */
+    public static $WIDE_INSN = 17;
+
+    /**
+     * The type of the ASM pseudo instructions with an unsigned 2 bytes offset
+     * label (see Label#resolve).
+     */
+    public static $ASM_LABEL_INSN = 18;
+
+    /**
+     * Represents a frame inserted between already existing frames. This kind of
+     * frame can only be used if the frame content can be computed from the
+     * previous existing frame and from the instructions between this existing
+     * frame and the inserted one, without any knowledge of the type hierarchy.
+     * This kind of frame is only used when an unconditional jump is inserted in
+     * a method while expanding an ASM pseudo instruction (see ClassReader).
+     */
+    public static $F_INSERT = 256;
+
+    /**
+     * The instruction types of all JVM opcodes.
+     */
+    public static $TYPE;
+
+    /**
+     * The type of CONSTANT_Class constant pool items.
+     */
+    public static $CLASS = 7;
+
+    /**
+     * The type of CONSTANT_Fieldref constant pool items.
+     */
+    public static $FIELD = 9;
+
+    /**
+     * The type of CONSTANT_Methodref constant pool items.
+     */
+    public static $METH = 10;
+
+    /**
+     * The type of CONSTANT_InterfaceMethodref constant pool items.
+     */
+    public static $IMETH = 11;
+
+    /**
+     * The type of CONSTANT_String constant pool items.
+     */
+    public static $STR = 8;
+
+    /**
+     * The type of CONSTANT_Integer constant pool items.
+     */
+    public static $INT = 3;
+
+    /**
+     * The type of CONSTANT_Float constant pool items.
+     */
+    public static $FLOAT = 4;
+
+    /**
+     * The type of CONSTANT_Long constant pool items.
+     */
+    public static $LONG = 5;
+
+    /**
+     * The type of CONSTANT_Double constant pool items.
+     */
+    public static $DOUBLE = 6;
+
+    /**
+     * The type of CONSTANT_NameAndType constant pool items.
+     */
+    public static $NAME_TYPE = 12;
+
+    /**
+     * The type of CONSTANT_Utf8 constant pool items.
+     */
+    public static $UTF8 = 1;
+
+    /**
+     * The type of CONSTANT_MethodType constant pool items.
+     */
+    public static $MTYPE = 16;
+    /**
+     * The type of CONSTANT_MethodHandle constant pool items.
+     */
+    public static $HANDLE = 15;
+
+    /**
+     * The type of CONSTANT_InvokeDynamic constant pool items.
+     */
+    public static $INDY = 18;
+
+    /**
+     * The base value for all CONSTANT_MethodHandle constant pool items.
+     * Internally, ASM store the 9 variations of CONSTANT_MethodHandle into 9
+     * different items.
+     */
+    public static $HANDLE_BASE = 20;
+
+    /**
+     * Normal type Item stored in the ClassWriter {@link ClassWriter#typeTable},
+     * instead of the constant pool, in order to avoid clashes with normal
+     * constant pool items in the ClassWriter constant pool's hash table.
+     */
+    public static $TYPE_NORMAL = 30;
+
+    /**
+     * Uninitialized type Item stored in the ClassWriter
+     * {@link ClassWriter#typeTable}, instead of the constant pool, in order to
+     * avoid clashes with normal constant pool items in the ClassWriter constant
+     * pool's hash table.
+     */
+    public static $TYPE_UNINIT = 31;
+
+    /**
+     * Merged type Item stored in the ClassWriter {@link ClassWriter#typeTable},
+     * instead of the constant pool, in order to avoid clashes with normal
+     * constant pool items in the ClassWriter constant pool's hash table.
+     */
+    public static $TYPE_MERGED = 32;
+
+    /**
+     * The type of BootstrapMethods items. These items are stored in a special
+     * class attribute named BootstrapMethods and not in the constant pool.
+     */
+    public static $BSM  = 33;
+
+    /**
+     * The class reader from which this class writer was constructed, if any.
+     *
+     * @var ClassReader
+     */
+    public $cr;
+
+    /**
+     * Minor and major version numbers of the class to be generated.
+     *
+     * @var int
+     */
+    public $version;
+
+    /**
+     * Index of the next item to be added in the constant pool.
+     *
+     * @var int
+     */
+    public $index;
+
+    /**
+     * The constant pool of this class.
+     *
+     * @var ByteVector
+     */
+    public $pool;
+
+    /**
+     * The constant pool's hash table data.
+     *
+     * @var Item[]
+     */
+    public $items;
+
+    /**
+     * The threshold of the constant pool's hash table.
+     *
+     * @var int
+     */
+    public $threshold;
+
+    /**
+     * A reusable key used to look for items in the {@link #items} hash table.
+     *
      * @var Item
      */
-    public $key; // Item
-    public $key2;    // Item
-    public $key3;    // Item
-    public $key4;    // Item
-    public $typeTable;   // Item[]
-    public $typeCount;   // short
-    public $access;  // int
-    public $name;    // int
-    public $thisName;    // String
-    public $signature;   // int
-    public $superName;   // int
-    public $interfaceCount;  // int
-    public $interfaces;  // int[]
-    public $sourceFile;  // int
-    public $sourceDebug; // ByteVector
-    public $enclosingMethodOwner;    // int
-    public $enclosingMethod; // int
-    public $anns;    // AnnotationWriter
-    public $ianns;   // AnnotationWriter
-    public $tanns;   // AnnotationWriter
-    public $itanns;  // AnnotationWriter
-    public $attrs;   // Attribute
-    public $innerClassesCount;   // int
-    public $innerClasses;    // ByteVector
-    public $bootstrapMethodsCount;   // int
-    public $bootstrapMethods;    // ByteVector
-    public $firstField;  // FieldWriter
-    public $lastField;   // FieldWriter
-    public $firstMethod; // MethodWriter
-    public $lastMethod;  // MethodWriter
-    public $compute; // int
-    public $hasAsmInsns; // boolean
+    public $key;
+
+    /**
+     * A reusable key used to look for items in the {@link #items} hash table.
+     *
+     * @var Item
+     */
+    public $key2;
+
+    /**
+     * A reusable key used to look for items in the {@link #items} hash table.
+     *
+     * @var Item
+     */
+    public $key3;
+
+    /**
+     * A reusable key used to look for items in the {@link #items} hash table.
+     *
+     * @var Item
+     */
+    public $key4;
+
+    /**
+     * A type table used to temporarily store internal names that will not
+     * necessarily be stored in the constant pool. This type table is used by
+     * the control flow and data flow analysis algorithm used to compute stack
+     * map frames from scratch. This array associates to each index <tt>i</tt>
+     * the Item whose index is <tt>i</tt>. All Item objects stored in this array
+     * are also stored in the {@link #items} hash table. These two arrays allow
+     * to retrieve an Item from its index or, conversely, to get the index of an
+     * Item from its value. Each Item stores an internal name in its
+     * {@link Item#strVal1} field.
+     *
+     * @var Item[]
+     */
+    public $typeTable;
+
+    /**
+     * Number of elements in the {@link #typeTable} array.
+     *
+     * @var int
+     */
+    public $typeCount;
+
+    /**
+     * The access flags of this class.
+     *
+     * @var int
+     */
+    public $access;
+
+    /**
+     * The constant pool item that contains the internal name of this class.
+     *
+     * @var int
+     */
+    public $name;
+
+    /**
+     * The internal name of this class.
+     *
+     * @var string
+     */
+    public $thisName;
+
+    /**
+     * The constant pool item that contains the signature of this class.
+     *
+     * @var int
+     */
+    public $signature;
+
+    /**
+     * The constant pool item that contains the internal name of the super class
+     * of this class.
+     *
+     * @var int
+     */
+    public $superName;
+
+    /**
+     * Number of interfaces implemented or extended by this class or interface.
+     *
+     * @var int
+     */
+    public $interfaceCount;
+
+    /**
+     * The interfaces implemented or extended by this class or interface. More
+     * precisely, this array contains the indexes of the constant pool items
+     * that contain the internal names of these interfaces.
+     *
+     * @var int[]
+     */
+    public $interfaces;
+
+    /**
+     * The index of the constant pool item that contains the name of the source
+     * file from which this class was compiled.
+     *
+     * @var int
+     */
+    public $sourceFile;
+
+    /**
+     * The SourceDebug attribute of this class.
+     *
+     * @var ByteVector
+     */
+    public $sourceDebug;
+
+    /**
+     * The constant pool item that contains the name of the enclosing class of
+     * this class.
+     *
+     * @var int
+     */
+    public $enclosingMethodOwner;
+
+    /**
+     * The constant pool item that contains the name and descriptor of the
+     * enclosing method of this class.
+     *
+     * @var int
+     */
+    public $enclosingMethod;
+
+    /**
+     * The runtime visible annotations of this class.
+     *
+     * @var AnnotationWriter
+     */
+    public $anns;
+
+    /**
+     * The runtime invisible annotations of this class.
+     *
+     * @var AnnotationWriter
+     */
+    public $ianns;
+
+    /**
+     * The runtime visible type annotations of this class.
+     *
+     * @var AnnotationWriter
+     */
+    public $tanns;
+
+    /**
+     * The runtime invisible type annotations of this class.
+     *
+     * @var AnnotationWriter
+     */
+    public $itanns;
+
+    /**
+     * The non standard attributes of this class.
+     *
+     * @var Attribute
+     */
+    public $attrs;
+
+    /**
+     * The number of entries in the InnerClasses attribute.
+     *
+     * @var int
+     */
+    public $innerClassesCount;
+
+    /**
+     * The InnerClasses attribute.
+     *
+     * @var ByteVector
+     */
+    public $innerClasses;
+
+    /**
+     * The number of entries in the BootstrapMethods attribute.
+     *
+     * @var int
+     */
+    public $bootstrapMethodsCount;
+
+    /**
+     * The BootstrapMethods attribute.
+     *
+     * @var ByteVector
+     */
+    public $bootstrapMethods;
+
+    /**
+     * The fields of this class. These fields are stored in a linked list of
+     * {@link FieldWriter} objects, linked to each other by their
+     * {@link FieldWriter#fv} field. This field stores the first element of this
+     * list.
+     *
+     * @var FieldWriter
+     */
+    public $firstField;
+
+    /**
+     * The fields of this class. These fields are stored in a linked list of
+     * {@link FieldWriter} objects, linked to each other by their
+     * {@link FieldWriter#fv} field. This field stores the last element of this
+     * list.
+     *
+     * @var FieldWriter
+     */
+    public $lastField;
+
+    /**
+     * The methods of this class. These methods are stored in a linked list of
+     * {@link MethodWriter} objects, linked to each other by their
+     * {@link MethodWriter#mv} field. This field stores the first element of
+     * this list.
+     *
+     * @var MethodWriter
+     */
+    public $firstMethod;
+
+    /**
+     * The methods of this class. These methods are stored in a linked list of
+     * {@link MethodWriter} objects, linked to each other by their
+     * {@link MethodWriter#mv} field. This field stores the last element of this
+     * list.
+     *
+     * @var MethodWriter
+     */
+    public $lastMethod;
+
+    /**
+     * Indicates what must be automatically computed.
+     *
+     * @see MethodWriter#compute
+     *
+     * @var int
+     */
+    public $compute;
+
+    /**
+     * <tt>true</tt> if some methods have wide forward jumps using ASM pseudo
+     * instructions, which need to be expanded into sequences of standard
+     * bytecode instructions. In this case the class is re-read and re-written
+     * with a ClassReader -> ClassWriter chain to perform this transformation.
+     *
+     * @var bool
+     */
+    public $hasAsmInsns;
 
     /**
      * Constructs a new {@link ClassWriter} object.
