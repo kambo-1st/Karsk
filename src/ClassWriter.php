@@ -49,50 +49,50 @@ use Kambo\Karsk\Exception\IllegalArgumentException;
  */
 class ClassWriter extends ClassVisitor
 {
-    public static $COMPUTE_MAXS;    // int
-    public static $COMPUTE_FRAMES;  // int
-    public static $ACC_SYNTHETIC_ATTRIBUTE;  // int
-    public static $TO_ACC_SYNTHETIC; // int
-    public static $NOARG_INSN;   // int
-    public static $SBYTE_INSN;   // int
-    public static $SHORT_INSN;   // int
-    public static $VAR_INSN; // int
-    public static $IMPLVAR_INSN; // int
-    public static $TYPE_INSN;    // int
-    public static $FIELDORMETH_INSN; // int
-    public static $ITFMETH_INSN; // int
-    public static $INDYMETH_INSN;    // int
-    public static $LABEL_INSN;   // int
-    public static $LABELW_INSN;  // int
-    public static $LDC_INSN; // int
-    public static $LDCW_INSN;    // int
-    public static $IINC_INSN;    // int
-    public static $TABL_INSN;    // int
-    public static $LOOK_INSN;    // int
-    public static $MANA_INSN;    // int
-    public static $WIDE_INSN;    // int
-    public static $ASM_LABEL_INSN;   // int
-    public static $F_INSERT; // int
-    public static $TYPE; // byte[]
-    public static $CLASS;    // int
-    public static $FIELD;    // int
-    public static $METH; // int
-    public static $IMETH;    // int
-    public static $STR;  // int
-    public static $INT;  // int
-    public static $FLOAT;    // int
-    public static $LONG; // int
-    public static $DOUBLE;   // int
-    public static $NAME_TYPE;    // int
-    public static $UTF8; // int
-    public static $MTYPE;    // int
-    public static $HANDLE;   // int
-    public static $INDY; // int
-    public static $HANDLE_BASE;  // int
-    public static $TYPE_NORMAL;  // int
-    public static $TYPE_UNINIT;  // int
-    public static $TYPE_MERGED;  // int
-    public static $BSM;  // int
+    public static $COMPUTE_MAXS            = 1;
+    public static $COMPUTE_FRAMES          = 2;
+    public static $ACC_SYNTHETIC_ATTRIBUTE = 0x40000;
+    public static $TO_ACC_SYNTHETIC        = 0x40000 / Opcodes::ACC_SYNTHETIC;
+    public static $NOARG_INSN              = 0;
+    public static $SBYTE_INSN              = 1;
+    public static $SHORT_INSN              = 2;
+    public static $VAR_INSN                = 3;
+    public static $IMPLVAR_INSN            = 4;
+    public static $TYPE_INSN               = 5;
+    public static $FIELDORMETH_INSN        = 6;
+    public static $ITFMETH_INSN            = 7;
+    public static $INDYMETH_INSN           = 8;
+    public static $LABEL_INSN              = 9;
+    public static $LABELW_INSN             = 10;
+    public static $LDC_INSN                = 11;
+    public static $LDCW_INSN               = 12;
+    public static $IINC_INSN               = 13;
+    public static $TABL_INSN               = 14;
+    public static $LOOK_INSN               = 15;
+    public static $MANA_INSN               = 16;
+    public static $WIDE_INSN               = 17;
+    public static $ASM_LABEL_INSN          = 18;
+    public static $F_INSERT                = 256;
+    public static $TYPE;
+    public static $CLASS                   = 7;
+    public static $FIELD                   = 9;
+    public static $METH                    = 10;
+    public static $IMETH                   = 11;
+    public static $STR                     = 8;
+    public static $INT                     = 3;
+    public static $FLOAT                   = 4;
+    public static $LONG                    = 5;
+    public static $DOUBLE                  = 6;
+    public static $NAME_TYPE               = 12;
+    public static $UTF8                    = 1;
+    public static $MTYPE                   = 16;
+    public static $HANDLE                  = 15;
+    public static $INDY                    = 18;
+    public static $HANDLE_BASE             = 20;
+    public static $TYPE_NORMAL             = 30;
+    public static $TYPE_UNINIT             = 31;
+    public static $TYPE_MERGED             = 32;
+    public static $BSM                     = 33;
 
     public $cr;  // ClassReader
     public $version; // int
@@ -136,54 +136,6 @@ class ClassWriter extends ClassVisitor
     public $lastMethod;  // MethodWriter
     public $compute; // int
     public $hasAsmInsns; // boolean
-
-    public static function __staticinit()
-    {
-     // static class members
-        self::$COMPUTE_MAXS = 1;
-        self::$COMPUTE_FRAMES = 2;
-        self::$ACC_SYNTHETIC_ATTRIBUTE = 0x40000;
-        self::$TO_ACC_SYNTHETIC = (self::$ACC_SYNTHETIC_ATTRIBUTE / Opcodes::ACC_SYNTHETIC);
-        self::$NOARG_INSN = 0;
-        self::$SBYTE_INSN = 1;
-        self::$SHORT_INSN = 2;
-        self::$VAR_INSN = 3;
-        self::$IMPLVAR_INSN = 4;
-        self::$TYPE_INSN = 5;
-        self::$FIELDORMETH_INSN = 6;
-        self::$ITFMETH_INSN = 7;
-        self::$INDYMETH_INSN = 8;
-        self::$LABEL_INSN = 9;
-        self::$LABELW_INSN = 10;
-        self::$LDC_INSN = 11;
-        self::$LDCW_INSN = 12;
-        self::$IINC_INSN = 13;
-        self::$TABL_INSN = 14;
-        self::$LOOK_INSN = 15;
-        self::$MANA_INSN = 16;
-        self::$WIDE_INSN = 17;
-        self::$ASM_LABEL_INSN = 18;
-        self::$F_INSERT = 256;
-        self::$CLASS = 7;
-        self::$FIELD = 9;
-        self::$METH = 10;
-        self::$IMETH = 11;
-        self::$STR = 8;
-        self::$INT = 3;
-        self::$FLOAT = 4;
-        self::$LONG = 5;
-        self::$DOUBLE = 6;
-        self::$NAME_TYPE = 12;
-        self::$UTF8 = 1;
-        self::$MTYPE = 16;
-        self::$HANDLE = 15;
-        self::$INDY = 18;
-        self::$HANDLE_BASE = 20;
-        self::$TYPE_NORMAL = 30;
-        self::$TYPE_UNINIT = 31;
-        self::$TYPE_MERGED = 32;
-        self::$BSM = 33;
-    }
 
     /**
      * Constructs a new {@link ClassWriter} object.
@@ -1524,5 +1476,3 @@ class ClassWriter extends ClassVisitor
         }
     }
 }
-
-ClassWriter::__staticinit(); // initialize static vars for this class on load - TODO [SIMEK, i] remove this
