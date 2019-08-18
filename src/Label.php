@@ -527,7 +527,7 @@ class Label
     /**
      * Returns a string representation of this label.
      *
-     * @return a string representation of this label.
+     * @return string a string representation of this label.
      *
      * @throws NotImplementedException - method is not yet implemented
      */
