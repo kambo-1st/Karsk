@@ -34,6 +34,8 @@ namespace Kambo\Karsk;
 
 use Kambo\Karsk\Type as KarskType;
 use Kambo\Karsk\Exception\IllegalArgumentException;
+use Kambo\Karsk\Lang\Constructor;
+use Kambo\Karsk\Lang\Method;
 
 /**
  * A Java field or method type. This class can be used to make it easier to
@@ -221,7 +223,7 @@ class Type
      */
     public static function getMethodType(Type $returnType, Type ...$argumentTypes) : Type
     {
-        return self::getType_String(self::getMethodDescriptor($returnType, ...$argumentTypes));
+        return self::getType(self::getMethodDescriptor($returnType, ...$argumentTypes));
     }
 
     /**
@@ -341,14 +343,14 @@ class Type
      * method or method descriptor.This method should only be used
      * for method types.
      *
-     * @param $method a method.
+     * @param Method|string $method a method.
      *
      * @return Type the return type of methods of this type.
      */
     public static function getReturnType($method = null) : Type
     {
         if ($method instanceof Method) {
-            return self::getType_Constructor($method->getReturnType());
+            return self::getType($method->getReturnType());
         }
 
         if (is_string($method)) {
@@ -570,7 +572,85 @@ class Type
      */
     public function getArgumentTypes() : array
     {
-        return $this->getArgumentTypes_String($this->getDescriptor());
+        return self::getArgumentTypesFromDescription($this->getDescriptor());
+    }
+
+    /**
+     * Returns the argument types of methods of this type.
+     *
+     * @param Method|string $method a method.
+     *
+     * @return array the argument types of methods of this type.
+     */
+    public static function getArgumentTps($method) : array
+    {
+        switch (true) {
+            case $method instanceof Method:
+                return self::getArgumentTypesFromMethod($method);
+            case is_string($method):
+                return self::getArgumentTypesFromDescription($method);
+        }
+
+        throw new IllegalArgumentException(
+            'Argument must be Method object or string. Provided value: '.var_export($method, true)
+        );
+    }
+
+    /**
+     * Returns the Java types corresponding to the argument types of the given
+     * method descriptor.
+     *
+     * @param string $methodDescriptor a method descriptor.
+     *
+     * @return Type[] the Java types corresponding to the argument types of the given method descriptor.
+     */
+    public static function getArgumentTypesFromDescription(string $methodDescriptor) : array
+    {
+        $buf  = str_split($methodDescriptor);
+        $off  = 1;
+        $size = 0;
+        while (true) {
+            $car = $buf[$off++];
+            if ($car === ')') {
+                break;
+            } elseif ($car === 'L') {
+                while ($buf[$off++] != ';') {
+                }
+                ++$size;
+            } elseif ($car != '[') {
+                ++$size;
+            }
+        }
+
+        $args = [];
+        $off  = 1;
+        $size = 0;
+        while ($buf[$off] !== ')') {
+            $args[$size] = self::getTypeFromArray($buf, $off);
+            $off  += ($args[$size]->len + (( (($args[$size]->sort == self::OBJECT)) ? 2 : 0 )));
+            $size += 1;
+        }
+
+        return $args;
+    }
+
+    /**
+     * Returns the Java types corresponding to the argument types of the given
+     * method.
+     *
+     * @param Method $method a method.
+     *
+     * @return Type[] the Java types corresponding to the argument types of the given method.
+     */
+    public static function getArgumentTypesFromMethod(Method $method) : array
+    {
+        $classes = $method->getParameterTypes();
+        $types   = [];
+        for ($i = (count($classes) - 1); $i >= 0; --$i) {
+            $types[$i] = self::getType($classes[$i]);
+        }
+
+        return $types;
     }
 
     // ------------------------------------------------------------------------
@@ -614,13 +694,13 @@ class Type
      */
     public static function getMethodDescriptor(Type $returnType, Type ...$argumentTypes) : string
     {
-        $buf = new StringBuilder();
-        $buf->append('(');
+        $buf   = [];
+        $buf[] = '(';
         for ($i = 0; ($i < count($argumentTypes)); ++$i) {
             $argumentTypes[$i]->getDescriptor($buf);
         }
 
-        $buf->append(')');
+        $buf[] = ')';
         $returnType->getDescriptorFromBuf($buf);
 
         return implode('', $buf);
@@ -633,20 +713,19 @@ class Type
      *
      * @return string the descriptor of the given method.
      */
-    public static function getMethodDescriptorFromMethod($m)
+    public static function getMethodDescriptorFromMethod(Method $m) : string
     {
         $parameters = $m->getParameterTypes();
-        $buf        = new StringBuilder();
+        $buf = '(';
 
-        $buf->append('(');
-        for ($i = 0; ($i < count($parameters)); ++$i) {
-            self::getDescriptorFromClass($buf, $parameters[$i]);
+        for ($i = 0; $i < count($parameters); ++$i) {
+            $buf .= self::getDescriptorFromClass($parameters[$i]);
         }
 
-        $buf->append(')');
+        $buf .= ')';
+        $buf .= self::getDescriptorFromClass($m->getReturnType());
 
-        self::getDescriptorFromClass($buf, $m->getReturnType());
-        return $buf->toString();
+        return $buf;
     }
 
     /**
@@ -674,7 +753,7 @@ class Type
      *
      * @param object $c the class whose descriptor must be computed.
      *
-     * @return void
+     * @return string
      */
     private static function getDescriptorFromClass($c)
     {
@@ -721,26 +800,27 @@ class Type
                     // scream
             }
         }
+
+        return $buf;
     }
 
     /**
      * Returns the descriptor corresponding to the given constructor.
      *
-     * @param object $class a {@link Constructor Constructor} object.
+     * @param Constructor $class a {@link Constructor Constructor} object.
      *
      * @return string the descriptor of the given constructor.
      */
-    public static function getConstructorDescriptor($class) : string
+    public static function getConstructorDescriptor(Constructor $class) : string
     {
         $parameters = $class->getParameterTypes();
-        $buf        = new StringBuilder();
+        $buf        = '(';
 
-        $buf->append('(');
-        for ($i = 0; ($i < count($parameters)); ++$i) {
-            self::getDescriptorFromClass($buf, $parameters[$i]);
+        for ($i = 0; $i < count($parameters); ++$i) {
+            $buf .= self::getDescriptorFromClass($parameters[$i]);
         }
 
-        return $buf->append(")V")->toString();
+        return $buf.')V';
     }
 
     /**
