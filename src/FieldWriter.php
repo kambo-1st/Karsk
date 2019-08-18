@@ -164,7 +164,7 @@ class FieldWriter extends FieldVisitor
         }
 
         $bv = new ByteVector();
-        $AnnotationWriter->putTarget($typeRef, $typePath, $bv);
+        AnnotationWriter::putTarget($typeRef, $typePath, $bv);
         $bv->putShort($this->cw->newUTF8($desc))->putShort(0);
         $aw = new AnnotationWriter($this->cw, true, $bv, $bv, (count($bv) /*from: bv.length*/ - 2));
         if ($visible) {

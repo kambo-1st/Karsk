@@ -1595,7 +1595,7 @@ class ClassWriter extends ClassVisitor
         return $this->newMethodItem($owner, $name, $desc, $itf)->index;
     }
 
-    protected function newInteger($value) // [final int value]
+    public function newInteger($value) // [final int value]
     {
         $this->key->setInteger($value);
         $result = $this->get($this->key);
@@ -1608,7 +1608,7 @@ class ClassWriter extends ClassVisitor
         return $result;
     }
 
-    protected function newFloat($value) // [final float value]
+    public function newFloat($value) // [final float value]
     {
         $this->key->setFloat($value);
         $result = $this->get($this->key);
@@ -1621,7 +1621,7 @@ class ClassWriter extends ClassVisitor
         return $result;
     }
 
-    protected function newLong($value) // [final long value]
+    public function newLong($value) // [final long value]
     {
         $this->key->setLong($value);
         $result = $this->get($this->key);
@@ -1635,7 +1635,7 @@ class ClassWriter extends ClassVisitor
         return $result;
     }
 
-    protected function newDouble($value) // [final double value]
+    public function newDouble($value) // [final double value]
     {
         $this->key->setDouble($value);
         $result = $this->get($this->key);
@@ -1649,7 +1649,7 @@ class ClassWriter extends ClassVisitor
         return $result;
     }
 
-    protected function newString($value) // [final String value]
+    public function newString($value) // [final String value]
     {
         $this->key2->setComplex(self::$STR, $value, null, null);
         $result = $this->get($this->key2);

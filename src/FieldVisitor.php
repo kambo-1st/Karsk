@@ -33,6 +33,7 @@
 namespace Kambo\Karsk;
 
 use Kambo\Karsk\Exception\IllegalArgumentException;
+use Kambo\Karsk\Exception\RuntimeException;
 
 /**
  * A visitor to visit a Java field. The methods of this class must be called in
@@ -117,8 +118,9 @@ abstract class FieldVisitor
      *            the class descriptor of the annotation class.
      * @param bool $visible
      *            <tt>true</tt> if the annotation is visible at runtime.
-     * @return a visitor to visit the annotation values, or <tt>null</tt> if
-     *         this visitor is not interested in visiting this annotation.
+     *
+     * @return AnnotationVisitor a visitor to visit the annotation values, or <tt>null</tt> if
+     *                           this visitor is not interested in visiting this annotation.
      */
     public function visitTypeAnnotation(int $typeRef, $typePath, string $desc, bool $visible)
     {
@@ -126,7 +128,7 @@ abstract class FieldVisitor
             throw new RuntimeException();
         }
 
-        if ($this->fv != null) {
+        if ($this->fv !== null) {
             return $this->fv->visitTypeAnnotation($typeRef, $typePath, $desc, $visible);
         }
 

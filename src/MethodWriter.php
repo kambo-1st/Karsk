@@ -228,8 +228,9 @@ class MethodWriter extends MethodVisitor
         if (!ClassReader::ANNOTATIONS) {
             return null;
         }
+
         $bv = new ByteVector();
-        $AnnotationWriter->putTarget($typeRef, $typePath, $bv);
+        AnnotationWriter::putTarget($typeRef, $typePath, $bv);
         $bv->putShort($this->cw->newUTF8($desc))->putShort(0);
         $aw = new AnnotationWriter($this->cw, true, $bv, $bv, (count($bv) /*from: bv.length*/ - 2));
         if ($visible) {
@@ -1899,11 +1900,11 @@ class MethodWriter extends MethodVisitor
         }
         if ((ClassReader::ANNOTATIONS && ($this->panns != null))) {
             $out->putShort($this->cw->newUTF8("RuntimeVisibleParameterAnnotations"));
-            $AnnotationWriter->put($this->panns, $this->synthetics, $out);
+            AnnotationWriter::put($this->panns, $this->synthetics, $out);
         }
         if ((ClassReader::ANNOTATIONS && ($this->ipanns != null))) {
             $out->putShort($this->cw->newUTF8("RuntimeInvisibleParameterAnnotations"));
-            $AnnotationWriter->put($this->ipanns, $this->synthetics, $out);
+            AnnotationWriter::put($this->ipanns, $this->synthetics, $out);
         }
         if (($this->attrs != null)) {
             $this->attrs->put($this->cw, null, 0, -1, -1, $out);

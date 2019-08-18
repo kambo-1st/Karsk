@@ -79,14 +79,14 @@ class TypePath
      *
      * @var array
      */
-    protected $b;
+    public $b;
 
     /**
      * The offset of the first byte of the type path in 'b'.
      *
      * @var int
      */
-    protected $offset;
+    public $offset;
 
     /**
      * Creates a new type path.
