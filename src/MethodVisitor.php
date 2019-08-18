@@ -32,6 +32,9 @@
  */
 namespace Kambo\Karsk;
 
+use Kambo\Karsk\Exception\IllegalArgumentException;
+use Kambo\Karsk\Exception\RuntimeException;
+
 /**
  * A visitor to visit a Java method. The methods of this class must be called in
  * the following order: ( <tt>visitParameter</tt> )* [
