@@ -158,7 +158,7 @@ class TypePath
         }
 
         $n   = strlen($typePath);
-        $out = new ByteVector($n);
+        $out = new ByteVector();
         $out->putByte(0);
 
         for ($i = 0; ($i < $n);) {
@@ -171,12 +171,12 @@ class TypePath
                 $out->put11(self::WILDCARD_BOUND, 0);
             } elseif (($c >= '0') && ($c <= '9')) {
                 $typeArg = $c - '0';
-                while (($i < $n) && (($c = $typePath->charAt($i)) >= '0') && ($c <= '9')) {
+                while (($i < $n) && (($c = self::charAt($typePath, $i)) >= '0') && ($c <= '9')) {
                     $typeArg = ((($typeArg * 10) + $c) - '0');
                     $i += 1;
                 }
 
-                if ((($i < $n) && ($typePath->charAt($i) == ';'))) {
+                if ((($i < $n) && (self::charAt($typePath, $i) == ';'))) {
                     $i += 1;
                 }
 
@@ -229,7 +229,7 @@ class TypePath
         return $this->toString();
     }
 
-    private function charAt($str, $pos)
+    private static function charAt($str, $pos)
     {
         return $str{$pos};
     }
