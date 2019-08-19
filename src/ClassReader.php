@@ -32,6 +32,18 @@
  */
 namespace Kambo\Karsk;
 
+use Kambo\Karsk\Exception\NotImplementedException;
+
+/**
+ * A Java class parser to make a {@link ClassVisitor} visit an existing class.
+ * This class parses a byte array conforming to the Java class file format and
+ * calls the appropriate visit methods of a given class visitor for each field,
+ * method and bytecode instruction encountered.
+ *
+ * @author Eric Bruneton
+ * @author Eugene Kuleshov
+ * @author Bohuslav Simek <bohuslav@simek.si>
+ */
 class ClassReader
 {
     /**
@@ -109,4 +121,16 @@ class ClassReader
      * converted back to a GOTO_W in ClassWriter cannot occur.
      */
     const EXPAND_ASM_INSNS = 256;
+
+    /**
+     * Constructs a new {@link ClassReader} object.
+     *
+     * @param array $byteCode the bytecode of the class to be read.
+     */
+    public function __construct(array $byteCode)
+    {
+        throw new NotImplementedException(
+            'This method is not implemented. Provided data: '.var_export($byteCode, true)
+        );
+    }
 }

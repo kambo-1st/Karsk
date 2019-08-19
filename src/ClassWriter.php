@@ -1149,7 +1149,7 @@ class ClassWriter extends ClassVisitor
 
         // Starting building individual bytecode section's
         // There are 10 basic sections to the Java Class File structure.
-        $out = new ByteVector($size);
+        $out = new ByteVector();
         // 4 bytes header (in hexadecimal), magic name: CA FE BA BE
         $out->putInt(0xCAFEBABE);
         // Version of Class File Format (4 bytes) - the minor and major
@@ -1595,7 +1595,7 @@ class ClassWriter extends ClassVisitor
         return $this->newMethodItem($owner, $name, $desc, $itf)->index;
     }
 
-    public function newInteger($value) // [final int value]
+    protected function newInteger($value) // [final int value]
     {
         $this->key->setInteger($value);
         $result = $this->get($this->key);
@@ -1608,7 +1608,7 @@ class ClassWriter extends ClassVisitor
         return $result;
     }
 
-    public function newFloat($value) // [final float value]
+    protected function newFloat($value) // [final float value]
     {
         $this->key->setFloat($value);
         $result = $this->get($this->key);
@@ -1621,7 +1621,7 @@ class ClassWriter extends ClassVisitor
         return $result;
     }
 
-    public function newLong($value) // [final long value]
+    protected function newLong($value) // [final long value]
     {
         $this->key->setLong($value);
         $result = $this->get($this->key);
@@ -1635,7 +1635,7 @@ class ClassWriter extends ClassVisitor
         return $result;
     }
 
-    public function newDouble($value) // [final double value]
+    protected function newDouble($value) // [final double value]
     {
         $this->key->setDouble($value);
         $result = $this->get($this->key);
@@ -1649,7 +1649,7 @@ class ClassWriter extends ClassVisitor
         return $result;
     }
 
-    public function newString($value) // [final String value]
+    protected function newString($value) // [final String value]
     {
         $this->key2->setComplex(self::$STR, $value, null, null);
         $result = $this->get($this->key2);
@@ -1708,7 +1708,7 @@ class ClassWriter extends ClassVisitor
         $this->key->hashCode = (0x7FFFFFFF & (((self::$TYPE_UNINIT + $type->hashCode()) + $offset)));
         $result = $this->get($this->key);
         if ($result == null) {
-            $result = $this->addTypeItem($this->key);
+            $result = $this->addTypeItem();
         }
 
         return $result->index;
@@ -1728,7 +1728,7 @@ class ClassWriter extends ClassVisitor
         $this->key->setComplex(self::$TYPE_NORMAL, $type, null, null);
         $result = $this->get($this->key);
         if ($result == null) {
-            $result = $this->addTypeItem($this->key);
+            $result = $this->addTypeItem();
         }
 
         return $result->index;
