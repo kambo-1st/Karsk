@@ -58,8 +58,8 @@ class CurrentFrame extends Frame
     {
         parent::execute($opcode, $arg, $cw, $item);
         $successor = new Frame();
-        $this->merge($cw, $successor, 0);
-        $this->set($successor);
+        $this->mergeFrame($cw, $successor, 0);
+        $this->setFrame($successor);
         $this->owner->inputStackTop = 0;
     }
 }
