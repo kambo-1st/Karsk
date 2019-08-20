@@ -61,7 +61,7 @@ class Attribute
      *
      * @var Attribute
      */
-    protected $next;
+    public $next;
 
     /**
      * Constructs a new empty attribute.

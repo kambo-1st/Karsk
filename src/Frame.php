@@ -253,6 +253,67 @@ class Frame
         0, //JSR_W, // -
     ];
 
+    public static $DIM;	// int
+    public static $ARRAY_OF;	// int
+    public static $ELEMENT_OF;	// int
+    public static $KIND;	// int
+    public static $TOP_IF_LONG_OR_DOUBLE;	// int
+    public static $VALUE;	// int
+    public static $BASE_KIND;	// int
+    public static $BASE_VALUE;	// int
+    public static $BASE;	// int
+    public static $OBJECT;	// int
+    public static $UNINITIALIZED;	// int
+    public static $LOCAL;	// int
+    public static $STACK;	// int
+    public static $TOP;	// int
+    public static $BOOLEAN;	// int
+    public static $BYTE;	// int
+    public static $CHAR;	// int
+    public static $SHORT;	// int
+    public static $INTEGER;	// int
+    public static $FLOAT;	// int
+    public static $DOUBLE;	// int
+    public static $LONG;	// int
+    public static $NULL;	// int
+    public static $UNINITIALIZED_THIS;	// int
+
+    protected $owner;	// Label
+    protected $inputLocals;	// int[]
+    protected $inputStack;	// int[]
+    protected $outputLocals;	// int[]
+    protected $outputStack;	// int[]
+    protected $outputStackTop;	// int
+    protected $initializationCount;	// int
+    protected $initializations;	// int[]
+
+    public static function __staticinit() { // static class members
+        self::$DIM = 0xF0000000;
+        self::$ARRAY_OF = 0x10000000;
+        self::$ELEMENT_OF = 0xF0000000;
+        self::$KIND = 0xF000000;
+        self::$TOP_IF_LONG_OR_DOUBLE = 0x800000;
+        self::$VALUE = 0x7FFFFF;
+        self::$BASE_KIND = 0xFF00000;
+        self::$BASE_VALUE = 0xFFFFF;
+        self::$BASE = 0x1000000;
+        self::$OBJECT = (self::$BASE | 0x700000);
+        self::$UNINITIALIZED = (self::$BASE | 0x800000);
+        self::$LOCAL = 0x2000000;
+        self::$STACK = 0x3000000;
+        self::$TOP = (self::$BASE | 0);
+        self::$BOOLEAN = (self::$BASE | 9);
+        self::$BYTE = (self::$BASE | 10);
+        self::$CHAR = (self::$BASE | 11);
+        self::$SHORT = (self::$BASE | 12);
+        self::$INTEGER = (self::$BASE | 1);
+        self::$FLOAT = (self::$BASE | 2);
+        self::$DOUBLE = (self::$BASE | 3);
+        self::$LONG = (self::$BASE | 4);
+        self::$NULL = (self::$BASE | 5);
+        self::$UNINITIALIZED_THIS = (self::$BASE | 6);
+    }
+
     /**
      * Computes the stack size variation corresponding to each JVM instruction.
      *
@@ -276,3 +337,5 @@ class Frame
         return $str[$pos];
     }
 }
+
+Frame::__staticinit(); // initialize static vars for this class on load

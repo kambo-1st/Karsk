@@ -249,11 +249,13 @@ class MethodWriter extends MethodVisitor
         if (!ClassReader::ANNOTATIONS) {
             return null;
         }
+
         $bv = new ByteVector();
-        if ("Ljava/lang/Synthetic;" /* from: "Ljava/lang/Synthetic;".equals(desc) */) {
-            $this->synthetics = max([$me->synthetics, ($parameter + 1)]);
+        if ($desc === "Ljava/lang/Synthetic;") {
+            $this->synthetics = max($this->synthetics, ($parameter + 1));
             return new AnnotationWriter($this->cw, false, $bv, null, 0);
         }
+
         $bv->putShort($this->cw->newUTF8($desc))->putShort(0);
         $aw = new AnnotationWriter($this->cw, true, $bv, $bv, 2);
         if ($visible) {
@@ -370,22 +372,36 @@ class MethodWriter extends MethodVisitor
 
         if (($this->compute == self::$INSERTED_FRAMES)) {
             if (($this->currentBlock->frame == null)) {
+                // This should happen only once, for the implicit first frame
+                // (which is explicitly visited in ClassReader if the
+                // EXPAND_ASM_INSNS option is used).
                 $this->currentBlock->frame = new CurrentFrame();
                 $this->currentBlock->frame->owner = $this->currentBlock;
                 $this->currentBlock->frame->initInputFrame(
                     $this->cw,
                     $this->access,
-                    $Type->getArgumentTypes($this->descriptor),
+                    Type::getArgumentTps($this->descriptor),
                     $nLocal
                 );
                 $this->visitImplicitFirstFrame();
             } else {
-                if (($type == Opcodes::F_NEW)) {
-                    $this->currentBlock->frame->set($this->cw, $nLocal, $local, $nStack, $stack);
+                if (($type === Opcodes::F_NEW)) {
+                    $this->currentBlock->frame->set(
+                        $this->cw,
+                        $nLocal,
+                        $local,
+                        $nStack,
+                        $stack
+                    );
                 } else {
-            /* match: Frame */
-                    $this->visitTargetFrame($this->currentBlock->frame);
+                    // In this case type is equal to F_INSERT by hypothesis, and
+                    // currentBlock.frame contains the stack map frame at the
+                    // current instruction, computed from the last F_NEW frame
+                    // and the bytecode instructions in between (via calls to
+                    // CurrentFrame#execute).
                 }
+
+                $this->visitTargetFrame($this->currentBlock->frame);
             }
         } elseif (($type == Opcodes::F_NEW)) {
             if (($this->previousFrame == null)) {
@@ -394,23 +410,23 @@ class MethodWriter extends MethodVisitor
             $this->currentLocals = $nLocal;
             $frameIndex = $this->startFrame(count($this->code) /*from: code.length*/, $nLocal, $nStack);
             for ($i = 0; ($i < $nLocal); ++$i) {
-                if ($local[$i] instanceof String) {
-                    $this->frame[++$frameIndex] = ($Frame->OBJECT | $this->cw->addType($local[$i]));
-                } elseif ($local[$i] instanceof Integer) {
-                    $this->frame[++$frameIndex] = ($local[$i])->intValue();
+                if (is_string($local[$i])) {
+                    $this->frame[++$frameIndex] = (Frame::$OBJECT | $this->cw->addType($local[$i]));
+                } elseif (is_int($local[$i])) {
+                    $this->frame[++$frameIndex] = $local[$i];
                 } else {
-                    $this->frame[++$frameIndex] = ($Frame->UNINITIALIZED
+                    $this->frame[++$frameIndex] = (Frame::$UNINITIALIZED
                         | $this->cw->addUninitializedType("", ($local[$i])::$position)
                     );
                 }
             }
             for ($i = 0; ($i < $nStack); ++$i) {
-                if ($stack[$i] instanceof String) {
-                    $this->frame[++$frameIndex] = ($Frame->OBJECT | $this->cw->addType($stack[$i]));
-                } elseif ($stack[$i] instanceof Integer) {
-                    $this->frame[++$frameIndex] = ($stack[$i])->intValue();
+                if (is_string($stack[$i])) {
+                    $this->frame[++$frameIndex] = (Frame::$OBJECT | $this->cw->addType($stack[$i]));
+                } elseif (is_int($stack[$i])) {
+                    $this->frame[++$frameIndex] = $stack[$i];
                 } else {
-                    $this->frame[++$frameIndex] = ($Frame->UNINITIALIZED
+                    $this->frame[++$frameIndex] = (Frame::$UNINITIALIZED
                         | $this->cw->addUninitializedType("", ($stack[$i])::$position)
                     );
                 }
@@ -427,7 +443,7 @@ class MethodWriter extends MethodVisitor
                     if (($type == Opcodes::F_SAME)) {
                         return ;
                     } else {
-                        throw new IllegalStateException();
+                        throw new \Kambo\Karsk\Exception\IllegalStateException();
                     }
                 }
             }
@@ -526,7 +542,7 @@ class MethodWriter extends MethodVisitor
                 $this->currentBlock->frame->execute($opcode, $var, null, null);
             } else {
                 if (($opcode == Opcodes::RET)) {
-                    $this->currentBlock->status |= $Label->RET;
+                    $this->currentBlock->status |= Label::RET;
                     $this->currentBlock->inputStackTop = $this->stackSize;
                     $this->noSuccessor();
                 } else {
@@ -668,20 +684,20 @@ class MethodWriter extends MethodVisitor
         if (($this->currentBlock != null)) {
             if (($this->compute == self::$FRAMES)) {
                 $this->currentBlock->frame->execute($opcode, 0, null, null);
-                $label->getFirst()->status |= $Label->TARGET;
-                $this->addSuccessor($Edge->NORMAL, $label);
-                if (($opcode != Opcodes::GOTO)) {
+                $label->getFirst()->status |= Label::TARGET;
+                $this->addSuccessor(Edge::NORMAL, $label);
+                if (($opcode != Opcodes::GOTO_)) {
                     $nextInsn = new Label();
                 }
             } elseif (($this->compute == self::$INSERTED_FRAMES)) {
                 $this->currentBlock->frame->execute($opcode, 0, null, null);
             } else {
                 if (($opcode == Opcodes::JSR)) {
-                    if (((($label->status & $Label->SUBROUTINE)) == 0)) {
-                        $label->status |= $Label->SUBROUTINE;
+                    if (((($label->status & Label::SUBROUTINE)) == 0)) {
+                        $label->status |= Label::SUBROUTINE;
                         ++$this->subroutines;
                     }
-                    $this->currentBlock->status |= $Label->JSR;
+                    $this->currentBlock->status |= Label::JSR;
                     $this->addSuccessor(($this->stackSize + 1), $label);
                     $nextInsn = new Label();
                 } else {
@@ -692,13 +708,13 @@ class MethodWriter extends MethodVisitor
         }
 
         if ((((($label->status & Label::RESOLVED)) != 0) && (($label->position - count($this->code)) < -32768))) {
-            if (($opcode == Opcodes::GOTO)) {
+            if (($opcode == Opcodes::GOTO_)) {
                 $this->code->putByte(200);
             } elseif (($opcode == Opcodes::JSR)) {
                 $this->code->putByte(201);
             } else {
                 if (($nextInsn != null)) {
-                    $nextInsn->status |= $Label->TARGET;
+                    $nextInsn->status |= Label::TARGET;
                 }
                 $this->code->putByte(( (($opcode <= 166)) ? ((((($opcode + 1)) ^ 1)) - 1) : ($opcode ^ 1) ));
                 $this->code->putShort(8);
@@ -740,11 +756,11 @@ class MethodWriter extends MethodVisitor
         if (($this->compute == self::$FRAMES)) {
             if (($this->currentBlock != null)) {
                 if (($label->position == $this->currentBlock->position)) {
-                    $this->currentBlock->status |= (($label->status & $Label->TARGET));
+                    $this->currentBlock->status |= (($label->status & Label::TARGET));
                     $label->frame = $this->currentBlock->frame;
                     return ;
                 }
-                $this->addSuccessor($Edge->NORMAL, $label);
+                $this->addSuccessor(Edge::NORMAL, $label);
             }
             $this->currentBlock = $label;
             if (($label->frame == null)) {
@@ -753,7 +769,7 @@ class MethodWriter extends MethodVisitor
             }
             if (($this->previousBlock != null)) {
                 if (($label->position == $this->previousBlock->position)) {
-                    $this->previousBlock->status |= (($label->status & $Label->TARGET));
+                    $this->previousBlock->status |= (($label->status & Label::TARGET));
                     $label->frame = $this->previousBlock->frame;
                     $this->currentBlock = $this->previousBlock;
                     return ;
@@ -911,11 +927,11 @@ class MethodWriter extends MethodVisitor
         if (($this->currentBlock != null)) {
             if (($this->compute == self::$FRAMES)) {
                 $this->currentBlock->frame->execute(Opcodes::LOOKUPSWITCH, 0, null, null);
-                $this->addSuccessor($Edge->NORMAL, $dflt);
-                $dflt->getFirst()->status |= $Label->TARGET;
+                $this->addSuccessor(Edge::NORMAL, $dflt);
+                $dflt->getFirst()->status |= Label::TARGET;
                 for ($i = 0; ($i < count($labels) /*from: labels.length*/); ++$i) {
-                    $this->addSuccessor($Edge->NORMAL, $labels[$i]);
-                    $labels[$i]->getFirst()->status |= $Label->TARGET;
+                    $this->addSuccessor(Edge::NORMAL, $labels[$i]);
+                    $labels[$i]->getFirst()->status |= Label::TARGET;
                 }
             } else {
                 --$this->stackSize;
@@ -949,7 +965,7 @@ class MethodWriter extends MethodVisitor
         }
         $bv = new ByteVector();
         $typeRef = ((($typeRef & 0xFF0000FF)) | (($this->lastCodeOffset << 8)));
-        $AnnotationWriter->putTarget($typeRef, $typePath, $bv);
+        AnnotationWriter::putTarget($typeRef, $typePath, $bv);
         $bv->putShort($this->cw->newUTF8($desc))->putShort(0);
         $aw = new AnnotationWriter($this->cw, true, $bv, $bv, (count($bv) /*from: bv.length*/ - 2));
         if ($visible) {
@@ -971,12 +987,13 @@ class MethodWriter extends MethodVisitor
         $h->end = $end;
         $h->handler = $handler;
         $h->desc = $type;
-        $h->type = ( (($type . null)) ? $this->cw->newClass($type) : 0 );
-        if (($this->lastHandler == null)) {
+        $h->type = ($type !== null) ? $this->cw->newClass($type) : 0;
+        if (($this->lastHandler === null)) {
             $this->firstHandler = $h;
         } else {
             $this->lastHandler->next = $h;
         }
+
         $this->lastHandler = $h;
     }
 
@@ -986,10 +1003,11 @@ class MethodWriter extends MethodVisitor
         if (!ClassReader::ANNOTATIONS) {
             return null;
         }
+
         $bv = new ByteVector();
-        $AnnotationWriter->putTarget($typeRef, $typePath, $bv);
+        AnnotationWriter::putTarget($typeRef, $typePath, $bv);
         $bv->putShort($this->cw->newUTF8($desc))->putShort(0);
-        $aw = new AnnotationWriter($this->cw, true, $bv, $bv, (count($bv) /*from: bv.length*/ - 2));
+        $aw = new AnnotationWriter($this->cw, true, $bv, $bv, (count($bv) - 2));
         if ($visible) {
             $aw->next = $this->ctanns;
             $this->ctanns = $aw;
@@ -997,6 +1015,7 @@ class MethodWriter extends MethodVisitor
             $aw->next = $this->ictanns;
             $this->ictanns = $aw;
         }
+
         return $aw;
     }
 
@@ -1050,6 +1069,7 @@ class MethodWriter extends MethodVisitor
         if (!ClassReader::ANNOTATIONS) {
             return null;
         }
+
         $bv = new ByteVector();
         $bv->putByte($this->uRShift($typeRef, 24))->putShort(count($start) /*from: start.length*/);
         for ($i = 0; ($i < count($start) /*from: start.length*/); ++$i) {
@@ -1057,12 +1077,14 @@ class MethodWriter extends MethodVisitor
                 ->putShort(($end[$i]->position - $start[$i]->position))
                 ->putShort($index[$i]);
         }
+
         if (($typePath == null)) {
             $bv->putByte(0);
         } else {
             $length = (($typePath->b[$typePath->offset] * 2) + 1);
             $bv->putByteArray($typePath->b, $typePath->offset, $length);
         }
+
         $bv->putShort($this->cw->newUTF8($desc))->putShort(0);
         $aw = new AnnotationWriter($this->cw, true, $bv, $bv, (count($bv) /*from: bv.length*/ - 2));
         if ($visible) {
@@ -1072,6 +1094,7 @@ class MethodWriter extends MethodVisitor
             $aw->next = $this->ictanns;
             $this->ictanns = $aw;
         }
+
         return $aw;
     }
 
@@ -1104,8 +1127,8 @@ class MethodWriter extends MethodVisitor
                 $h = $handler->handler->getFirst();
                 $e = $handler->end->getFirst();
                 $t = ( (($handler->desc == null)) ? "java/lang/Throwable" : $handler->desc );
-                $kind = ($Frame->OBJECT | $this->cw->addType($t));
-                $h->status |= $Label->TARGET;
+                $kind = (Frame::$OBJECT | $this->cw->addType($t));
+                $h->status |= Label::TARGET;
                 while (($l != $e)) {
                     $b = new Edge();
                     $b->info = $kind;
@@ -1114,10 +1137,12 @@ class MethodWriter extends MethodVisitor
                     $l->successors = $b;
                     $l = $l->successor;
                 }
+
                 $handler = $handler->next;
             }
+
             $f = $this->labels->frame;
-            $f->initInputFrame($this->cw, $this->access, $Type->getArgumentTypes($this->descriptor), $this->maxLocals);
+            $f->initInputFrame($this->cw, $this->access, Type::getArgumentTps($this->descriptor), $this->maxLocals);
             /* match: Frame */
             $this->visitTargetFrame($f);
             $max = 0;
@@ -1127,10 +1152,10 @@ class MethodWriter extends MethodVisitor
                 $changed = $changed->next;
                 $l->next = null;
                 $f = $l->frame;
-                if (((($l->status & $Label->TARGET)) != 0)) {
-                    $l->status |= $Label->STORE;
+                if (((($l->status & Label::TARGET)) != 0)) {
+                    $l->status |= Label::STORE;
                 }
-                $l->status |= $Label->REACHABLE;
+                $l->status |= Label::REACHABLE;
                 $blockMax = (count($f->inputStack) /*from: f.inputStack.length*/ + $l->outputStackMax);
                 if (($blockMax > $max)) {
                     $max = $blockMax;
@@ -1149,11 +1174,11 @@ class MethodWriter extends MethodVisitor
             $l = $this->labels;
             while (($l != null)) {
                 $f = $l->frame;
-                if (((($l->status & $Label->STORE)) != 0)) {
+                if (((($l->status & Label::STORE)) != 0)) {
             /* match: Frame */
                     $this->visitTargetFrame($f);
                 }
-                if (((($l->status & $Label->REACHABLE)) == 0)) {
+                if (((($l->status & Label::REACHABLE)) == 0)) {
                     $k = $l->successor;
                     $start = $l->position;
                     $end = ((( (($k == null)) ? count($this->code) /*from: code.length*/ : $k->position )) - 1);
@@ -1164,9 +1189,9 @@ class MethodWriter extends MethodVisitor
                         }
                         $this->code->data[$end] = Opcodes::ATHROW;
                         $frameIndex = $this->startFrame($start, 0, 1);
-                        $this->frame[$frameIndex] = ($Frame->OBJECT | $this->cw->addType("java/lang/Throwable"));
+                        $this->frame[$frameIndex] = (Frame::$OBJECT | $this->cw->addType("java/lang/Throwable"));
                         $this->endFrame();
-                        $this->firstHandler = $Handler->remove($this->firstHandler, $l, $k);
+                        $this->firstHandler = Handler::remove($this->firstHandler, $l, $k);
                     }
                 }
                 $l = $l->successor;
@@ -1186,9 +1211,9 @@ class MethodWriter extends MethodVisitor
                 $e = $handler->end;
                 while (($l != $e)) {
                     $b = new Edge();
-                    $b->info = $Edge->EXCEPTION;
+                    $b->info = Edge::EXCEPTION;
                     $b->successor = $h;
-                    if (((($l->status & $Label->JSR)) == 0)) {
+                    if (((($l->status & Label::JSR)) == 0)) {
                         $b->next = $l->successors;
                         $l->successors = $b;
                     } else {
@@ -1204,9 +1229,9 @@ class MethodWriter extends MethodVisitor
                 $this->labels->visitSubroutine(null, 1, $this->subroutines);
                 $l = $this->labels;
                 while (($l != null)) {
-                    if (((($l->status & $Label->JSR)) != 0)) {
+                    if (((($l->status & Label::JSR)) != 0)) {
                         $subroutine = $l->successors->next->successor;
-                        if (((($subroutine->status & $Label->VISITED)) == 0)) {
+                        if (((($subroutine->status & Label::VISITED)) == 0)) {
                             $id += 1;
                             $subroutine->visitSubroutine(
                                 null,
@@ -1219,10 +1244,10 @@ class MethodWriter extends MethodVisitor
                 }
                 $l = $this->labels;
                 while (($l != null)) {
-                    if (((($l->status & $Label->JSR)) != 0)) {
+                    if (((($l->status & Label::JSR)) != 0)) {
                         $L = $this->labels;
                         while (($L != null)) {
-                            $L->status &= ~$Label->VISITED2;
+                            $L->status &= ~Label::VISITED2;
                             $L = $L->successor;
                         }
                         $subroutine = $l->successors->next->successor;
@@ -1300,20 +1325,20 @@ class MethodWriter extends MethodVisitor
         $stacks = $f->inputStack;
         for ($i = 0; ($i < count($locals) /*from: locals.length*/); ++$i) {
             $t = $locals[$i];
-            if (($t == $Frame->TOP)) {
+            if (($t == Frame::$TOP)) {
                 ++$nTop;
             } else {
                 $nLocal += ($nTop + 1);
                 $nTop = 0;
             }
-            if ((($t == $Frame->LONG) || ($t == $Frame->DOUBLE))) {
+            if ((($t == Frame::$LONG) || ($t == Frame::$DOUBLE))) {
                 ++$i;
             }
         }
         for ($i = 0; ($i < count($stacks) /*from: stacks.length*/); ++$i) {
             $t = $stacks[$i];
             ++$nStack;
-            if ((($t == $Frame->LONG) || ($t == $Frame->DOUBLE))) {
+            if ((($t == Frame::$LONG) || ($t == Frame::$DOUBLE))) {
                 ++$i;
             }
         }
@@ -1321,14 +1346,14 @@ class MethodWriter extends MethodVisitor
         for ($i = 0; ($nLocal > 0); ++$i, --$nLocal) {
             $t = $locals[$i];
             $this->frame[++$frameIndex] = $t;
-            if ((($t == $Frame->LONG) || ($t == $Frame->DOUBLE))) {
+            if ((($t == Frame::$LONG) || ($t == Frame::$DOUBLE))) {
                 ++$i;
             }
         }
         for ($i = 0; ($i < count($stacks) /*from: stacks.length*/); ++$i) {
             $t = $stacks[$i];
             $this->frame[++$frameIndex] = $t;
-            if ((($t == $Frame->LONG) || ($t == $Frame->DOUBLE))) {
+            if ((($t == Frame::$LONG) || ($t == Frame::$DOUBLE))) {
                 ++$i;
             }
         }
@@ -1344,8 +1369,8 @@ class MethodWriter extends MethodVisitor
     {
         $frameIndex = $this->startFrame(0, ($this->descriptor->length() + 1), 0);
         if (((($this->access & Opcodes::ACC_STATIC)) == 0)) {
-            if (((($this->access & self::ACC_CONSTRUCTOR)) == 0)) {
-                $this->frame[++$frameIndex] = ($Frame->OBJECT | $this->cw->addTypeItem($this->cw->thisName));
+            if (((($this->access & self::$ACC_CONSTRUCTOR)) == 0)) {
+                $this->frame[++$frameIndex] = (Frame::$OBJECT | $this->cw->addTypeItem($this->cw->thisName));
             } else {
                 $this->frame[++$frameIndex] = 6;
             }
@@ -1376,26 +1401,26 @@ class MethodWriter extends MethodVisitor
 
                     break;
                 case '[':
-                    while ($this->charAt($descriptor, $i) == '[') {
+                    while ($this->charAt($this->descriptor, $i) == '[') {
                         ++$i;
                     }
 
-                    if ($this->charAt($descriptor, $i) == 'L') {
+                    if ($this->charAt($this->descriptor, $i) == 'L') {
                         ++$i;
-                        while ($this->charAt($descriptor, $i) != ';') {
+                        while ($this->charAt($this->descriptor, $i) != ';') {
                             ++$i;
                         }
                     }
 
-                    $frame[$frameIndex++] = Frame::OBJECT | $this->cw->addType(substr($descriptor, $j, ++$i));
+                    $frame[$frameIndex++] = Frame::$OBJECT | $this->cw->addType(substr($this->descriptor, $j, ++$i));
 
                     break;
                 case 'L':
-                    while ($this->charAt($descriptor, $i) != ';') {
+                    while ($this->charAt($this->descriptor, $i) != ';') {
                         ++$i;
                     }
 
-                    $frame[$frameIndex++] = Frame::OBJECT | $this->cw->addType(substr($descriptor, $j+1, $i++));
+                    $frame[$frameIndex++] = Frame::$OBJECT | $this->cw->addType(substr($this->descriptor, $j+1, $i++));
 
                     break;
                 default:
@@ -1514,57 +1539,57 @@ class MethodWriter extends MethodVisitor
     {
         for ($i = $start; ($i < $end); ++$i) {
             $t = $this->frame[$i];
-            $d = ($t & $Frame->DIM);
+            $d = ($t & Frame::$DIM);
             if (($d == 0)) {
-                $v = ($t & $Frame->BASE_VALUE);
-                switch (($t & $Frame->BASE_KIND)) {
-                    case $Frame->OBJECT:
+                $v = ($t & Frame::$BASE_VALUE);
+                switch (($t & Frame::$BASE_KIND)) {
+                    case Frame::$OBJECT:
                         $this->stackMap->putByte(7)->putShort($this->cw->newClass($this->cw->typeTable[$v]->strVal1));
                         break;
-                    case $Frame->UNINITIALIZED:
+                    case Frame::$UNINITIALIZED:
                         $this->stackMap->putByte(8)->putShort($this->cw->typeTable[$v]->intVal);
                         break;
                     default:
                         $this->stackMap->putByte($v);
                 }
             } else {
-                $sb = new StringBuilder();
+                $sb = '';
                 $d >>= 28;
                 while ((--$d > 0)) {
-                    $sb->append('[');
+                    $sb .= '[';
                 }
-                if (((($t & $Frame->BASE_KIND)) == $Frame->OBJECT)) {
-                    $sb->append('L');
-                    $sb->append($this->cw->typeTable[($t & $Frame->BASE_VALUE)]->strVal1);
-                    $sb->append(';');
+                if (((($t & Frame::$BASE_KIND)) == Frame::$OBJECT)) {
+                    $sb .='L';
+                    $sb .=$this->cw->typeTable[($t & Frame::$BASE_VALUE)]->strVal1;
+                    $sb .=';';
                 } else {
                     switch (($t & 0xF)) {
                         case 1:
-                            $sb->append('I');
+                            $sb .= ('I');
                             break;
                         case 2:
-                            $sb->append('F');
+                            $sb .= ('F');
                             break;
                         case 3:
-                            $sb->append('D');
+                            $sb .= ('D');
                             break;
                         case 9:
-                            $sb->append('Z');
+                            $sb .= ('Z');
                             break;
                         case 10:
-                            $sb->append('B');
+                            $sb .= ('B');
                             break;
                         case 11:
-                            $sb->append('C');
+                            $sb .= ('C');
                             break;
                         case 12:
-                            $sb->append('S');
+                            $sb .= ('S');
                             break;
                         default:
-                            $sb->append('J');
+                            $sb .= ('J');
                     }
                 }
-                $this->stackMap->putByte(7)->putShort($this->cw->newClass($sb->toString()));
+                $this->stackMap->putByte(7)->putShort($this->cw->newClass($sb));
             }
         }
     }
@@ -1588,7 +1613,7 @@ class MethodWriter extends MethodVisitor
         $size = 8;
         if ((count($this->code) /*from: code.length*/ > 0)) {
             if ((count($this->code) /*from: code.length*/ > 65535)) {
-                throw new RuntimeException("Method code too large!");
+                throw new \Kambo\Karsk\Exception\RuntimeException("Method code too large!");
             }
             $this->cw->newUTF8("Code");
             $size += ((18 + count($this->code) /*from: code.length*/) + (8 * $this->handlerCount));

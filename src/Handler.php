@@ -39,21 +39,21 @@ class Handler
      *
      * @var Label
      */
-    protected $start;
+    public $start;
 
     /**
      * End of the exception handler's scope (exclusive).
      *
      * @var Label
      */
-    protected $end;
+    public $end;
 
     /**
      * Beginning of the exception handler's code.
      *
      * @var Label
      */
-    protected $handler;
+    public $handler;
 
     /**
      * Internal name of the type of exceptions handled by this handler, or
@@ -61,7 +61,7 @@ class Handler
      *
      * @var string
      */
-    protected $desc;
+    public $desc;
 
     /**
      * Constant pool index of the internal name of the type of exceptions
@@ -69,14 +69,14 @@ class Handler
      *
      * @var int
      */
-    protected $type;
+    public $type;
 
     /**
      * Next exception handler block info.
      *
      * @var Handler
      */
-    protected $next;
+    public $next;
 
     /**
      * Removes the range between start and end from the given exception

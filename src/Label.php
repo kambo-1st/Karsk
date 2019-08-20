@@ -483,7 +483,7 @@ class Label
      *
      * @return void
      */
-    protected function visitSubroutine(Label $JSR, int $id, int $nbSubroutines) : void
+    public function visitSubroutine(Label $JSR, int $id, int $nbSubroutines) : void
     {
         $stack = $this;
         while (($stack != null)) {
