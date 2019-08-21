@@ -49,12 +49,12 @@ class CurrentFrame extends Frame
      * that the value of this object when this method is called is the stack map
      * frame status just before the given instruction is executed.
      *
-     * @param $opcode the opcode of the instruction.
-     * @param $arg    the operand of the instruction, if any.
-     * @param $cw     the class writer to which this label belongs.
-     * @param $item   the operand of the instructions, if any.
+     * @param int         $opcode the opcode of the instruction.
+     * @param int         $arg    the operand of the instruction, if any.
+     * @param ClassWriter $cw     the class writer to which this label belongs.
+     * @param Item        $item   the operand of the instructions, if any.
      */
-    protected function execute($opcode, $arg, $cw, $item) : void
+    protected function execute(int $opcode, int $arg, ClassWriter $cw, Item $item) : void
     {
         parent::execute($opcode, $arg, $cw, $item);
         $successor = new Frame();
