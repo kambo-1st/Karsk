@@ -22,8 +22,6 @@ jobs:
         with:
           fetch-depth: 2
       - name: Composer
-        uses: ./
-        # uses: khs1994-docker/actions-setup-php@master
         with:
           # job_container_network: ${{ job.container.network }}
           php_type: composer
@@ -33,8 +31,6 @@ jobs:
             composer --version
             composer global config -l
       - name: Without version
-        uses: ./
-        # uses: khs1994-docker/actions-setup-php@master
         with:
           job_container_network: ${{ job.container.network }}
           args: |
@@ -42,8 +38,6 @@ jobs:
             php -v
             env
       - name: Check version
-        uses: ./
-        # uses: khs1994-docker/actions-setup-php@master
         with:
           php_version: ${{ matrix.php_version }}
           job_container_network: ${{ job.container.network }}
