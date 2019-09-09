@@ -139,13 +139,13 @@ class Attribute
      *
      * @return Attribute a <i>new</i> {@link Attribute} object corresponding to the given bytes.
      */
-    protected function read(
+    public function read(
         ClassReader $cr,
         int $off,
         int $len,
-        array $buf,
+        ?array $buf,
         int $codeOff,
-        array $labels
+        ?array $labels
     ) : Attribute {
         $attr        = new self($this->type);
         $attr->value = [];
@@ -186,7 +186,7 @@ class Attribute
      *
      * @return ByteVector the byte array form of this attribute.
      */
-    protected function write(
+    public function write(
         ClassWriter $cw,
         array $code,
         int $len,
