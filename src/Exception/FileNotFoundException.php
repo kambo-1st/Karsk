@@ -8,7 +8,7 @@ namespace Kambo\Karsk\Exception;
  * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
-class FileNotFoundException extends IOException
+class FileNotFoundException extends IOException implements KarskException
 {
 
 }

@@ -8,7 +8,7 @@ namespace Kambo\Karsk\Exception;
  * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license MIT
  */
-class IllegalArgumentException extends \Exception
+class IllegalArgumentException extends \Exception implements KarskException
 {
 
 }

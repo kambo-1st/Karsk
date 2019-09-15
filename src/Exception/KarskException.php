@@ -3,12 +3,12 @@
 namespace Kambo\Karsk\Exception;
 
 /**
- * RuntimeException exception
+ * Marker interface for all Karsk exceptions
  *
  * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
-class RuntimeException extends \Exception implements KarskException
+interface KarskException
 {
 
 }

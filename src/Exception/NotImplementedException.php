@@ -8,7 +8,7 @@ namespace Kambo\Karsk\Exception;
  * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license MIT
  */
-class NotImplementedException extends \Exception
+class NotImplementedException extends \Exception implements KarskException
 {
 
 }
