@@ -192,7 +192,228 @@ class ClassWriter extends ClassVisitor
     /**
      * The instruction types of all JVM opcodes.
      */
-    public static $TYPE;
+    public static $TYPE = [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        11,
+        12,
+        12,
+        3,
+        3,
+        3,
+        3,
+        3,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        3,
+        3,
+        3,
+        3,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        13,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        3,
+        14,
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        7,
+        8,
+        5,
+        1,
+        5,
+        0,
+        0,
+        5,
+        5,
+        0,
+        0,
+        17,
+        16,
+        9,
+        9,
+        10,
+        10,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+        18,
+    ];
 
     /**
      * The type of CONSTANT_Class constant pool items.
@@ -603,6 +824,7 @@ class ClassWriter extends ClassVisitor
      */
     public function __construct(int $flags)
     {
+        //self::calculate();die;
         parent::__construct(Opcodes::ASM5);
         $this->index = 1;
         $this->pool  = new ByteVector();
@@ -657,7 +879,7 @@ class ClassWriter extends ClassVisitor
      *                    {@link #COMPUTE_FRAMES}.
      *
      * @notYetImplemented
-     * @return ClassWriter
+     * @return            ClassWriter
      */
     public static function createFromClass($classReader, int $flags)
     {
@@ -689,7 +911,7 @@ class ClassWriter extends ClassVisitor
      *               {@link Type#getInternalName() getInternalName}). For
      *               interfaces, the super class is {@link Object}. May be
      *               <tt>null</tt>, but only for the {@link Object} class.
-     * @param array $interfaces
+     * @param array  $interfaces
      *              the internal names of the class's interfaces (see
      *              {@link Type#getInternalName() getInternalName}). May be
      *              <tt>null</tt>.
@@ -1103,7 +1325,8 @@ class ClassWriter extends ClassVisitor
 
         if (($this->access & Opcodes::ACC_SYNTHETIC) != 0) {
             if (((($this->version & 0xFFFF)) < Opcodes::V1_5)
-                || ((($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE)) != 0)) {
+                || ((($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE)) != 0)
+            ) {
                 ++$attributeCount;
                 $size += 6;
                 $this->newUTF8("Synthetic");
@@ -1221,7 +1444,8 @@ class ClassWriter extends ClassVisitor
 
         if (($this->access & Opcodes::ACC_SYNTHETIC) != 0) {
             if (((($this->version & 0xFFFF)) < Opcodes::V1_5)
-                || (($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE) != 0)) {
+                || (($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE) != 0)
+            ) {
                 $out->putShort($this->newUTF8("Synthetic"))->putInt(0);
             }
         }
@@ -1554,7 +1778,7 @@ class ClassWriter extends ClassVisitor
      *            the method's name.
      * @param string $desc
      *            the method's descriptor.
-     * @param bool $itf
+     * @param bool   $itf
      *            <tt>true</tt> if <tt>owner</tt> is an interface.
      *
      * @return Item a new or already existing method reference item.
@@ -1585,7 +1809,7 @@ class ClassWriter extends ClassVisitor
      *            the method's name.
      * @param string $desc
      *            the method's descriptor.
-     * @param bool $itf
+     * @param bool   $itf
      *            <tt>true</tt> if <tt>owner</tt> is an interface.
      *
      * @return int the index of a new or already existing method reference item.

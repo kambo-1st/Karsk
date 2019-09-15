@@ -133,7 +133,88 @@ class ClassReaderTest extends TestCase
 
         $this->assertNull($result->accept($stub));
     }
-    
+
+    public function testAcceptInstructions()
+    {
+        $result = new ClassReader($this->getTestedClassByteCode());
+
+        $stub = $this->getMockForAbstractClass(
+            ClassVisitor::class,
+            [Opcodes::ASM4],
+            '',
+            true,
+            true,
+            true,
+            ['visit', 'visitMethod']
+        );
+
+        $mvMock = $this->createMock(MethodVisitor::class);
+        $mvMock->expects($this->exactly(2))
+            ->method('visitInsn')
+            ->withConsecutive(
+                [
+                    Opcodes::RETURN_
+                ],
+                [
+                    Opcodes::RETURN_
+                ]
+            );
+
+        $mvMock->expects($this->exactly(1))
+            ->method('visitVarInsn')
+            ->withConsecutive(
+                [
+                    Opcodes::ALOAD
+                ]
+            );
+
+        $mvMock->expects($this->exactly(2))
+            ->method('visitMethodInsn')
+            ->withConsecutive(
+                [
+                    Opcodes::INVOKESPECIAL,
+                    'java/lang/Object',
+                    '<init>',
+                    '()V',
+                    false,
+                ],
+                [
+                    Opcodes::INVOKEVIRTUAL,
+                    'java/io/PrintStream',
+                    'println',
+                    '(Ljava/lang/String;)V',
+                    false,
+                ]
+            );
+
+        $mvMock->expects($this->exactly(1))
+            ->method('visitLdcInsn')
+            ->withConsecutive(
+                [
+                    'Hello world!'
+                ]
+            );
+
+        $mvMock->expects($this->exactly(1))
+            ->method('visitFieldInsn')
+            ->withConsecutive(
+                [
+                    Opcodes::GETSTATIC,
+                    'java/lang/System',
+                    'out',
+                    'Ljava/io/PrintStream;',
+                ]
+            );
+
+        $stub->expects($this->exactly(2))
+            ->method('visitMethod')
+            ->willReturn(
+                $mvMock
+            );
+
+        $this->assertNull($result->accept($stub));
+    }
+
     private function getTestedClassByteCode() : array
     {
         return [
