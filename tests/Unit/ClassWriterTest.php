@@ -36,16 +36,16 @@ class ClassWriterTest extends TestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC,
-            "Example",
+            'Example',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
         $mw = $cw->visitMethod(
             Opcodes::ACC_PUBLIC,
-            "<init>",
-            "()V",
+            '<init>',
+            '()V',
             null,
             null
         );
@@ -53,9 +53,9 @@ class ClassWriterTest extends TestCase
 
         $mw->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
-            "java/lang/Object",
-            "<init>",
-            "()V",
+            'java/lang/Object',
+            '<init>',
+            '()V',
             false
         );
         $mw->visitInsn(Opcodes::RETURN_);
@@ -64,24 +64,24 @@ class ClassWriterTest extends TestCase
 
         $mw2 = $cw->visitMethod(
             (Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC),
-            "main",
-            "([Ljava/lang/String;)V",
+            'main',
+            '([Ljava/lang/String;)V',
             null,
             null
         );
         $mw2->visitFieldInsn(
             Opcodes::GETSTATIC,
-            "java/lang/System",
-            "out",
-            "Ljava/io/PrintStream;"
+            'java/lang/System',
+            'out',
+            'Ljava/io/PrintStream;'
         );
-        $mw2->visitLdcInsn("Hello world!");
+        $mw2->visitLdcInsn('Hello world!');
 
         $mw2->visitMethodInsn(
             Opcodes::INVOKEVIRTUAL,
-            "java/io/PrintStream",
-            "println",
-            "(Ljava/lang/String;)V",
+            'java/io/PrintStream',
+            'println',
+            '(Ljava/lang/String;)V',
             false
         );
         $mw2->visitInsn(Opcodes::RETURN_);
@@ -136,16 +136,16 @@ class ClassWriterTest extends TestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-            "AssignVariable",
+            'AssignVariable',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC,
-            "<init>",
-            "()V",
+            '<init>',
+            '()V',
             null,
             null
         );
@@ -154,9 +154,9 @@ class ClassWriterTest extends TestCase
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
         $mv->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
-            "java/lang/Object",
-            "<init>",
-            "()V",
+            'java/lang/Object',
+            '<init>',
+            '()V',
             false
         );
         $mv->visitInsn(Opcodes::RETURN_);
@@ -166,8 +166,8 @@ class ClassWriterTest extends TestCase
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-            "main",
-            "([Ljava/lang/String;)V",
+            'main',
+            '([Ljava/lang/String;)V',
             null,
             null
         );
@@ -182,9 +182,9 @@ class ClassWriterTest extends TestCase
         $mv->visitVarInsn(Opcodes::ILOAD, 2);
         $mv->visitVarInsn(Opcodes::ISTORE, 1);
 
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 1);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $mv->visitInsn(Opcodes::RETURN_);
 
@@ -241,16 +241,16 @@ class ClassWriterTest extends TestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-            "SimpleMath",
+            'SimpleMath',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC,
-            "<init>",
-            "()V",
+            '<init>',
+            '()V',
             null,
             null
         );
@@ -259,9 +259,9 @@ class ClassWriterTest extends TestCase
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
         $mv->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
-            "java/lang/Object",
-            "<init>",
-            "()V",
+            'java/lang/Object',
+            '<init>',
+            '()V',
             false
         );
         $mv->visitInsn(Opcodes::RETURN_);
@@ -269,7 +269,7 @@ class ClassWriterTest extends TestCase
         $mv->visitMaxs(1, 1);
         $mv->visitEnd();
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, 'main', '([Ljava/lang/String;)V', null, null);
         $mv->visitCode();
 
         $mv->visitIntInsn(Opcodes::BIPUSH, 10);
@@ -293,9 +293,9 @@ class ClassWriterTest extends TestCase
         $mv->visitInsn(Opcodes::IDIV);
         $mv->visitVarInsn(Opcodes::ISTORE, 1);
 
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 1);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $mv->visitInsn(Opcodes::RETURN_);
 
@@ -355,23 +355,23 @@ class ClassWriterTest extends TestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-            "SimpleCondition",
+            'SimpleCondition',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
         $mv->visitCode();
 
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
-        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
         $mv->visitInsn(Opcodes::RETURN_);
 
         $mv->visitMaxs(1, 1);
         $mv->visitEnd();
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, 'main', '([Ljava/lang/String;)V', null, null);
         $mv->visitCode();
 
         $mv->visitIntInsn(Opcodes::BIPUSH, 10);
@@ -390,15 +390,15 @@ class ClassWriterTest extends TestCase
         $l4 = new Label();
         $mv->visitJumpInsn(Opcodes::IF_ICMPNE, $l4);
 
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 3);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
         $mv->visitLabel($l4);
         $mv->visitLineNumber(14, $l4);
         $mv->visitFrame(Opcodes::F_APPEND, 3, [Opcodes::INTEGER, Opcodes::FLOAT, Opcodes::INTEGER], 0, null);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 1);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $mv->visitInsn(Opcodes::RETURN_);
 
@@ -464,27 +464,27 @@ class ClassWriterTest extends TestCase
     {
         $cw = new ClassWriter(0);
 
-        $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, "Switch", null, "java/lang/Object", null);
+        $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, 'Switch', null, 'java/lang/Object', null);
 
-        $cw->visitSource("Switch.java", null);
+        $cw->visitSource('Switch.java', null);
 
-        $mv =  $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv =  $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
         $mv->visitCode();
 
         $l0 = new Label();
         $mv->visitLabel($l0);
         $mv->visitLineNumber(3, $l0);
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
-        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
         $mv->visitInsn(Opcodes::RETURN_);
 
         $l1 = new Label();
         $mv->visitLabel($l1);
-        $mv->visitLocalVariable("this", "Lkambo/Switch;", null, $l0, $l1, 0);
+        $mv->visitLocalVariable('this', 'Lkambo/Switch;', null, $l0, $l1, 0);
         $mv->visitMaxs(1, 1);
         $mv->visitEnd();
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, 'main', '([Ljava/lang/String;)V', null, null);
         $mv->visitCode();
 
         $l0 = new Label();
@@ -505,7 +505,7 @@ class ClassWriterTest extends TestCase
         $mv->visitLabel($l2);
         $mv->visitLineNumber(10, $l2);
         $mv->visitFrame(Opcodes::F_APPEND, 1, [Opcodes::INTEGER], 0, null);
-        $mv->visitLdcInsn("January");
+        $mv->visitLdcInsn('January');
         $mv->visitVarInsn(Opcodes::ASTORE, 2);
 
         $l5 = new Label();
@@ -517,7 +517,7 @@ class ClassWriterTest extends TestCase
         $mv->visitLabel($l3);
         $mv->visitLineNumber(12, $l3);
         $mv->visitFrame(Opcodes::F_SAME, 0, null, 0, null);
-        $mv->visitLdcInsn("February");
+        $mv->visitLdcInsn('February');
         $mv->visitVarInsn(Opcodes::ASTORE, 2);
 
         $l7 = new Label();
@@ -528,15 +528,15 @@ class ClassWriterTest extends TestCase
         $mv->visitLabel($l4);
         $mv->visitLineNumber(14, $l4);
         $mv->visitFrame(Opcodes::F_SAME, 0, null, 0, null);
-        $mv->visitLdcInsn("Invalid month");
+        $mv->visitLdcInsn('Invalid month');
         $mv->visitVarInsn(Opcodes::ASTORE, 2);
 
         $mv->visitLabel($l6);
         $mv->visitLineNumber(18, $l6);
-        $mv->visitFrame(Opcodes::F_APPEND, 1, ["java/lang/String"], 0, null);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFrame(Opcodes::F_APPEND, 1, ['java/lang/String'], 0, null);
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ALOAD, 2);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(Ljava/lang/String;)V', false);
 
         $l8 = new Label();
         $mv->visitLabel($l8);
@@ -545,11 +545,11 @@ class ClassWriterTest extends TestCase
 
         $l9 = new Label();
         $mv->visitLabel($l9);
-        $mv->visitLocalVariable("args", "[Ljava/lang/String;", null, $l0, $l9, 0);
-        $mv->visitLocalVariable("month", "I", null, $l1, $l9, 1);
-        $mv->visitLocalVariable("monthString", "Ljava/lang/String;", null, $l5, $l3, 2);
-        $mv->visitLocalVariable("monthString", "Ljava/lang/String;", null, $l7, $l4, 2);
-        $mv->visitLocalVariable("monthString", "Ljava/lang/String;", null, $l6, $l9, 2);
+        $mv->visitLocalVariable('args', '[Ljava/lang/String;', null, $l0, $l9, 0);
+        $mv->visitLocalVariable('month', 'I', null, $l1, $l9, 1);
+        $mv->visitLocalVariable('monthString', 'Ljava/lang/String;', null, $l5, $l3, 2);
+        $mv->visitLocalVariable('monthString', 'Ljava/lang/String;', null, $l7, $l4, 2);
+        $mv->visitLocalVariable('monthString', 'Ljava/lang/String;', null, $l6, $l9, 2);
         $mv->visitMaxs(2, 3);
         $mv->visitEnd();
 
@@ -616,15 +616,15 @@ class ClassWriterTest extends TestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-            "ForLoop",
+            'ForLoop',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
-        $cw->visitSource("ForLoop.java", null);
+        $cw->visitSource('ForLoop.java', null);
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
         $mv->visitCode();
 
         $l0 = new Label();
@@ -633,23 +633,23 @@ class ClassWriterTest extends TestCase
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
         $mv->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
-            "java/lang/Object",
-            "<init>",
-            "()V",
+            'java/lang/Object',
+            '<init>',
+            '()V',
             false
         );
         $mv->visitInsn(Opcodes::RETURN_);
 
         $l1 = new Label();
         $mv->visitLabel($l1);
-        $mv->visitLocalVariable("this", "Lkambo/ForLoop;", null, $l0, $l1, 0);
+        $mv->visitLocalVariable('this', 'Lkambo/ForLoop;', null, $l0, $l1, 0);
         $mv->visitMaxs(1, 1);
         $mv->visitEnd();
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-            "main",
-            "([Ljava/lang/String;)V",
+            'main',
+            '([Ljava/lang/String;)V',
             null,
             null
         );
@@ -673,16 +673,16 @@ class ClassWriterTest extends TestCase
         $mv->visitFrame(Opcodes::F_APPEND, 1, [Opcodes::INTEGER], 0, null);
         $mv->visitFieldInsn(
             Opcodes::GETSTATIC,
-            "java/lang/System",
-            "out",
-            "Ljava/io/PrintStream;"
+            'java/lang/System',
+            'out',
+            'Ljava/io/PrintStream;'
         );
         $mv->visitVarInsn(Opcodes::ILOAD, 1);
         $mv->visitMethodInsn(
             Opcodes::INVOKEVIRTUAL,
-            "java/io/PrintStream",
-            "println",
-            "(I)V",
+            'java/io/PrintStream',
+            'println',
+            '(I)V',
             false
         );
 
@@ -703,8 +703,8 @@ class ClassWriterTest extends TestCase
 
         $l6 = new Label();
         $mv->visitLabel($l6);
-        $mv->visitLocalVariable("args", "[Ljava/lang/String;", null, $l0, $l6, 0);
-        $mv->visitLocalVariable("i", "I", null, $l1, $l5, 1);
+        $mv->visitLocalVariable('args', '[Ljava/lang/String;', null, $l0, $l6, 0);
+        $mv->visitLocalVariable('i', 'I', null, $l1, $l5, 1);
         $mv->visitMaxs(2, 2);
         $mv->visitEnd();
 
@@ -777,39 +777,39 @@ class ClassWriterTest extends TestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-            "SimpleClass",
+            'SimpleClass',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
-        $cw->visitSource("SimpleClass.java", null);
+        $cw->visitSource('SimpleClass.java', null);
 
-        $fv = $cw->visitField(Opcodes::ACC_PRIVATE, "classname", "Ljava/lang/String;", null, null);
+        $fv = $cw->visitField(Opcodes::ACC_PRIVATE, 'classname', 'Ljava/lang/String;', null, null);
         $fv->visitEnd();
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "(Ljava/lang/String;)V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '(Ljava/lang/String;)V', null, null);
         $mv->visitCode();
 
         $l0 = new Label();
         $mv->visitLabel($l0);
         $mv->visitLineNumber(7, $l0);
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
-        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
 
         $l1 = new Label();
         $mv->visitLabel($l1);
         $mv->visitLineNumber(8, $l1);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ALOAD, 1);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(Ljava/lang/String;)V', false);
 
         $l2 = new Label();
         $mv->visitLabel($l2);
         $mv->visitLineNumber(9, $l2);
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
         $mv->visitVarInsn(Opcodes::ALOAD, 1);
-        $mv->visitFieldInsn(Opcodes::PUTFIELD, "SimpleClass", "classname", "Ljava/lang/String;");
+        $mv->visitFieldInsn(Opcodes::PUTFIELD, 'SimpleClass', 'classname', 'Ljava/lang/String;');
 
         $l3 = new Label();
         $mv->visitLabel($l3);
@@ -818,46 +818,46 @@ class ClassWriterTest extends TestCase
 
         $l4 = new Label();
         $mv->visitLabel($l4);
-        $mv->visitLocalVariable("this", "LSimpleClass;", null, $l0, $l4, 0);
-        $mv->visitLocalVariable("name", "Ljava/lang/String;", null, $l0, $l4, 1);
+        $mv->visitLocalVariable('this', 'LSimpleClass;', null, $l0, $l4, 0);
+        $mv->visitLocalVariable('name', 'Ljava/lang/String;', null, $l0, $l4, 1);
         $mv->visitMaxs(2, 2);
         $mv->visitEnd();
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "getName", "()Ljava/lang/String;", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, 'getName', '()Ljava/lang/String;', null, null);
         $mv->visitCode();
 
         $l0 = new Label();
         $mv->visitLabel($l0);
         $mv->visitLineNumber(13, $l0);
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
-        $mv->visitFieldInsn(Opcodes::GETFIELD, "SimpleClass", "classname", "Ljava/lang/String;");
+        $mv->visitFieldInsn(Opcodes::GETFIELD, 'SimpleClass', 'classname', 'Ljava/lang/String;');
         $mv->visitInsn(Opcodes::ARETURN);
 
         $l1 = new Label();
         $mv->visitLabel($l1);
-        $mv->visitLocalVariable("this", "LSimpleClass;", null, $l0, $l1, 0);
+        $mv->visitLocalVariable('this', 'LSimpleClass;', null, $l0, $l1, 0);
         $mv->visitMaxs(1, 1);
         $mv->visitEnd();
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, 'main', '([Ljava/lang/String;)V', null, null);
         $mv->visitCode();
 
         $l0 = new Label();
         $mv->visitLabel($l0);
         $mv->visitLineNumber(17, $l0);
-        $mv->visitTypeInsn(Opcodes::NEW_, "SimpleClass");
+        $mv->visitTypeInsn(Opcodes::NEW_, 'SimpleClass');
         $mv->visitInsn(Opcodes::DUP);
-        $mv->visitLdcInsn("cool class");
-        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "SimpleClass", "<init>", "(Ljava/lang/String;)V", false);
+        $mv->visitLdcInsn('cool class');
+        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'SimpleClass', '<init>', '(Ljava/lang/String;)V', false);
         $mv->visitVarInsn(Opcodes::ASTORE, 1);
 
         $l1 = new Label();
         $mv->visitLabel($l1);
         $mv->visitLineNumber(19, $l1);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ALOAD, 1);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "SimpleClass", "getName", "()Ljava/lang/String;", false);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'SimpleClass', 'getName', '()Ljava/lang/String;', false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(Ljava/lang/String;)V', false);
 
         $l2 = new Label();
         $mv->visitLabel($l2);
@@ -866,8 +866,8 @@ class ClassWriterTest extends TestCase
 
         $l3 = new Label();
         $mv->visitLabel($l3);
-        $mv->visitLocalVariable("args", "[Ljava/lang/String;", null, $l0, $l3, 0);
-        $mv->visitLocalVariable("simpleInstance", "LSimpleClass;", null, $l1, $l3, 1);
+        $mv->visitLocalVariable('args', '[Ljava/lang/String;', null, $l0, $l3, 0);
+        $mv->visitLocalVariable('simpleInstance', 'LSimpleClass;', null, $l1, $l3, 1);
         $mv->visitMaxs(3, 2);
         $mv->visitEnd();
 
@@ -954,15 +954,15 @@ class ClassWriterTest extends TestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-            "Variables",
+            'Variables',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
-        $cw->visitSource("Variables.java", null);
+        $cw->visitSource('Variables.java', null);
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
         $mv->visitCode();
         $l0 = new Label();
         $mv->visitLabel($l0);
@@ -970,22 +970,22 @@ class ClassWriterTest extends TestCase
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
         $mv->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
-            "java/lang/Object",
-            "<init>",
-            "()V",
+            'java/lang/Object',
+            '<init>',
+            '()V',
             false
         );
         $mv->visitInsn(Opcodes::RETURN_);
         $l1 = new Label();
         $mv->visitLabel($l1);
-        $mv->visitLocalVariable("this", "LVariables;", null, $l0, $l1, 0);
+        $mv->visitLocalVariable('this', 'LVariables;', null, $l0, $l1, 0);
         $mv->visitMaxs(1, 1);
         $mv->visitEnd();
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-            "main",
-            "([Ljava/lang/String;)V",
+            'main',
+            '([Ljava/lang/String;)V',
             null,
             null
         );
@@ -1024,7 +1024,7 @@ class ClassWriterTest extends TestCase
         $l5 = new Label();
         $mv->visitLabel($l5);
         $mv->visitLineNumber(11, $l5);
-        $mv->visitLdcInsn(new Type\Double("3.14"));
+        $mv->visitLdcInsn(new Type\Double('3.14'));
         $mv->visitVarInsn(Opcodes::DSTORE, 6);
 
         $l6 = new Label();
@@ -1037,7 +1037,7 @@ class ClassWriterTest extends TestCase
         $l7 = new Label();
         $mv->visitLabel($l7);
         $mv->visitLineNumber(13, $l7);
-        $mv->visitLdcInsn("im a string");
+        $mv->visitLdcInsn('im a string');
         $mv->visitVarInsn(Opcodes::ASTORE, 9);
 
         $l8 = new Label();
@@ -1051,59 +1051,59 @@ class ClassWriterTest extends TestCase
         $l9 = new Label();
         $mv->visitLabel($l9);
         $mv->visitLineNumber(17, $l9);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 1);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Z)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(Z)V', false);
 
         $l10 = new Label();
         $mv->visitLabel($l10);
         $mv->visitLineNumber(18, $l10);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 2);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(C)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(C)V', false);
 
         $l11 = new Label();
         $mv->visitLabel($l11);
         $mv->visitLineNumber(19, $l11);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 3);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $l12 = new Label();
         $mv->visitLabel($l12);
         $mv->visitLineNumber(20, $l12);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 4);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $l13 = new Label();
         $mv->visitLabel($l13);
         $mv->visitLineNumber(21, $l13);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 5);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $l14 = new Label();
         $mv->visitLabel($l14);
         $mv->visitLineNumber(22, $l14);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::DLOAD, 6);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(D)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(D)V', false);
 
         $l15 = new Label();
         $mv->visitLabel($l15);
         $mv->visitLineNumber(23, $l15);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ALOAD, 9);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(Ljava/lang/String;)V', false);
 
         $l16 = new Label();
         $mv->visitLabel($l16);
         $mv->visitLineNumber(24, $l16);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ALOAD, 8);
         $mv->visitInsn(Opcodes::ARRAYLENGTH);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $l17 = new Label();
         $mv->visitLabel($l17);
@@ -1112,15 +1112,15 @@ class ClassWriterTest extends TestCase
 
         $l18 = new Label();
         $mv->visitLabel($l18);
-        $mv->visitLocalVariable("args", "[Ljava/lang/String;", null, $l0, $l18, 0);
-        $mv->visitLocalVariable("bool", "Z", null, $l1, $l18, 1);
-        $mv->visitLocalVariable("c", "C", null, $l2, $l18, 2);
-        $mv->visitLocalVariable("b", "B", null, $l3, $l18, 3);
-        $mv->visitLocalVariable("s", "S", null, $l4, $l18, 4);
-        $mv->visitLocalVariable("i", "I", null, $l5, $l18, 5);
-        $mv->visitLocalVariable("d", "D", null, $l6, $l18, 6);
-        $mv->visitLocalVariable("anArray", "[I", null, $l7, $l18, 8);
-        $mv->visitLocalVariable("string", "Ljava/lang/String;", null, $l8, $l18, 9);
+        $mv->visitLocalVariable('args', '[Ljava/lang/String;', null, $l0, $l18, 0);
+        $mv->visitLocalVariable('bool', 'Z', null, $l1, $l18, 1);
+        $mv->visitLocalVariable('c', 'C', null, $l2, $l18, 2);
+        $mv->visitLocalVariable('b', 'B', null, $l3, $l18, 3);
+        $mv->visitLocalVariable('s', 'S', null, $l4, $l18, 4);
+        $mv->visitLocalVariable('i', 'I', null, $l5, $l18, 5);
+        $mv->visitLocalVariable('d', 'D', null, $l6, $l18, 6);
+        $mv->visitLocalVariable('anArray', '[I', null, $l7, $l18, 8);
+        $mv->visitLocalVariable('string', 'Ljava/lang/String;', null, $l8, $l18, 9);
         $mv->visitMaxs(3, 10);
         $mv->visitEnd();
 
@@ -1214,15 +1214,15 @@ class ClassWriterTest extends TestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-            "Variables",
+            'Variables',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
-        $cw->visitSource("Variables.java", null);
+        $cw->visitSource('Variables.java', null);
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
         $mv->visitCode();
         $l0 = new Label();
         $mv->visitLabel($l0);
@@ -1230,22 +1230,22 @@ class ClassWriterTest extends TestCase
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
         $mv->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
-            "java/lang/Object",
-            "<init>",
-            "()V",
+            'java/lang/Object',
+            '<init>',
+            '()V',
             false
         );
         $mv->visitInsn(Opcodes::RETURN_);
         $l1 = new Label();
         $mv->visitLabel($l1);
-        $mv->visitLocalVariable("this", "LVariables;", null, $l0, $l1, 0);
+        $mv->visitLocalVariable('this', 'LVariables;', null, $l0, $l1, 0);
         $mv->visitMaxs(1, 1);
         $mv->visitEnd();
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-            "main",
-            "([Ljava/lang/String;)V",
+            'main',
+            '([Ljava/lang/String;)V',
             null,
             null
         );
@@ -1284,7 +1284,7 @@ class ClassWriterTest extends TestCase
         $l5 = new Label();
         $mv->visitLabel($l5);
         $mv->visitLineNumber(11, $l5);
-        $mv->visitLdcInsn(new Type\Double("3.14"));
+        $mv->visitLdcInsn(new Type\Double('3.14'));
         $mv->visitVarInsn(Opcodes::DSTORE, 6);
 
         $l6 = new Label();
@@ -1297,7 +1297,7 @@ class ClassWriterTest extends TestCase
         $l7 = new Label();
         $mv->visitLabel($l7);
         $mv->visitLineNumber(13, $l7);
-        $mv->visitLdcInsn(new Type\String_("im a string"));
+        $mv->visitLdcInsn(new Type\String_('im a string'));
         $mv->visitVarInsn(Opcodes::ASTORE, 9);
 
         $l8 = new Label();
@@ -1311,59 +1311,59 @@ class ClassWriterTest extends TestCase
         $l9 = new Label();
         $mv->visitLabel($l9);
         $mv->visitLineNumber(17, $l9);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 1);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Z)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(Z)V', false);
 
         $l10 = new Label();
         $mv->visitLabel($l10);
         $mv->visitLineNumber(18, $l10);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 2);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(C)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(C)V', false);
 
         $l11 = new Label();
         $mv->visitLabel($l11);
         $mv->visitLineNumber(19, $l11);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 3);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $l12 = new Label();
         $mv->visitLabel($l12);
         $mv->visitLineNumber(20, $l12);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 4);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $l13 = new Label();
         $mv->visitLabel($l13);
         $mv->visitLineNumber(21, $l13);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ILOAD, 5);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $l14 = new Label();
         $mv->visitLabel($l14);
         $mv->visitLineNumber(22, $l14);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::DLOAD, 6);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(D)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(D)V', false);
 
         $l15 = new Label();
         $mv->visitLabel($l15);
         $mv->visitLineNumber(23, $l15);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ALOAD, 9);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(Ljava/lang/String;)V', false);
 
         $l16 = new Label();
         $mv->visitLabel($l16);
         $mv->visitLineNumber(24, $l16);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
         $mv->visitVarInsn(Opcodes::ALOAD, 8);
         $mv->visitInsn(Opcodes::ARRAYLENGTH);
-        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
         $l17 = new Label();
         $mv->visitLabel($l17);
@@ -1372,15 +1372,15 @@ class ClassWriterTest extends TestCase
 
         $l18 = new Label();
         $mv->visitLabel($l18);
-        $mv->visitLocalVariable("args", "[Ljava/lang/String;", null, $l0, $l18, 0);
-        $mv->visitLocalVariable("bool", "Z", null, $l1, $l18, 1);
-        $mv->visitLocalVariable("c", "C", null, $l2, $l18, 2);
-        $mv->visitLocalVariable("b", "B", null, $l3, $l18, 3);
-        $mv->visitLocalVariable("s", "S", null, $l4, $l18, 4);
-        $mv->visitLocalVariable("i", "I", null, $l5, $l18, 5);
-        $mv->visitLocalVariable("d", "D", null, $l6, $l18, 6);
-        $mv->visitLocalVariable("anArray", "[I", null, $l7, $l18, 8);
-        $mv->visitLocalVariable("string", "Ljava/lang/String;", null, $l8, $l18, 9);
+        $mv->visitLocalVariable('args', '[Ljava/lang/String;', null, $l0, $l18, 0);
+        $mv->visitLocalVariable('bool', 'Z', null, $l1, $l18, 1);
+        $mv->visitLocalVariable('c', 'C', null, $l2, $l18, 2);
+        $mv->visitLocalVariable('b', 'B', null, $l3, $l18, 3);
+        $mv->visitLocalVariable('s', 'S', null, $l4, $l18, 4);
+        $mv->visitLocalVariable('i', 'I', null, $l5, $l18, 5);
+        $mv->visitLocalVariable('d', 'D', null, $l6, $l18, 6);
+        $mv->visitLocalVariable('anArray', '[I', null, $l7, $l18, 8);
+        $mv->visitLocalVariable('string', 'Ljava/lang/String;', null, $l8, $l18, 9);
         $mv->visitMaxs(3, 10);
         $mv->visitEnd();
 
@@ -1461,46 +1461,46 @@ class ClassWriterTest extends TestCase
             Opcodes::ACC_SUPER,
             'InnerClass$Inner_Demo',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
-        $cw->visitSource("InnerClass.java", null);
+        $cw->visitSource('InnerClass.java', null);
         $cw->visitInnerClass(
             'InnerClass$Inner_Demo',
-            "InnerClass",
-            "Inner_Demo",
+            'InnerClass',
+            'Inner_Demo',
             Opcodes::ACC_PRIVATE + Opcodes::ACC_STATIC
         );
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PRIVATE, "<init>", "()V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PRIVATE, '<init>', '()V', null, null);
         $mv->visitCode();
 
         $l0 = new Label();
         $mv->visitLabel($l0);
         $mv->visitLineNumber(4, $l0);
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
-        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
         $mv->visitInsn(Opcodes::RETURN_);
 
         $l1 = new Label();
         $mv->visitLabel($l1);
-        $mv->visitLocalVariable("this", 'LInnerClass$Inner_Demo;', null, $l0, $l1, 0);
+        $mv->visitLocalVariable('this', 'LInnerClass$Inner_Demo;', null, $l0, $l1, 0);
         $mv->visitMaxs(1, 1);
         $mv->visitEnd();
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "print", "()V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, 'print', '()V', null, null);
         $mv->visitCode();
 
         $l0 = new Label();
         $mv->visitLabel($l0);
         $mv->visitLineNumber(6, $l0);
-        $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-        $mv->visitLdcInsn("This is an inner class");
+        $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
+        $mv->visitLdcInsn('This is an inner class');
         $mv->visitMethodInsn(
             Opcodes::INVOKEVIRTUAL,
-            "java/io/PrintStream",
-            "println",
-            "(Ljava/lang/String;)V",
+            'java/io/PrintStream',
+            'println',
+            '(Ljava/lang/String;)V',
             false
         );
 
@@ -1512,7 +1512,7 @@ class ClassWriterTest extends TestCase
         $l2 = new Label();
         $mv->visitLabel($l2);
         $mv->visitLocalVariable(
-            "this",
+            'this',
             'LInnerClass$Inner_Demo;',
             null,
             $l0,
@@ -1524,7 +1524,7 @@ class ClassWriterTest extends TestCase
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_SYNTHETIC,
-            "<init>",
+            '<init>',
             '(LInnerClass$Inner_Demo;)V',
             null,
             null
@@ -1538,8 +1538,8 @@ class ClassWriterTest extends TestCase
         $mv->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
             'InnerClass$Inner_Demo',
-            "<init>",
-            "()V",
+            '<init>',
+            '()V',
             false
         );
         $mv->visitInsn(Opcodes::RETURN_);
@@ -1591,39 +1591,39 @@ class ClassWriterTest extends TestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-            "InnerClass",
+            'InnerClass',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
-        $cw->visitSource("InnerClass.java", null);
+        $cw->visitSource('InnerClass.java', null);
         $cw->visitInnerClass(
             'InnerClass$Inner_Demo',
-            "InnerClass",
-            "Inner_Demo",
+            'InnerClass',
+            'Inner_Demo',
             Opcodes::ACC_PRIVATE + Opcodes::ACC_STATIC
         );
 
-        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+        $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
         $mv->visitCode();
 
         $l0 = new Label();
         $mv->visitLabel($l0);
         $mv->visitLineNumber(3, $l0);
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
-        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
         $mv->visitInsn(Opcodes::RETURN_);
 
         $l1 = new Label();
         $mv->visitLabel($l1);
-        $mv->visitLocalVariable("this", "LInnerClass;", null, $l0, $l1, 0);
+        $mv->visitLocalVariable('this', 'LInnerClass;', null, $l0, $l1, 0);
         $mv->visitMaxs(1, 1);
         $mv->visitEnd();
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-            "main",
-            "([Ljava/lang/String;)V",
+            'main',
+            '([Ljava/lang/String;)V',
             null,
             null
         );
@@ -1638,7 +1638,7 @@ class ClassWriterTest extends TestCase
         $mv->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
             'InnerClass$Inner_Demo',
-            "<init>",
+            '<init>',
             '(LInnerClass$Inner_Demo;)V',
             false
         );
@@ -1654,8 +1654,8 @@ class ClassWriterTest extends TestCase
         $mv->visitMethodInsn(
             Opcodes::INVOKEVIRTUAL,
             'InnerClass$Inner_Demo',
-            "print",
-            "()V",
+            'print',
+            '()V',
             false
         );
 
@@ -1667,15 +1667,15 @@ class ClassWriterTest extends TestCase
         $l3 = new Label();
         $mv->visitLabel($l3);
         $mv->visitLocalVariable(
-            "args",
-            "[Ljava/lang/String;",
+            'args',
+            '[Ljava/lang/String;',
             null,
             $l0,
             $l3,
             0
         );
         $mv->visitLocalVariable(
-            "inner",
+            'inner',
             'LInnerClass$Inner_Demo;',
             null,
             $l1,
@@ -1746,21 +1746,21 @@ class ClassWriterTest extends TestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-            "AddFunction",
+            'AddFunction',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
         $cw->visitSource(
-            "AddFunction.java",
+            'AddFunction.java',
             null
         );
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC,
-            "<init>",
-            "()V",
+            '<init>',
+            '()V',
             null,
             null
         );
@@ -1772,9 +1772,9 @@ class ClassWriterTest extends TestCase
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
         $mv->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
-            "java/lang/Object",
-            "<init>",
-            "()V",
+            'java/lang/Object',
+            '<init>',
+            '()V',
             false
         );
         $mv->visitInsn(Opcodes::RETURN_);
@@ -1782,8 +1782,8 @@ class ClassWriterTest extends TestCase
         $l1 = new Label();
         $mv->visitLabel($l1);
         $mv->visitLocalVariable(
-            "this",
-            "LAddFunction;",
+            'this',
+            'LAddFunction;',
             null,
             $l0,
             $l1,
@@ -1794,8 +1794,8 @@ class ClassWriterTest extends TestCase
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-            "main",
-            "([Ljava/lang/String;)V",
+            'main',
+            '([Ljava/lang/String;)V',
             null,
             null
         );
@@ -1806,24 +1806,24 @@ class ClassWriterTest extends TestCase
         $mv->visitLineNumber(6, $l0);
         $mv->visitFieldInsn(
             Opcodes::GETSTATIC,
-            "java/lang/System",
-            "out",
-            "Ljava/io/PrintStream;"
+            'java/lang/System',
+            'out',
+            'Ljava/io/PrintStream;'
         );
         $mv->visitIntInsn(Opcodes::BIPUSH, 10);
         $mv->visitIntInsn(Opcodes::BIPUSH, 10);
         $mv->visitMethodInsn(
             Opcodes::INVOKESTATIC,
-            "AddFunction",
-            "add",
-            "(II)I",
+            'AddFunction',
+            'add',
+            '(II)I',
             false
         );
         $mv->visitMethodInsn(
             Opcodes::INVOKEVIRTUAL,
-            "java/io/PrintStream",
-            "println",
-            "(I)V",
+            'java/io/PrintStream',
+            'println',
+            '(I)V',
             false
         );
 
@@ -1835,8 +1835,8 @@ class ClassWriterTest extends TestCase
         $l2 = new Label();
         $mv->visitLabel($l2);
         $mv->visitLocalVariable(
-            "args",
-            "[Ljava/lang/String;",
+            'args',
+            '[Ljava/lang/String;',
             null,
             $l0,
             $l2,
@@ -1847,8 +1847,8 @@ class ClassWriterTest extends TestCase
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-            "add",
-            "(II)I",
+            'add',
+            '(II)I',
             null,
             null
         );
@@ -1864,8 +1864,8 @@ class ClassWriterTest extends TestCase
 
         $l1 = new Label();
         $mv->visitLabel($l1);
-        $mv->visitLocalVariable("a", "I", null, $l0, $l1, 0);
-        $mv->visitLocalVariable("b", "I", null, $l0, $l1, 1);
+        $mv->visitLocalVariable('a', 'I', null, $l0, $l1, 0);
+        $mv->visitLocalVariable('b', 'I', null, $l0, $l1, 1);
         $mv->visitMaxs(2, 2);
         $mv->visitEnd();
 

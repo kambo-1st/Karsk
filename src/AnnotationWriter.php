@@ -55,7 +55,7 @@ final class AnnotationWriter extends AnnotationVisitor
     /**
      * Constructs a new {@link AnnotationWriter}.
      *
-     * @param ClassWriter $cw the class writer to which this annotation must be added.
+     * @param ClassWriter $cw     the class writer to which this annotation must be added.
      * @param bool        $named  <tt>true<tt> if values are named, <tt>false</tt> otherwise.
      * @param ByteVector  $bv     where the annotation values must be stored.
      * @param ByteVector  $parent where the number of annotation values must be stored.
@@ -79,7 +79,7 @@ final class AnnotationWriter extends AnnotationVisitor
     /**
      * Visits a primitive value of the annotation.
      *
-     * @param string $name the value name.
+     * @param string $name  the value name.
      * @param mixed  $value
      *               the actual value, whose type must be {@link Byte},
      *               {@link Boolean}, {@link Character}, {@link Short},
@@ -424,7 +424,7 @@ final class AnnotationWriter extends AnnotationVisitor
                 break;
             default:
                 $item = $this->cw->newConstItem($value);
-                $this->bv->put12($this->charAt(".s.IFJDCS", $item->type), $item->index);
+                $this->bv->put12($this->charAt('.s.IFJDCS', $item->type), $item->index);
 
                 break;
         }

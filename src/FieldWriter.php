@@ -63,15 +63,15 @@ class FieldWriter extends FieldVisitor
      *
      * @param ClassWriter $cw
      *            the class writer to which this field must be added.
-     * @param int $access
+     * @param int         $access
      *            the field's access flags (see {@link Opcodes}).
-     * @param string $name
+     * @param string      $name
      *            the field's name.
-     * @param string $desc
+     * @param string      $desc
      *            the field's descriptor (see {@link Type}).
-     * @param string $signature
+     * @param string      $signature
      *            the field's signature. May be <tt>null</tt>.
-     * @param mixed $value
+     * @param mixed       $value
      *            the field's constant value. May be <tt>null</tt>.
      *
      * @throws Exception\IllegalArgumentException
@@ -112,7 +112,7 @@ class FieldWriter extends FieldVisitor
      *
      * @param string $desc
      *            the class descriptor of the annotation class.
-     * @param bool $visible
+     * @param bool   $visible
      *            <tt>true</tt> if the annotation is visible at runtime.
      *
      * @return AnnotationVisitor a visitor to visit the annotation values, or <tt>null</tt> if
@@ -141,7 +141,7 @@ class FieldWriter extends FieldVisitor
     /**
      * Visits an annotation on the type of the field.
      *
-     * @param int $typeRef
+     * @param int      $typeRef
      *            a reference to the annotated type. The sort of this type
      *            reference must be {@link TypeReference#FIELD FIELD}. See
      *            {@link TypeReference}.
@@ -149,9 +149,9 @@ class FieldWriter extends FieldVisitor
      *            the path to the annotated type argument, wildcard bound, array
      *            element type, or static inner type within 'typeRef'. May be
      *            <tt>null</tt> if the annotation targets 'typeRef' as a whole.
-     * @param string $desc
+     * @param string   $desc
      *            the class descriptor of the annotation class.
-     * @param bool $visible
+     * @param bool     $visible
      *            <tt>true</tt> if the annotation is visible at runtime.
      *
      * @return AnnotationWriter a visitor to visit the annotation values, or <tt>null</tt> if
@@ -215,45 +215,46 @@ class FieldWriter extends FieldVisitor
     {
         $size = 8;
         if (($this->value != 0)) {
-            $this->cw->newUTF8("ConstantValue");
+            $this->cw->newUTF8('ConstantValue');
             $size += 8;
         }
 
         if (((($this->access & Opcodes::ACC_SYNTHETIC)) != 0)) {
             if ((($this->cw->version & 0xFFFF) < Opcodes::V1_5)
-                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0)) {
-                $this->cw->newUTF8("Synthetic");
+                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0)
+            ) {
+                $this->cw->newUTF8('Synthetic');
                 $size += 6;
             }
         }
 
         if (((($this->access & Opcodes::ACC_DEPRECATED)) != 0)) {
-            $this->cw->newUTF8("Deprecated");
+            $this->cw->newUTF8('Deprecated');
             $size += 6;
         }
 
         if ((ClassReader::SIGNATURES && ($this->signature != 0))) {
-            $this->cw->newUTF8("Signature");
+            $this->cw->newUTF8('Signature');
             $size += 8;
         }
 
         if ((ClassReader::ANNOTATIONS && ($this->anns != null))) {
-            $this->cw->newUTF8("RuntimeVisibleAnnotations");
+            $this->cw->newUTF8('RuntimeVisibleAnnotations');
             $size += (8 + $this->anns->getSize());
         }
 
         if ((ClassReader::ANNOTATIONS && ($this->ianns != null))) {
-            $this->cw->newUTF8("RuntimeInvisibleAnnotations");
+            $this->cw->newUTF8('RuntimeInvisibleAnnotations');
             $size += (8 + $this->ianns->getSize());
         }
 
         if ((ClassReader::ANNOTATIONS && ($this->tanns != null))) {
-            $this->cw->newUTF8("RuntimeVisibleTypeAnnotations");
+            $this->cw->newUTF8('RuntimeVisibleTypeAnnotations');
             $size += (8 + $this->tanns->getSize());
         }
 
         if ((ClassReader::ANNOTATIONS && ($this->itanns != null))) {
-            $this->cw->newUTF8("RuntimeInvisibleTypeAnnotations");
+            $this->cw->newUTF8('RuntimeInvisibleTypeAnnotations');
             $size += (8 + $this->itanns->getSize());
         }
 
@@ -285,7 +286,8 @@ class FieldWriter extends FieldVisitor
 
         if (((($this->access & Opcodes::ACC_SYNTHETIC)) != 0)) {
             if ((((($this->cw->version & 0xFFFF)) < Opcodes::V1_5)
-                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))) {
+                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))
+            ) {
                 ++$attributeCount;
             }
         }
@@ -320,43 +322,44 @@ class FieldWriter extends FieldVisitor
 
         $out->putShort($attributeCount);
         if (($this->value != 0)) {
-            $out->putShort($this->cw->newUTF8("ConstantValue"));
+            $out->putShort($this->cw->newUTF8('ConstantValue'));
             $out->putInt(2)->putShort($this->value);
         }
 
         if (((($this->access & Opcodes::ACC_SYNTHETIC)) != 0)) {
             if ((((($this->cw->version & 0xFFFF)) < Opcodes::V1_5)
-                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))) {
-                $out->putShort($this->cw->newUTF8("Synthetic"))->putInt(0);
+                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))
+            ) {
+                $out->putShort($this->cw->newUTF8('Synthetic'))->putInt(0);
             }
         }
 
         if (((($this->access & Opcodes::ACC_DEPRECATED)) != 0)) {
-            $out->putShort($this->cw->newUTF8("Deprecated"))->putInt(0);
+            $out->putShort($this->cw->newUTF8('Deprecated'))->putInt(0);
         }
 
         if ((ClassReader::SIGNATURES && ($this->signature != 0))) {
-            $out->putShort($this->cw->newUTF8("Signature"));
+            $out->putShort($this->cw->newUTF8('Signature'));
             $out->putInt(2)->putShort($this->signature);
         }
 
         if ((ClassReader::ANNOTATIONS && ($this->anns != null))) {
-            $out->putShort($this->cw->newUTF8("RuntimeVisibleAnnotations"));
+            $out->putShort($this->cw->newUTF8('RuntimeVisibleAnnotations'));
             $this->anns->put($out);
         }
 
         if ((ClassReader::ANNOTATIONS && ($this->ianns != null))) {
-            $out->putShort($this->cw->newUTF8("RuntimeInvisibleAnnotations"));
+            $out->putShort($this->cw->newUTF8('RuntimeInvisibleAnnotations'));
             $this->ianns->put($out);
         }
 
         if ((ClassReader::ANNOTATIONS && ($this->tanns != null))) {
-            $out->putShort($this->cw->newUTF8("RuntimeVisibleTypeAnnotations"));
+            $out->putShort($this->cw->newUTF8('RuntimeVisibleTypeAnnotations'));
             $this->tanns->put($out);
         }
 
         if ((ClassReader::ANNOTATIONS && ($this->itanns != null))) {
-            $out->putShort($this->cw->newUTF8("RuntimeInvisibleTypeAnnotations"));
+            $out->putShort($this->cw->newUTF8('RuntimeInvisibleTypeAnnotations'));
             $this->itanns->put($out);
         }
 

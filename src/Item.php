@@ -257,7 +257,7 @@ class Item
                 return ;
             default:
                 $this->hashCode = (0x7FFFFFFF &
-                    (($type + (($hash->get($strVal1) * $hash->get($strVal2)) * $hash->get($strVal3))))
+                (($type + (($hash->get($strVal1) * $hash->get($strVal2)) * $hash->get($strVal3))))
                 );
         }
     }

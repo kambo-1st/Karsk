@@ -35,9 +35,9 @@ namespace Kambo\Karsk;
 /**
  * A reference to a field or a method.
  *
- * @author Remi Forax
- * @author Eric Bruneton
- * @author Bohuslav Simek <bohuslav@simek.si>
+ * @author  Remi Forax
+ * @author  Eric Bruneton
+ * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
 class Handle
@@ -227,7 +227,7 @@ class Handle
      */
     public function toString()
     {
-        return $this->owner . '.' . $this->name . $this->desc . " (" . $this->tag
-            . ( !is_null($this->itf) ? " itf" : "" ) . ')';
+        return $this->owner . '.' . $this->name . $this->desc . ' (' . $this->tag
+            . ( !is_null($this->itf) ? ' itf' : '' ) . ')';
     }
 }

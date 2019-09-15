@@ -41,9 +41,9 @@ use Kambo\Karsk\Lang\Method;
  * A Java field or method type. This class can be used to make it easier to
  * manipulate type and method descriptors.
  *
- * @author Eric Bruneton
- * @author Chris Nokleberg
- * @author Bohuslav Simek <bohuslav@simek.si>
+ * @author  Eric Bruneton
+ * @author  Chris Nokleberg
+ * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
 class Type
@@ -334,7 +334,7 @@ class Type
             case 'object':
                 return self::getTypeFromArray(str_split(self::getDescriptorOfClass($c)), 0);
             default:
-                throw new IllegalArgumentException("value " . var_export($c, true));
+                throw new IllegalArgumentException('value ' . var_export($c, true));
         }
     }
 
@@ -505,27 +505,27 @@ class Type
     {
         switch ($this->sort) {
             case self::VOID:
-                return "void";
+                return 'void';
             case self::BOOLEAN:
-                return "boolean";
+                return 'boolean';
             case self::CHAR:
-                return "char";
+                return 'char';
             case self::BYTE:
-                return "byte";
+                return 'byte';
             case self::SHORT:
-                return "short";
+                return 'short';
             case self::INT:
-                return "int";
+                return 'int';
             case self::FLOAT:
-                return "float";
+                return 'float';
             case self::LONG:
-                return "long";
+                return 'long';
             case self::DOUBLE:
-                return "double";
+                return 'double';
             case self::ARRAY:
                 $arrayDefinition = $this->getElementType()->getClassName();
                 for ($i = $this->getDimensions(); ($i > 0); --$i) {
-                    $arrayDefinition .= "[]";
+                    $arrayDefinition .= '[]';
                 }
 
                 return $arrayDefinition;
@@ -793,7 +793,7 @@ class Type
                     break;
                 case $c instanceof KarskType\Object_:
                     $buf .= 'L';
-                    $buf .= str_replace(".", "/", $c->getType());
+                    $buf .= str_replace('.', '/', $c->getType());
                     $buf .= ';';
                     return $buf;
                 default:

@@ -188,7 +188,7 @@ class ClassReader
 
         $this->items   = [];//$this->readUnsignedShort($off + 8);
         $n             = $this->readUnsignedShort($off + 8);//count($this->items);
-        $this->strings = array();
+        $this->strings = [];
         $max = 0;
         $index = ($off + 10);
         for ($i = 1; ($i < $n); ++$i) {
@@ -360,14 +360,14 @@ class ClassReader
                     $item->setComplex($tag, $s, null, null);
                     break;
                 case ClassWriter::$HANDLE:
-                        $fieldOrMethodRef = $this->items[$this->readUnsignedShort(($index + 1))];
-                        $nameType = $this->items[$this->readUnsignedShort(($fieldOrMethodRef + 2))];
-                        $item->setComplex(
-                            (ClassWriter::$HANDLE_BASE + $this->readByte($index)),
-                            $this->readClass($fieldOrMethodRef, $buf),
-                            $this->readUTF8($nameType, $buf),
-                            $this->readUTF8(($nameType + 2), $buf)
-                        );
+                    $fieldOrMethodRef = $this->items[$this->readUnsignedShort(($index + 1))];
+                    $nameType = $this->items[$this->readUnsignedShort(($fieldOrMethodRef + 2))];
+                    $item->setComplex(
+                        (ClassWriter::$HANDLE_BASE + $this->readByte($index)),
+                        $this->readClass($fieldOrMethodRef, $buf),
+                        $this->readUTF8($nameType, $buf),
+                        $this->readUTF8(($nameType + 2), $buf)
+                    );
                     break;
                 case ClassWriter::$INDY:
                     if (($classWriter->bootstrapMethods == null)) {
@@ -489,18 +489,18 @@ class ClassReader
     protected static function readClassFromStream(?InputStream $is, bool $close) : array
     {
         if ($is === null) {
-            throw new IOException("Class not found");
+            throw new IOException('Class not found');
         }
 
         try {
-            $b   = array();
+            $b   = [];
             $len = 0;
             while (true) {
                 $n = $is->read($b, $len, ($is->available() /*from: b.length*/ - $len));
 
                 if (($n == -1)) {
                     if (($len < count($b) /*from: b.length*/)) {
-                        $c = array();
+                        $c = [];
                         foreach (range(0, ($len + 0)) as $_upto) {
                             $c[$_upto] = $b[$_upto - (0) + 0];
                         } /* from: System.arraycopy(b, 0, c, 0, len) */;
@@ -518,7 +518,7 @@ class ClassReader
                         return $b;
                     }
 
-                    $c = array();
+                    $c = [];
                     foreach (range(0, ($len - 1)) as $_upto) {
                         $c[$_upto] = $b[$_upto];
                     }
@@ -547,7 +547,7 @@ class ClassReader
      *
      * @param ClassVisitor $classVisitor
      *                     the visitor that must visit this class.
-     * @param Attribute[] $attrs
+     * @param Attribute[]  $attrs
      *                    prototypes of the attributes that must be parsed during the
      *                    visit of the class. Any attribute whose type is not equal to
      *                    the type of one the prototypes will not be parsed: its byte
@@ -556,7 +556,7 @@ class ClassReader
      *                    the constant pool, or has syntactic or semantic links with a
      *                    class element that has been transformed by a class adapter
      *                    between the reader and the writer</i>.
-     * @param int         $flags
+     * @param int          $flags
      *                    option flags that can be used to modify the default behavior
      *                    of this class. See {@link #SKIP_DEBUG}, {@link #EXPAND_FRAMES}
      *                    , {@link #SKIP_FRAMES}, {@link #SKIP_CODE}.
@@ -567,7 +567,7 @@ class ClassReader
         int $flags = null
     ) : void {
         $u = $this->header;
-        $c = array();
+        $c = [];
 
         $context = new Context();
         $context->attrs = $attrs;
@@ -577,7 +577,7 @@ class ClassReader
         $access     = $this->readUnsignedShort($u);
         $name       = $this->readClass(($u + 2), $c);
         $superClass = $this->readClass(($u + 4), $c);
-        $interfaces = array(); // TODO [SIMEK, i] fix by String[] interfaces = new String[readUnsignedShort(u + 6)];
+        $interfaces = []; // TODO [SIMEK, i] fix by String[] interfaces = new String[readUnsignedShort(u + 6)];
 
         $u += 8;
         for ($i = 0; ($i < count($interfaces) /*from: interfaces.length*/); ++$i) {
@@ -601,36 +601,36 @@ class ClassReader
         $u = $this->getAttributes();
         for ($i = $this->readUnsignedShort($u); ($i > 0); --$i) {
             $attrName = $this->readUTF8(($u + 2), $c);
-            if ($attrName === "SourceFile") {
+            if ($attrName === 'SourceFile') {
                 $sourceFile = $this->readUTF8(($u + 8), $c);
-            } elseif ($attrName === "InnerClasses") {
+            } elseif ($attrName === 'InnerClasses') {
                 $innerClasses = ($u + 8);
-            } elseif ($attrName ===  "EnclosingMethod") {
+            } elseif ($attrName ===  'EnclosingMethod') {
                 $enclosingOwner = $this->readClass(($u + 8), $c);
                 $item = $this->readUnsignedShort(($u + 10));
                 if (($item != 0)) {
                     $enclosingName = $this->readUTF8($this->items[$item], $c);
                     $enclosingDesc = $this->readUTF8(($this->items[$item] + 2), $c);
                 }
-            } elseif ((self::SIGNATURES && $attrName === "Signature")) {
+            } elseif ((self::SIGNATURES && $attrName === 'Signature')) {
                 $signature = $this->readUTF8(($u + 8), $c);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeVisibleAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeVisibleAnnotations')) {
                 $anns = ($u + 8);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeVisibleTypeAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeVisibleTypeAnnotations')) {
                 $tanns = ($u + 8);
-            } elseif ($attrName === "Deprecated") {
+            } elseif ($attrName === 'Deprecated') {
                 $access |= Opcodes::ACC_DEPRECATED;
-            } elseif ($attrName === "Synthetic") {
+            } elseif ($attrName === 'Synthetic') {
                 $access |= (Opcodes::ACC_SYNTHETIC | ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE);
-            } elseif ($attrName === "SourceDebugExtension") {
+            } elseif ($attrName === 'SourceDebugExtension') {
                 $len = $this->readInt(($u + 4));
-                $sourceDebug = $this->readUTF(($u + 8), $len, array());
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeInvisibleAnnotations")) {
+                $sourceDebug = $this->readUTF(($u + 8), $len, []);
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeInvisibleAnnotations')) {
                 $ianns = ($u + 8);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeInvisibleTypeAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeInvisibleTypeAnnotations')) {
                 $itanns = ($u + 8);
-            } elseif ($attrName ===  "BootstrapMethods") {
-                $bootstrapMethods = array();
+            } elseif ($attrName ===  'BootstrapMethods') {
+                $bootstrapMethods = [];
                 for ($j = 0, $v = ($u + 10); ($j < count($bootstrapMethods)); ++$j) {
                     $bootstrapMethods[$j] = $v;
                     $v += ((2 + $this->readUnsignedShort(($v + 2))) << 1);
@@ -781,22 +781,22 @@ class ClassReader
 
         for ($i = $this->readUnsignedShort($u); ($i > 0); --$i) {
             $attrName = $this->readUTF8(($u + 2), $c);
-            if ($attrName === "ConstantValue") {
+            if ($attrName === 'ConstantValue') {
                 $item = $this->readUnsignedShort(($u + 8));
                 $value = ( (($item == 0)) ? null : $this->readConst($item, $c) );
-            } elseif ((self::SIGNATURES && $attrName === "Signature")) {
+            } elseif ((self::SIGNATURES && $attrName === 'Signature')) {
                 $signature = $this->readUTF8(($u + 8), $c);
-            } elseif ($attrName === "Deprecated") {
+            } elseif ($attrName === 'Deprecated') {
                 $access |= Opcodes::ACC_DEPRECATED;
-            } elseif ($attrName === "Synthetic") {
+            } elseif ($attrName === 'Synthetic') {
                 $access |= (Opcodes::ACC_SYNTHETIC | ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeVisibleAnnotations" )) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeVisibleAnnotations' )) {
                 $anns = ($u + 8);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeVisibleTypeAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeVisibleTypeAnnotations')) {
                 $tanns = ($u + 8);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeInvisibleAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeInvisibleAnnotations')) {
                 $ianns = ($u + 8);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeInvisibleTypeAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeInvisibleTypeAnnotations')) {
                 $itanns = ($u + 8);
             } else {
                 $attr = $this->readAttribute(
@@ -918,38 +918,38 @@ class ClassReader
 
             // tests are sorted in decreasing frequency order
             // (based on frequencies observed on typical classes)
-            if ($attrName === "Code") {
+            if ($attrName === 'Code') {
                 if (((($context->flags & self::SKIP_CODE)) == 0)) {
                     $code = ($u + 8);
                 }
-            } elseif ($attrName === "Exceptions") {
-                $exceptions = array();
+            } elseif ($attrName === 'Exceptions') {
+                $exceptions = [];
                 $exception = ($u + 10);
                 for ($j = 0; ($j < count($exceptions) /*from: exceptions.length*/); ++$j) {
                     $exceptions[$j] = $this->readClass($exception, $c);
                     $exception += 2;
                 }
-            } elseif ((self::SIGNATURES && $attrName ===  "Signature")) {
+            } elseif ((self::SIGNATURES && $attrName ===  'Signature')) {
                 $signature = $this->readUTF8(($u + 8), $c);
-            } elseif ($attrName === "Deprecated") {
+            } elseif ($attrName === 'Deprecated') {
                 $context->access |= Opcodes::ACC_DEPRECATED;
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeVisibleAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeVisibleAnnotations')) {
                 $anns = ($u + 8);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeVisibleTypeAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeVisibleTypeAnnotations')) {
                 $tanns = ($u + 8);
-            } elseif ((self::ANNOTATIONS && $attrName === "AnnotationDefault")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'AnnotationDefault')) {
                 $dann = ($u + 8);
-            } elseif ($attrName === "Synthetic") {
+            } elseif ($attrName === 'Synthetic') {
                 $context->access |= (Opcodes::ACC_SYNTHETIC | ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeInvisibleAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeInvisibleAnnotations')) {
                 $ianns = ($u + 8);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeInvisibleTypeAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeInvisibleTypeAnnotations')) {
                 $itanns = ($u + 8);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeVisibleParameterAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeVisibleParameterAnnotations')) {
                 $mpanns = ($u + 8);
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeInvisibleParameterAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeInvisibleParameterAnnotations')) {
                 $impanns = ($u + 8);
-            } elseif ($attrName === "MethodParameters") {
+            } elseif ($attrName === 'MethodParameters') {
                 $methodParameters = ($u + 8);
             } else {
                 $attr = $this->readAttribute(
@@ -1123,7 +1123,7 @@ class ClassReader
         $u += 8;
         $codeStart = $u;
         $codeEnd = ($u + $codeLength);
-        $labels = $context->labels = array();
+        $labels = $context->labels = [];
         $this->readLabel(($codeLength + 1), $labels);
         while (($u < $codeEnd)) {
             $offset = ($u - $codeStart);
@@ -1218,7 +1218,7 @@ class ClassReader
         $attributes = null;
         for ($i = $this->readUnsignedShort($u); ($i > 0); --$i) {
             $attrName = $this->readUTF8(($u + 2), $c);
-            if ($attrName === "LocalVariableTable") {
+            if ($attrName === 'LocalVariableTable') {
                 if (((($context->flags & self::SKIP_DEBUG)) == 0)) {
                     $varTable = ($u + 8);
                     for ($j = $this->readUnsignedShort(($u + 8)), $v = $u; ($j > 0); --$j) {
@@ -1233,9 +1233,9 @@ class ClassReader
                         $v += 10;
                     }
                 }
-            } elseif ($attrName === "LocalVariableTypeTable") {
+            } elseif ($attrName === 'LocalVariableTypeTable') {
                 $varTypeTable = ($u + 8);
-            } elseif ($attrName === "LineNumberTable") {
+            } elseif ($attrName === 'LineNumberTable') {
                 if (((($context->flags & self::SKIP_DEBUG)) == 0)) {
                     for ($j = $this->readUnsignedShort(($u + 8)), $v = $u; ($j > 0); --$j) {
                         $label = $this->readUnsignedShort(($v + 10));
@@ -1253,23 +1253,23 @@ class ClassReader
                         $v += 4;
                     }
                 }
-            } elseif (self::ANNOTATIONS && $attrName === "RuntimeVisibleTypeAnnotations") {
+            } elseif (self::ANNOTATIONS && $attrName === 'RuntimeVisibleTypeAnnotations') {
                 $tanns = $this->readTypeAnnotations($mv, $context, ($u + 8), true);
                 $ntoff = (
                     (((count($tanns) /*from: tanns.length*/ == 0)
                         || ($this->readByte($tanns[0]) < 0x43))) ? -1 : $this->readUnsignedShort(($tanns[0] + 1))
                 );
-            } elseif ((self::ANNOTATIONS && $attrName === "RuntimeInvisibleTypeAnnotations")) {
+            } elseif ((self::ANNOTATIONS && $attrName === 'RuntimeInvisibleTypeAnnotations')) {
                 $itanns = $this->readTypeAnnotations($mv, $context, ($u + 8), false);
                 $nitoff = ( (((count($itanns) /*from: itanns.length*/ == 0)
                     || ($this->readByte($itanns[0]) < 0x43))) ? -1 : $this->readUnsignedShort(($itanns[0] + 1)) );
-            } elseif ((self::FRAMES && $attrName === "StackMapTable")) {
+            } elseif ((self::FRAMES && $attrName === 'StackMapTable')) {
                 if (((($context->flags & self::SKIP_FRAMES)) == 0)) {
                     $stackMap = ($u + 10);
                     $stackMapSize = $this->readInt(($u + 4));
                     $frameCount = $this->readUnsignedShort(($u + 8));
                 }
-            } elseif ((self::FRAMES && $attrName === "StackMap")) {
+            } elseif ((self::FRAMES && $attrName === 'StackMap')) {
                 if (((($context->flags & self::SKIP_FRAMES)) == 0)) {
                     $zip =  false ;
                     $stackMap = ($u + 10);
@@ -1304,8 +1304,8 @@ class ClassReader
             $frame->localCount = 0;
             $frame->localDiff = 0;
             $frame->stackCount = 0;
-            $frame->local = array();
-            $frame->stack = array();
+            $frame->local = [];
+            $frame->stack = [];
             if ($unzip) {
                 $this->getImplicitFrame($context);
             }
@@ -1404,7 +1404,8 @@ class ClassReader
                         $mv->visitJumpInsn(200, $target);
                         $mv->visitLabel($endif);
                         if (((self::FRAMES && ($stackMap != 0)) && ((($frame == null)
-                                || ($frame->offset != ($offset + 3)))))) {
+                        || ($frame->offset != ($offset + 3)))))
+                        ) {
                             $mv->visitFrame(ClassWriter::$F_INSERT, 0, null, 0, null);
                         }
                     }
@@ -1427,7 +1428,7 @@ class ClassReader
                     $label = ($offset + $this->readInt($u));
                     $min = $this->readInt(($u + 4));
                     $max = $this->readInt(($u + 8));
-                    $table = array();
+                    $table = [];
                     $u += 12;
                     for ($i = 0; ($i < count($table) /*from: table.length*/); ++$i) {
                         $table[$i] = $labels[($offset + $this->readInt($u))];
@@ -1440,8 +1441,8 @@ class ClassReader
                     $u = (($u + 4) - (($offset & 3)));
                     $label = ($offset + $this->readInt($u));
                     $len = $this->readInt(($u + 4));
-                    $keys = array();
-                    $values = array();
+                    $keys = [];
+                    $values = [];
                     $u += 8;
                     for ($i = 0; ($i < $len); ++$i) {
                         $keys[$i] = $this->readInt($u);
@@ -1497,7 +1498,7 @@ class ClassReader
                     $bsmIndex = $context->bootstrapMethods[$this->readUnsignedShort($cpIndex)];
                     $bsm = $this->readConst($this->readUnsignedShort($bsmIndex), $c);
                     $bsmArgCount = $this->readUnsignedShort(($bsmIndex + 2));
-                    $bsmArgs = array();
+                    $bsmArgs = [];
                     $bsmIndex += 4;
                     for ($i = 0; ($i < $bsmArgCount); ++$i) {
                         $bsmArgs[$i] = $this->readConst($this->readUnsignedShort($bsmIndex), $c);
@@ -1574,7 +1575,7 @@ class ClassReader
             $typeTable = null;
             if (($varTypeTable != 0)) {
                 $u = ($varTypeTable + 2);
-                $typeTable = array();
+                $typeTable = [];
                 for ($i = count($typeTable) /*from: typeTable.length*/; ($i > 0);) {
                     $typeTable[--$i] = ($u + 6);
                     $typeTable[--$i] = $this->readUnsignedShort(($u + 8));
@@ -1666,7 +1667,6 @@ class ClassReader
      * Parses a type annotation table to find the labels, and to visit the try
      * catch block annotations.
      *
-
      * @param MethodVisitor $mv      the method visitor to be used to visit the try catch block annotations.
      * @param Context       $context information about the class being parsed.
      * @param int           $u       the start offset of a type annotation table.
@@ -1677,7 +1677,7 @@ class ClassReader
     protected function readTypeAnnotations(MethodVisitor $mv, Context $context, int $u, bool $visible) : int
     {
         $c = $context->buffer;
-        $offsets = array();
+        $offsets = [];
         $u += 2;
         for ($i = 0; ($i < count($offsets) /*from: offsets.length*/); ++$i) {
             $offsets[$i] = $u;
@@ -1765,9 +1765,9 @@ class ClassReader
             case 0x41:
                 $target &= 0xFF000000;
                 $n = $this->readUnsignedShort(($u + 1));
-                $context->start = array();
-                $context->end = array();
-                $context->index = array();
+                $context->start = [];
+                $context->end = [];
+                $context->index = [];
                 $u += 3;
                 for ($i = 0; ($i < $n); ++$i) {
                     $start = $this->readUnsignedShort($u);
@@ -1819,7 +1819,7 @@ class ClassReader
         $synthetics = (count(Type::getArgumentTypesFromDescription($context->desc)) - $n);
         $av = null;
         for ($i = 0; ($i < $synthetics); ++$i) {
-            $av = $mv->visitParameterAnnotation($i, "Ljava/lang/Synthetic;", false);
+            $av = $mv->visitParameterAnnotation($i, 'Ljava/lang/Synthetic;', false);
             if (($av != null)) {
                 $av->visitEnd();
             }
@@ -1952,7 +1952,7 @@ class ClassReader
                 }
                 switch (($this->b[++$v] & 0xFF)) {
                     case 'B':
-                        $bv = array();
+                        $bv = [];
                         for ($i = 0; ($i < $size); ++$i) {
                             $bv[$i] = $this->readInt($this->items[$this->readUnsignedShort($v)]);
                             $v += 3;
@@ -1961,7 +1961,7 @@ class ClassReader
                         --$v;
                         break;
                     case 'Z':
-                        $zv = array();
+                        $zv = [];
                         for ($i = 0; ($i < $size); ++$i) {
                             $zv[$i] = ($this->readInt($this->items[$this->readUnsignedShort($v)]) != 0);
                             $v += 3;
@@ -1970,7 +1970,7 @@ class ClassReader
                         --$v;
                         break;
                     case 'S':
-                        $sv = array();
+                        $sv = [];
                         for ($i = 0; ($i < $size); ++$i) {
                             $sv[$i] = $this->readInt($this->items[$this->readUnsignedShort($v)]);
                             $v += 3;
@@ -1979,7 +1979,7 @@ class ClassReader
                         --$v;
                         break;
                     case 'C':
-                        $cv = array();
+                        $cv = [];
                         for ($i = 0; ($i < $size); ++$i) {
                             $cv[$i] = $this->readInt($this->items[$this->readUnsignedShort($v)]);
                             $v += 3;
@@ -1988,7 +1988,7 @@ class ClassReader
                         --$v;
                         break;
                     case 'I':
-                        $iv = array();
+                        $iv = [];
                         for ($i = 0; ($i < $size); ++$i) {
                             $iv[$i] = $this->readInt($this->items[$this->readUnsignedShort($v)]);
                             $v += 3;
@@ -1997,7 +1997,7 @@ class ClassReader
                         --$v;
                         break;
                     case 'J':
-                        $lv = array();
+                        $lv = [];
                         for ($i = 0; ($i < $size); ++$i) {
                             $lv[$i] = $this->readLong($this->items[$this->readUnsignedShort($v)]);
                             $v += 3;
@@ -2006,7 +2006,7 @@ class ClassReader
                         --$v;
                         break;
                     case 'F':
-                        $fv = array();
+                        $fv = [];
                         for ($i = 0; ($i < $size); ++$i) {
                             $fv[$i] = $this->intBitsToFloat($this->readInt($this->items[$this->readUnsignedShort($v)]));
                             $v += 3;
@@ -2015,7 +2015,7 @@ class ClassReader
                         --$v;
                         break;
                     case 'D':
-                        $dv = array();
+                        $dv = [];
                         for ($i = 0; ($i < $size); ++$i) {
                             $dv[$i] = $this->longBitsToDouble(
                                 $this->readLong($this->items[$this->readUnsignedShort($v)])
@@ -2044,7 +2044,7 @@ class ClassReader
         $locals = &$frame->local;
         $local  = 0;
         if (((($frame->access & Opcodes::ACC_STATIC)) == 0)) {
-            if ($frame->name === "<init>") {
+            if ($frame->name === '<init>') {
                 $locals[++$local] = Opcodes::UNINITIALIZED_THIS;
             } else {
                 $locals[++$local] = $this->readClass(($this->header + 2), $frame->buffer);
@@ -2453,7 +2453,7 @@ class ClassReader
      * is intended for {@link Attribute} sub classes, and is normally not needed
      * by class generators or adapters.</i>
      *
-     * @param int       $index
+     * @param int      $index
      *                         the start index of an unsigned short value in {@link #b b},
      *                         whose value is the index of an UTF8 constant pool item.
      * @param string[] $buf

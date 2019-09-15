@@ -1,6 +1,6 @@
 <?php
 
-    require_once("../vendor/autoload.php");
+    require_once('../vendor/autoload.php');
 
     use Kambo\Karsk\ClassWriter;
     use Kambo\Karsk\Opcodes;
@@ -25,23 +25,23 @@ public class AssignVariable {
     $cw->visit(
         Opcodes::V1_8,
         Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-        "AssignVariable",
+        'AssignVariable',
         null,
-        "java/lang/Object",
+        'java/lang/Object',
         null
     );
 
-    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
     $mv->visitCode();
 
     $mv->visitVarInsn(Opcodes::ALOAD, 0);
-    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
     $mv->visitInsn(Opcodes::RETURN_);
 
     $mv->visitMaxs(1, 1);
     $mv->visitEnd();
 
-    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, 'main', '([Ljava/lang/String;)V', null, null);
     $mv->visitCode();
 
     $mv->visitIntInsn(Opcodes::BIPUSH, 10);
@@ -53,9 +53,9 @@ public class AssignVariable {
     $mv->visitVarInsn(Opcodes::ILOAD, 2);
     $mv->visitVarInsn(Opcodes::ISTORE, 1);
 
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitVarInsn(Opcodes::ILOAD, 1);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
     $mv->visitInsn(Opcodes::RETURN_);
 
@@ -66,7 +66,7 @@ public class AssignVariable {
 
     $code = $cw->toByteArray();
 
-    $binarystring = pack("c*", ...$code);
+    $binarystring = pack('c*', ...$code);
 
     $file_w = fopen('AssignVariable.class', 'w+');
 

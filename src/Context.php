@@ -35,8 +35,8 @@ namespace Kambo\Karsk;
 /**
  * Information about a class being parsed in a {@link ClassReader}.
  *
- * @author Eric Bruneton
- * @author Bohuslav Simek <bohuslav@simek.si>
+ * @author  Eric Bruneton
+ * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
 class Context

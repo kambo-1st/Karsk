@@ -32,7 +32,7 @@ namespace Kambo\Karsk\Type;
 /**
  * Represent simple data type and it's value
  *
- * @author Bohuslav Simek <bohuslav@simek.si>
+ * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
 class AbstractDataType implements DataType

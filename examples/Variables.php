@@ -1,6 +1,6 @@
 <?php
 
-    require_once("../vendor/autoload.php");
+    require_once('../vendor/autoload.php');
 
     use Kambo\Karsk\ClassWriter;
     use Kambo\Karsk\Opcodes;
@@ -40,28 +40,28 @@
 
     $cw = new ClassWriter(0);
 
-    $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, "Variables", null, "java/lang/Object", null);
+    $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, 'Variables', null, 'java/lang/Object', null);
 
-    $cw->visitSource("Variables.java", null);
+    $cw->visitSource('Variables.java', null);
 
-    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
     $mv->visitCode();
     $l0 = new Label();
     $mv->visitLabel($l0);
     $mv->visitLineNumber(3, $l0);
     $mv->visitVarInsn(Opcodes::ALOAD, 0);
-    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
     $mv->visitInsn(Opcodes::RETURN_);
     $l1 = new Label();
     $mv->visitLabel($l1);
-    $mv->visitLocalVariable("this", "LVariables;", null, $l0, $l1, 0);
+    $mv->visitLocalVariable('this', 'LVariables;', null, $l0, $l1, 0);
     $mv->visitMaxs(1, 1);
     $mv->visitEnd();
 
     $mv = $cw->visitMethod(
         Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-        "main",
-        "([Ljava/lang/String;)V",
+        'main',
+        '([Ljava/lang/String;)V',
         null,
         null
     );
@@ -100,7 +100,7 @@
     $l5 = new Label();
     $mv->visitLabel($l5);
     $mv->visitLineNumber(11, $l5);
-    $mv->visitLdcInsn(new Double("3.14"));
+    $mv->visitLdcInsn(new Double('3.14'));
     $mv->visitVarInsn(Opcodes::DSTORE, 6);
 
     $l6 = new Label();
@@ -113,7 +113,7 @@
     $l7 = new Label();
     $mv->visitLabel($l7);
     $mv->visitLineNumber(13, $l7);
-    $mv->visitLdcInsn("im a string");
+    $mv->visitLdcInsn('im a string');
     $mv->visitVarInsn(Opcodes::ASTORE, 9);
 
     $l8 = new Label();
@@ -127,59 +127,59 @@
     $l9 = new Label();
     $mv->visitLabel($l9);
     $mv->visitLineNumber(17, $l9);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitVarInsn(Opcodes::ILOAD, 1);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Z)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(Z)V', false);
 
     $l10 = new Label();
     $mv->visitLabel($l10);
     $mv->visitLineNumber(18, $l10);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitVarInsn(Opcodes::ILOAD, 2);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(C)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(C)V', false);
 
     $l11 = new Label();
     $mv->visitLabel($l11);
     $mv->visitLineNumber(19, $l11);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitVarInsn(Opcodes::ILOAD, 3);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
     $l12 = new Label();
     $mv->visitLabel($l12);
     $mv->visitLineNumber(20, $l12);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitVarInsn(Opcodes::ILOAD, 4);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
     $l13 = new Label();
     $mv->visitLabel($l13);
     $mv->visitLineNumber(21, $l13);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitVarInsn(Opcodes::ILOAD, 5);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
     $l14 = new Label();
     $mv->visitLabel($l14);
     $mv->visitLineNumber(22, $l14);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitVarInsn(Opcodes::DLOAD, 6);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(D)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(D)V', false);
 
     $l15 = new Label();
     $mv->visitLabel($l15);
     $mv->visitLineNumber(23, $l15);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitVarInsn(Opcodes::ALOAD, 9);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(Ljava/lang/String;)V', false);
 
     $l16 = new Label();
     $mv->visitLabel($l16);
     $mv->visitLineNumber(24, $l16);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitVarInsn(Opcodes::ALOAD, 8);
     $mv->visitInsn(Opcodes::ARRAYLENGTH);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
     $l17 = new Label();
     $mv->visitLabel($l17);
@@ -188,15 +188,15 @@
 
     $l18 = new Label();
     $mv->visitLabel($l18);
-    $mv->visitLocalVariable("args", "[Ljava/lang/String;", null, $l0, $l18, 0);
-    $mv->visitLocalVariable("bool", "Z", null, $l1, $l18, 1);
-    $mv->visitLocalVariable("c", "C", null, $l2, $l18, 2);
-    $mv->visitLocalVariable("b", "B", null, $l3, $l18, 3);
-    $mv->visitLocalVariable("s", "S", null, $l4, $l18, 4);
-    $mv->visitLocalVariable("i", "I", null, $l5, $l18, 5);
-    $mv->visitLocalVariable("d", "D", null, $l6, $l18, 6);
-    $mv->visitLocalVariable("anArray", "[I", null, $l7, $l18, 8);
-    $mv->visitLocalVariable("string", "Ljava/lang/String;", null, $l8, $l18, 9);
+    $mv->visitLocalVariable('args', '[Ljava/lang/String;', null, $l0, $l18, 0);
+    $mv->visitLocalVariable('bool', 'Z', null, $l1, $l18, 1);
+    $mv->visitLocalVariable('c', 'C', null, $l2, $l18, 2);
+    $mv->visitLocalVariable('b', 'B', null, $l3, $l18, 3);
+    $mv->visitLocalVariable('s', 'S', null, $l4, $l18, 4);
+    $mv->visitLocalVariable('i', 'I', null, $l5, $l18, 5);
+    $mv->visitLocalVariable('d', 'D', null, $l6, $l18, 6);
+    $mv->visitLocalVariable('anArray', '[I', null, $l7, $l18, 8);
+    $mv->visitLocalVariable('string', 'Ljava/lang/String;', null, $l8, $l18, 9);
     $mv->visitMaxs(3, 10);
     $mv->visitEnd();
 
@@ -204,7 +204,7 @@
 
     $code = $cw->toByteArray();
 
-    $binarystring = pack("c*", ...$code);
+    $binarystring = pack('c*', ...$code);
 
     $file_w = fopen('Variables.class', 'w+');
 

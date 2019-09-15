@@ -153,7 +153,7 @@ class MethodWriter extends MethodVisitor
         $this->cw = $cw;
         $this->access = $access;
 
-        if ("<init>" /* from: "<init>".equals(name) */) {
+        if ('<init>' /* from: "<init>".equals(name) */) {
             $this->access |= self::$ACC_CONSTRUCTOR;
         }
 
@@ -167,7 +167,7 @@ class MethodWriter extends MethodVisitor
 
         if ((($exceptions != null) && (count($exceptions) /*from: exceptions.length*/ > 0))) {
             $this->exceptionCount = count($exceptions) /*from: exceptions.length*/;
-            $this->exceptions = array();
+            $this->exceptions = [];
             for ($i = 0; ($i < $this->exceptionCount); ++$i) {
                 $this->exceptions[$i] = $cw->newClass($exceptions[$i]);
             }
@@ -251,7 +251,7 @@ class MethodWriter extends MethodVisitor
         }
 
         $bv = new ByteVector();
-        if ($desc === "Ljava/lang/Synthetic;") {
+        if ($desc === 'Ljava/lang/Synthetic;') {
             $this->synthetics = max($this->synthetics, ($parameter + 1));
             return new AnnotationWriter($this->cw, false, $bv, null, 0);
         }
@@ -260,13 +260,13 @@ class MethodWriter extends MethodVisitor
         $aw = new AnnotationWriter($this->cw, true, $bv, $bv, 2);
         if ($visible) {
             if (($this->panns == null)) {
-                $this->panns = array();
+                $this->panns = [];
             }
             $aw->next = $this->panns[$parameter];
             $this->panns[$parameter] = $aw;
         } else {
             if (($this->ipanns == null)) {
-                $this->ipanns = array();
+                $this->ipanns = [];
             }
             $aw->next = $this->ipanns[$parameter];
             $this->ipanns[$parameter] = $aw;
@@ -331,14 +331,14 @@ class MethodWriter extends MethodVisitor
      * illegal to visit two or more frames for the same code location (i.e., at
      * least one instruction must be visited between two calls to visitFrame).
      *
-     * @param int $type
+     * @param int   $type
      *            the type of this stack map frame. Must be
      *            {@link Opcodes#F_NEW} for expanded frames, or
      *            {@link Opcodes#F_FULL}, {@link Opcodes#F_APPEND},
      *            {@link Opcodes#F_CHOP}, {@link Opcodes#F_SAME} or
      *            {@link Opcodes#F_APPEND}, {@link Opcodes#F_SAME1} for
      *            compressed frames.
-     * @param int $nLocal
+     * @param int   $nLocal
      *            the number of local variables in the visited frame.
      * @param array $local
      *            the local variable types in this frame. This array must not be
@@ -352,7 +352,7 @@ class MethodWriter extends MethodVisitor
      *            and uninitialized types by Label objects (this label
      *            designates the NEW instruction that created this uninitialized
      *            value).
-     * @param int $nStack
+     * @param int   $nStack
      *            the number of operand stack elements in the visited frame.
      * @param array $stack
      *            the operand stack types in this frame. This array must not be
@@ -416,7 +416,7 @@ class MethodWriter extends MethodVisitor
                     $this->frame[++$frameIndex] = $local[$i];
                 } else {
                     $this->frame[++$frameIndex] = (Frame::$UNINITIALIZED
-                        | $this->cw->addUninitializedType("", ($local[$i])::$position)
+                        | $this->cw->addUninitializedType('', ($local[$i])::$position)
                     );
                 }
             }
@@ -427,7 +427,7 @@ class MethodWriter extends MethodVisitor
                     $this->frame[++$frameIndex] = $stack[$i];
                 } else {
                     $this->frame[++$frameIndex] = (Frame::$UNINITIALIZED
-                        | $this->cw->addUninitializedType("", ($stack[$i])::$position)
+                        | $this->cw->addUninitializedType('', ($stack[$i])::$position)
                     );
                 }
             }
@@ -560,7 +560,8 @@ class MethodWriter extends MethodVisitor
             if ((((($opcode == Opcodes::LLOAD)
                 || ($opcode == Opcodes::DLOAD))
                 || ($opcode == Opcodes::LSTORE))
-                || ($opcode == Opcodes::DSTORE))) {
+                || ($opcode == Opcodes::DSTORE))
+            ) {
                 $n = ($var + 2);
             } else {
                 $n = ($var + 1);
@@ -1126,7 +1127,7 @@ class MethodWriter extends MethodVisitor
                 $l = $handler->start->getFirst();
                 $h = $handler->handler->getFirst();
                 $e = $handler->end->getFirst();
-                $t = ( (($handler->desc == null)) ? "java/lang/Throwable" : $handler->desc );
+                $t = ( (($handler->desc == null)) ? 'java/lang/Throwable' : $handler->desc );
                 $kind = (Frame::$OBJECT | $this->cw->addType($t));
                 $h->status |= Label::TARGET;
                 while (($l != $e)) {
@@ -1175,7 +1176,7 @@ class MethodWriter extends MethodVisitor
             while (($l != null)) {
                 $f = $l->frame;
                 if (((($l->status & Label::STORE)) != 0)) {
-            /* match: Frame */
+                    /* match: Frame */
                     $this->visitTargetFrame($f);
                 }
                 if (((($l->status & Label::REACHABLE)) == 0)) {
@@ -1189,7 +1190,7 @@ class MethodWriter extends MethodVisitor
                         }
                         $this->code->data[$end] = Opcodes::ATHROW;
                         $frameIndex = $this->startFrame($start, 0, 1);
-                        $this->frame[$frameIndex] = (Frame::$OBJECT | $this->cw->addType("java/lang/Throwable"));
+                        $this->frame[$frameIndex] = (Frame::$OBJECT | $this->cw->addType('java/lang/Throwable'));
                         $this->endFrame();
                         $this->firstHandler = Handler::remove($this->firstHandler, $l, $k);
                     }
@@ -1435,7 +1436,7 @@ class MethodWriter extends MethodVisitor
     {
         $n = ((3 + $nLocal) + $nStack);
         if ((($this->frame == null) || (count($this->frame) /*from: frame.length*/ < $n))) {
-            $this->frame = array();
+            $this->frame = [];
         }
         $this->frame[0] = $offset;
         $this->frame[1] = $nLocal;
@@ -1613,33 +1614,33 @@ class MethodWriter extends MethodVisitor
         $size = 8;
         if ((count($this->code) /*from: code.length*/ > 0)) {
             if ((count($this->code) /*from: code.length*/ > 65535)) {
-                throw new \Kambo\Karsk\Exception\RuntimeException("Method code too large!");
+                throw new \Kambo\Karsk\Exception\RuntimeException('Method code too large!');
             }
-            $this->cw->newUTF8("Code");
+            $this->cw->newUTF8('Code');
             $size += ((18 + count($this->code) /*from: code.length*/) + (8 * $this->handlerCount));
             if (($this->localVar != null)) {
-                $this->cw->newUTF8("LocalVariableTable");
+                $this->cw->newUTF8('LocalVariableTable');
                 $size += (8 + count($this->localVar) /*from: localVar.length*/);
             }
             if (($this->localVarType != null)) {
-                $this->cw->newUTF8("LocalVariableTypeTable");
+                $this->cw->newUTF8('LocalVariableTypeTable');
                 $size += (8 + count($this->localVarType) /*from: localVarType.length*/);
             }
             if (($this->lineNumber != null)) {
-                $this->cw->newUTF8("LineNumberTable");
+                $this->cw->newUTF8('LineNumberTable');
                 $size += (8 + count($this->lineNumber) /*from: lineNumber.length*/);
             }
             if (($this->stackMap != null)) {
                 $zip = ((($this->cw->version & 0xFFFF)) >= Opcodes::V1_6);
-                $this->cw->newUTF8(( ($zip) ? "StackMapTable" : "StackMap" ));
+                $this->cw->newUTF8(( ($zip) ? 'StackMapTable' : 'StackMap' ));
                 $size += (8 + count($this->stackMap) /*from: stackMap.length*/);
             }
             if ((ClassReader::ANNOTATIONS && ($this->ctanns != null))) {
-                $this->cw->newUTF8("RuntimeVisibleTypeAnnotations");
+                $this->cw->newUTF8('RuntimeVisibleTypeAnnotations');
                 $size += (8 + $this->ctanns->getSize());
             }
             if ((ClassReader::ANNOTATIONS && ($this->ictanns != null))) {
-                $this->cw->newUTF8("RuntimeInvisibleTypeAnnotations");
+                $this->cw->newUTF8('RuntimeInvisibleTypeAnnotations');
                 $size += (8 + $this->ictanns->getSize());
             }
             if (($this->cattrs != null)) {
@@ -1653,58 +1654,59 @@ class MethodWriter extends MethodVisitor
             }
         }
         if (($this->exceptionCount > 0)) {
-            $this->cw->newUTF8("Exceptions");
+            $this->cw->newUTF8('Exceptions');
             $size += (8 + (2 * $this->exceptionCount));
         }
         if (((($this->access & Opcodes::ACC_SYNTHETIC)) != 0)) {
             if ((((($this->cw->version & 0xFFFF)) < Opcodes::V1_5)
-                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))) {
-                $this->cw->newUTF8("Synthetic");
+                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))
+            ) {
+                $this->cw->newUTF8('Synthetic');
                 $size += 6;
             }
         }
         if (((($this->access & Opcodes::ACC_DEPRECATED)) != 0)) {
-            $this->cw->newUTF8("Deprecated");
+            $this->cw->newUTF8('Deprecated');
             $size += 6;
         }
         if ((ClassReader::SIGNATURES && ($this->signature != null))) {
-            $this->cw->newUTF8("Signature");
+            $this->cw->newUTF8('Signature');
             $this->cw->newUTF8($this->signature);
             $size += 8;
         }
         if (($this->methodParameters != null)) {
-            $this->cw->newUTF8("MethodParameters");
+            $this->cw->newUTF8('MethodParameters');
             $size += (7 + count($this->methodParameters) /*from: methodParameters.length*/);
         }
         if ((ClassReader::ANNOTATIONS && ($this->annd != null))) {
-            $this->cw->newUTF8("AnnotationDefault");
+            $this->cw->newUTF8('AnnotationDefault');
             $size += (6 + count($this->annd) /*from: annd.length*/);
         }
         if ((ClassReader::ANNOTATIONS && ($this->anns != null))) {
-            $this->cw->newUTF8("RuntimeVisibleAnnotations");
+            $this->cw->newUTF8('RuntimeVisibleAnnotations');
             $size += (8 + $this->anns->getSize());
         }
         if ((ClassReader::ANNOTATIONS && ($this->ianns != null))) {
-            $this->cw->newUTF8("RuntimeInvisibleAnnotations");
+            $this->cw->newUTF8('RuntimeInvisibleAnnotations');
             $size += (8 + $this->ianns->getSize());
         }
         if ((ClassReader::ANNOTATIONS && ($this->tanns != null))) {
-            $this->cw->newUTF8("RuntimeVisibleTypeAnnotations");
+            $this->cw->newUTF8('RuntimeVisibleTypeAnnotations');
             $size += (8 + $this->tanns->getSize());
         }
         if ((ClassReader::ANNOTATIONS && ($this->itanns != null))) {
-            $this->cw->newUTF8("RuntimeInvisibleTypeAnnotations");
+            $this->cw->newUTF8('RuntimeInvisibleTypeAnnotations');
             $size += (8 + $this->itanns->getSize());
         }
         if ((ClassReader::ANNOTATIONS && ($this->panns != null))) {
-            $this->cw->newUTF8("RuntimeVisibleParameterAnnotations");
+            $this->cw->newUTF8('RuntimeVisibleParameterAnnotations');
             $size += (7 + (2 * ((count($this->panns) /*from: panns.length*/ - $this->synthetics))));
             for ($i = (count($this->panns) /*from: panns.length*/ - 1); ($i >= $this->synthetics); --$i) {
                 $size += ( (($this->panns[$i] == null)) ? 0 : $this->panns[$i]->getSize() );
             }
         }
         if ((ClassReader::ANNOTATIONS && ($this->ipanns != null))) {
-            $this->cw->newUTF8("RuntimeInvisibleParameterAnnotations");
+            $this->cw->newUTF8('RuntimeInvisibleParameterAnnotations');
             $size += (7 + (2 * ((count($this->ipanns) /*from: ipanns.length*/ - $this->synthetics))));
             for ($i = (count($this->ipanns) /*from: ipanns.length*/ - 1); ($i >= $this->synthetics); --$i) {
                 $size += ( (($this->ipanns[$i] == null)) ? 0 : $this->ipanns[$i]->getSize() );
@@ -1734,7 +1736,8 @@ class MethodWriter extends MethodVisitor
         }
         if (((($this->access & Opcodes::ACC_SYNTHETIC)) != 0)) {
             if ((((($this->cw->version & 0xFFFF)) < Opcodes::V1_5)
-                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))) {
+                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))
+            ) {
                 ++$attributeCount;
             }
         }
@@ -1801,7 +1804,7 @@ class MethodWriter extends MethodVisitor
                     $this->maxLocals
                 );
             }
-            $out->putShort($this->cw->newUTF8("Code"))->putInt($size);
+            $out->putShort($this->cw->newUTF8('Code'))->putInt($size);
             $out->putShort($this->maxStack)->putShort($this->maxLocals);
             $out->putInt(count($this->code))->putByteArray($this->code->data, 0, count($this->code));
             $out->putShort($this->handlerCount);
@@ -1839,32 +1842,32 @@ class MethodWriter extends MethodVisitor
             }
             $out->putShort($attributeCount);
             if (($this->localVar != null)) {
-                $out->putShort($this->cw->newUTF8("LocalVariableTable"));
+                $out->putShort($this->cw->newUTF8('LocalVariableTable'));
                 $out->putInt((count($this->localVar) /*from: localVar.length*/ + 2))->putShort($this->localVarCount);
                 $out->putByteArray($this->localVar->data, 0, count($this->localVar) /*from: localVar.length*/);
             }
             if (($this->localVarType != null)) {
-                $out->putShort($this->cw->newUTF8("LocalVariableTypeTable"));
+                $out->putShort($this->cw->newUTF8('LocalVariableTypeTable'));
                 $out->putInt((count($this->localVarType) + 2))->putShort($this->localVarTypeCount);
                 $out->putByteArray($this->localVarType->data, 0, count($this->localVarType));
             }
             if (($this->lineNumber != null)) {
-                $out->putShort($this->cw->newUTF8("LineNumberTable"));
+                $out->putShort($this->cw->newUTF8('LineNumberTable'));
                 $out->putInt((count($this->lineNumber) + 2))->putShort($this->lineNumberCount);
                 $out->putByteArray($this->lineNumber->data, 0, count($this->lineNumber));
             }
             if (($this->stackMap != null)) {
                 $zip = ((($this->cw->version & 0xFFFF)) >= Opcodes::V1_6);
-                $out->putShort($this->cw->newUTF8(( ($zip) ? "StackMapTable" : "StackMap" )));
+                $out->putShort($this->cw->newUTF8(( ($zip) ? 'StackMapTable' : 'StackMap' )));
                 $out->putInt((count($this->stackMap) /*from: stackMap.length*/ + 2))->putShort($this->frameCount);
                 $out->putByteArray($this->stackMap->data, 0, count($this->stackMap) /*from: stackMap.length*/);
             }
             if ((ClassReader::ANNOTATIONS && ($this->ctanns != null))) {
-                $out->putShort($this->cw->newUTF8("RuntimeVisibleTypeAnnotations"));
+                $out->putShort($this->cw->newUTF8('RuntimeVisibleTypeAnnotations'));
                 $this->ctanns->put($out);
             }
             if ((ClassReader::ANNOTATIONS && ($this->ictanns != null))) {
-                $out->putShort($this->cw->newUTF8("RuntimeInvisibleTypeAnnotations"));
+                $out->putShort($this->cw->newUTF8('RuntimeInvisibleTypeAnnotations'));
                 $this->ictanns->put($out);
             }
             if (($this->cattrs != null)) {
@@ -1879,7 +1882,7 @@ class MethodWriter extends MethodVisitor
             }
         }
         if (($this->exceptionCount > 0)) {
-            $out->putShort($this->cw->newUTF8("Exceptions"))->putInt(((2 * $this->exceptionCount) + 2));
+            $out->putShort($this->cw->newUTF8('Exceptions'))->putInt(((2 * $this->exceptionCount) + 2));
             $out->putShort($this->exceptionCount);
             for ($i = 0; ($i < $this->exceptionCount); ++$i) {
                 $out->putShort($this->exceptions[$i]);
@@ -1887,48 +1890,49 @@ class MethodWriter extends MethodVisitor
         }
         if (((($this->access & Opcodes::ACC_SYNTHETIC)) != 0)) {
             if ((((($this->cw->version & 0xFFFF)) < Opcodes::V1_5)
-                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))) {
-                $out->putShort($this->cw->newUTF8("Synthetic"))->putInt(0);
+                || ((($this->access & ClassWriter::$ACC_SYNTHETIC_ATTRIBUTE)) != 0))
+            ) {
+                $out->putShort($this->cw->newUTF8('Synthetic'))->putInt(0);
             }
         }
         if (((($this->access & Opcodes::ACC_DEPRECATED)) != 0)) {
-            $out->putShort($this->cw->newUTF8("Deprecated"))->putInt(0);
+            $out->putShort($this->cw->newUTF8('Deprecated'))->putInt(0);
         }
         if ((ClassReader::SIGNATURES && ($this->signature != null))) {
-            $out->putShort($this->cw->newUTF8("Signature"))->putInt(2)->putShort($this->cw->newUTF8($this->signature));
+            $out->putShort($this->cw->newUTF8('Signature'))->putInt(2)->putShort($this->cw->newUTF8($this->signature));
         }
         if (($this->methodParameters != null)) {
-            $out->putShort($this->cw->newUTF8("MethodParameters"));
+            $out->putShort($this->cw->newUTF8('MethodParameters'));
             $out->putInt((count($this->methodParameters) + 1))->putByte($this->methodParametersCount);
             $out->putByteArray($this->methodParameters->data, 0, count($this->methodParameters));
         }
         if ((ClassReader::ANNOTATIONS && ($this->annd != null))) {
-            $out->putShort($this->cw->newUTF8("AnnotationDefault"));
+            $out->putShort($this->cw->newUTF8('AnnotationDefault'));
             $out->putInt(count($this->annd) /*from: annd.length*/);
             $out->putByteArray($this->annd->data, 0, count($this->annd) /*from: annd.length*/);
         }
         if ((ClassReader::ANNOTATIONS && ($this->anns != null))) {
-            $out->putShort($this->cw->newUTF8("RuntimeVisibleAnnotations"));
+            $out->putShort($this->cw->newUTF8('RuntimeVisibleAnnotations'));
             $this->anns->put($out);
         }
         if ((ClassReader::ANNOTATIONS && ($this->ianns != null))) {
-            $out->putShort($this->cw->newUTF8("RuntimeInvisibleAnnotations"));
+            $out->putShort($this->cw->newUTF8('RuntimeInvisibleAnnotations'));
             $this->ianns->put($out);
         }
         if ((ClassReader::ANNOTATIONS && ($this->tanns != null))) {
-            $out->putShort($this->cw->newUTF8("RuntimeVisibleTypeAnnotations"));
+            $out->putShort($this->cw->newUTF8('RuntimeVisibleTypeAnnotations'));
             $this->tanns->put($out);
         }
         if ((ClassReader::ANNOTATIONS && ($this->itanns != null))) {
-            $out->putShort($this->cw->newUTF8("RuntimeInvisibleTypeAnnotations"));
+            $out->putShort($this->cw->newUTF8('RuntimeInvisibleTypeAnnotations'));
             $this->itanns->put($out);
         }
         if ((ClassReader::ANNOTATIONS && ($this->panns != null))) {
-            $out->putShort($this->cw->newUTF8("RuntimeVisibleParameterAnnotations"));
+            $out->putShort($this->cw->newUTF8('RuntimeVisibleParameterAnnotations'));
             AnnotationWriter::put($this->panns, $this->synthetics, $out);
         }
         if ((ClassReader::ANNOTATIONS && ($this->ipanns != null))) {
-            $out->putShort($this->cw->newUTF8("RuntimeInvisibleParameterAnnotations"));
+            $out->putShort($this->cw->newUTF8('RuntimeInvisibleParameterAnnotations'));
             AnnotationWriter::put($this->ipanns, $this->synthetics, $out);
         }
         if (($this->attrs != null)) {

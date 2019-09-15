@@ -108,16 +108,16 @@ class BasicClassTest extends ExecutionTestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC,
-            "Example",
+            'Example',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
         $mw = $cw->visitMethod(
             Opcodes::ACC_PUBLIC,
-            "<init>",
-            "()V",
+            '<init>',
+            '()V',
             null,
             null
         );
@@ -125,9 +125,9 @@ class BasicClassTest extends ExecutionTestCase
 
         $mw->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
-            "java/lang/Object",
-            "<init>",
-            "()V",
+            'java/lang/Object',
+            '<init>',
+            '()V',
             false
         );
         $mw->visitInsn(Opcodes::RETURN_);
@@ -136,24 +136,24 @@ class BasicClassTest extends ExecutionTestCase
 
         $mw2 = $cw->visitMethod(
             (Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC),
-            "main",
-            "([Ljava/lang/String;)V",
+            'main',
+            '([Ljava/lang/String;)V',
             null,
             null
         );
         $mw2->visitFieldInsn(
             Opcodes::GETSTATIC,
-            "java/lang/System",
-            "out",
-            "Ljava/io/PrintStream;"
+            'java/lang/System',
+            'out',
+            'Ljava/io/PrintStream;'
         );
-        $mw2->visitLdcInsn("Hello world!");
+        $mw2->visitLdcInsn('Hello world!');
 
         $mw2->visitMethodInsn(
             Opcodes::INVOKEVIRTUAL,
-            "java/io/PrintStream",
-            "println",
-            "(Ljava/lang/String;)V",
+            'java/io/PrintStream',
+            'println',
+            '(Ljava/lang/String;)V',
             false
         );
         $mw2->visitInsn(Opcodes::RETURN_);

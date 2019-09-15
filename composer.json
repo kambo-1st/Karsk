@@ -33,7 +33,7 @@
         "unit-test": "./vendor/bin/phpunit tests/Unit/",
         "coverage-html": "./vendor/bin/phpunit --coverage-html coverage tests/Unit/",
         "coverage-xml": "./vendor/bin/phpunit tests/Unit/ --coverage-clover=coverage.xml",
-        "checkstyle": "./vendor/bin/phpcs --standard=PSR2 src",
+        "checkstyle": "./vendor/bin/phpcs .",
         "static-analysis": "./vendor/bin/phpstan analyze"
     }
 }

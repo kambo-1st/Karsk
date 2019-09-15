@@ -32,7 +32,7 @@ namespace Kambo\Karsk\Type;
 /**
  * Represents long value
  *
- * @author Bohuslav Simek <bohuslav@simek.si>
+ * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
 class Long extends AbstractDataType

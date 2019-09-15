@@ -207,24 +207,24 @@ class TypeTest extends TestCase
      */
     public function testEquals() : void
     {
-        $this->assertFalse(Type::getObjectType("I")->equals(null));
-        $this->assertFalse(Type::getObjectType("I")->equals(Type::getObjectType("HI")));
-        $this->assertFalse(Type::getObjectType("I")->equals(Type::getObjectType("J")));
+        $this->assertFalse(Type::getObjectType('I')->equals(null));
+        $this->assertFalse(Type::getObjectType('I')->equals(Type::getObjectType('HI')));
+        $this->assertFalse(Type::getObjectType('I')->equals(Type::getObjectType('J')));
 
-        $this->assertTrue(Type::getObjectType("I")->equals(Type::getObjectType("I")));
-        $this->assertTrue(Type::getObjectType("I")->equals(Type::getType("LI;")));
-        $this->assertTrue(Type::getType("LI;")->equals(Type::getObjectType("I")));
+        $this->assertTrue(Type::getObjectType('I')->equals(Type::getObjectType('I')));
+        $this->assertTrue(Type::getObjectType('I')->equals(Type::getType('LI;')));
+        $this->assertTrue(Type::getType('LI;')->equals(Type::getObjectType('I')));
     }
 
     public function testGetDimensions() : void
     {
-        $this->assertEquals(1, Type::getType("[I")->getDimensions());
-        $this->assertEquals(3, Type::getType("[[[LI;")->getDimensions());
+        $this->assertEquals(1, Type::getType('[I')->getDimensions());
+        $this->assertEquals(3, Type::getType('[[[LI;')->getDimensions());
     }
 
     public function testGetReturnType() : void
     {
-        $this->assertEquals(Type::getType(new Type\Integer()), Type::getReturnType("()I"));
-        $this->assertEquals(Type::getType(new Type\Integer()), Type::getReturnType("(Lpkg/classMethod();)I"));
+        $this->assertEquals(Type::getType(new Type\Integer()), Type::getReturnType('()I'));
+        $this->assertEquals(Type::getType(new Type\Integer()), Type::getReturnType('(Lpkg/classMethod();)I'));
     }
 }

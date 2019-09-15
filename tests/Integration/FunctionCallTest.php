@@ -159,21 +159,21 @@ class FunctionCallTest extends ExecutionTestCase
         $cw->visit(
             Opcodes::V1_8,
             Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-            "AddFunction",
+            'AddFunction',
             null,
-            "java/lang/Object",
+            'java/lang/Object',
             null
         );
 
         $cw->visitSource(
-            "AddFunction.java",
+            'AddFunction.java',
             null
         );
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC,
-            "<init>",
-            "()V",
+            '<init>',
+            '()V',
             null,
             null
         );
@@ -185,9 +185,9 @@ class FunctionCallTest extends ExecutionTestCase
         $mv->visitVarInsn(Opcodes::ALOAD, 0);
         $mv->visitMethodInsn(
             Opcodes::INVOKESPECIAL,
-            "java/lang/Object",
-            "<init>",
-            "()V",
+            'java/lang/Object',
+            '<init>',
+            '()V',
             false
         );
         $mv->visitInsn(Opcodes::RETURN_);
@@ -195,8 +195,8 @@ class FunctionCallTest extends ExecutionTestCase
         $l1 = new Label();
         $mv->visitLabel($l1);
         $mv->visitLocalVariable(
-            "this",
-            "LAddFunction;",
+            'this',
+            'LAddFunction;',
             null,
             $l0,
             $l1,
@@ -207,8 +207,8 @@ class FunctionCallTest extends ExecutionTestCase
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-            "main",
-            "([Ljava/lang/String;)V",
+            'main',
+            '([Ljava/lang/String;)V',
             null,
             null
         );
@@ -219,24 +219,24 @@ class FunctionCallTest extends ExecutionTestCase
         $mv->visitLineNumber(6, $l0);
         $mv->visitFieldInsn(
             Opcodes::GETSTATIC,
-            "java/lang/System",
-            "out",
-            "Ljava/io/PrintStream;"
+            'java/lang/System',
+            'out',
+            'Ljava/io/PrintStream;'
         );
         $mv->visitIntInsn(Opcodes::BIPUSH, 10);
         $mv->visitIntInsn(Opcodes::BIPUSH, 10);
         $mv->visitMethodInsn(
             Opcodes::INVOKESTATIC,
-            "AddFunction",
-            "add",
-            "(II)I",
+            'AddFunction',
+            'add',
+            '(II)I',
             false
         );
         $mv->visitMethodInsn(
             Opcodes::INVOKEVIRTUAL,
-            "java/io/PrintStream",
-            "println",
-            "(I)V",
+            'java/io/PrintStream',
+            'println',
+            '(I)V',
             false
         );
 
@@ -248,8 +248,8 @@ class FunctionCallTest extends ExecutionTestCase
         $l2 = new Label();
         $mv->visitLabel($l2);
         $mv->visitLocalVariable(
-            "args",
-            "[Ljava/lang/String;",
+            'args',
+            '[Ljava/lang/String;',
             null,
             $l0,
             $l2,
@@ -260,8 +260,8 @@ class FunctionCallTest extends ExecutionTestCase
 
         $mv = $cw->visitMethod(
             Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-            "add",
-            "(II)I",
+            'add',
+            '(II)I',
             null,
             null
         );
@@ -277,8 +277,8 @@ class FunctionCallTest extends ExecutionTestCase
 
         $l1 = new Label();
         $mv->visitLabel($l1);
-        $mv->visitLocalVariable("a", "I", null, $l0, $l1, 0);
-        $mv->visitLocalVariable("b", "I", null, $l0, $l1, 1);
+        $mv->visitLocalVariable('a', 'I', null, $l0, $l1, 0);
+        $mv->visitLocalVariable('b', 'I', null, $l0, $l1, 1);
         $mv->visitMaxs(2, 2);
         $mv->visitEnd();
 

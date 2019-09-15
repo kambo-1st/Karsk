@@ -37,8 +37,8 @@ namespace Kambo\Karsk;
  * method. This is implemented as a Frame subclass for a "basic block"
  * containing only one instruction.
  *
- * @author Eric Bruneton
- * @author Bohuslav Simek <bohuslav@simek.si>
+ * @author  Eric Bruneton
+ * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
 class CurrentFrame extends Frame

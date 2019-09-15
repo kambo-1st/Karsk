@@ -221,12 +221,12 @@ class ByteVector implements \Countable
      * bytes before the encoded characters, if there is space for that (i.e. if
      * $this->length - i - 2 >= 0).
      *
-     * @param string $s the String to encode.
-     * @param int    $i the index of the first character to encode. The previous
-     *                  characters are supposed to have already been encoded, using
-     *                  only one byte per character.
+     * @param string $s             the String to encode.
+     * @param int    $i             the index of the first character to encode. The previous
+     *                              characters are supposed to have already been encoded,
+     *                              using only one byte per character.
      * @param int    $maxByteLength the maximum byte length of the encoded string, including the
-     *               already encoded characters.
+     *                              already encoded characters.
      *
      * @return ByteVector Self for fluent interface
      */
@@ -281,10 +281,10 @@ class ByteVector implements \Countable
     /**
      * Puts an array of bytes into this byte vector.
      *
-     * @param array $b an array of bytes. May be <tt>null</tt> to put <tt>len</tt>
-     *                 null bytes into this byte vector.
-     * @param int $off index of the fist byte of b that must be copied.
-     * @param int $len number of bytes of b that must be copied.
+     * @param array $b   an array of bytes. May be <tt>null</tt> to put <tt>len</tt>
+     *                   null bytes into this byte vector.
+     * @param int   $off index of the fist byte of b that must be copied.
+     * @param int   $len number of bytes of b that must be copied.
      *
      * @return ByteVector Self for fluent interface
      */

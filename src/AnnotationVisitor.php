@@ -84,7 +84,7 @@ class AnnotationVisitor
     /**
      * Visits a primitive value of the annotation.
      *
-     * @param string $name the value name.
+     * @param string $name  the value name.
      * @param mixed  $value
      *               the actual value, whose type must be {@link Byte},
      *               {@link Boolean}, {@link Character}, {@link Short},

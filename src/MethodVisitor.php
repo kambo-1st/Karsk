@@ -475,7 +475,7 @@ class MethodVisitor
 
         if ($this->api < Opcodes::ASM5) {
             if ($itf != ($opcode == Opcodes::INVOKEINTERFACE)) {
-                throw new \InvalidArgumentException("INVOKESPECIAL/STATIC on interfaces require ASM 5");
+                throw new \InvalidArgumentException('INVOKESPECIAL/STATIC on interfaces require ASM 5');
             }
 
             $this->visitMethodInsn($opcode, $owner, $name, $desc, $itf);

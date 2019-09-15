@@ -64,7 +64,7 @@ abstract class FieldVisitor
     /**
      * Constructs a new {@link FieldVisitor}.
      *
-     * @param int $api
+     * @param int          $api
      *            the ASM API version implemented by this visitor. Must be one
      *            of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
      * @param FieldVisitor $fv
@@ -88,7 +88,7 @@ abstract class FieldVisitor
      *
      * @param string $desc
      *            the class descriptor of the annotation class.
-     * @param bool $visible
+     * @param bool   $visible
      *            <tt>true</tt> if the annotation is visible at runtime.
      *
      * @return AnnotationVisitor a visitor to visit the annotation values, or <tt>null</tt> if
@@ -106,7 +106,7 @@ abstract class FieldVisitor
     /**
      * Visits an annotation on the type of the field.
      *
-     * @param int $typeRef
+     * @param int      $typeRef
      *            a reference to the annotated type. The sort of this type
      *            reference must be {@link TypeReference#FIELD FIELD}. See
      *            {@link TypeReference}.
@@ -114,9 +114,9 @@ abstract class FieldVisitor
      *            the path to the annotated type argument, wildcard bound, array
      *            element type, or static inner type within 'typeRef'. May be
      *            <tt>null</tt> if the annotation targets 'typeRef' as a whole.
-     * @param string $desc
+     * @param string   $desc
      *            the class descriptor of the annotation class.
-     * @param bool $visible
+     * @param bool     $visible
      *            <tt>true</tt> if the annotation is visible at runtime.
      *
      * @return AnnotationVisitor a visitor to visit the annotation values, or <tt>null</tt> if

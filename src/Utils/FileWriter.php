@@ -24,7 +24,7 @@ class FileWriter
     {
         $code = $classWriter->toByteArray();
 
-        $binaryString = pack("c*", ...$code);
+        $binaryString = pack('c*', ...$code);
 
         $file = fopen($fileName, 'w+');
 

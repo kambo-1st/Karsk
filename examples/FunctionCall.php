@@ -1,6 +1,6 @@
 <?php
 
-    require_once("../vendor/autoload.php");
+    require_once('../vendor/autoload.php');
 
     use Kambo\Karsk\ClassWriter;
     use Kambo\Karsk\Opcodes;
@@ -22,35 +22,35 @@
 
     $cw = new ClassWriter(1);
 
-    $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, "AddFunction", null, "java/lang/Object", null);
+    $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, 'AddFunction', null, 'java/lang/Object', null);
 
-    $cw->visitSource("AddFunction.java", null);
+    $cw->visitSource('AddFunction.java', null);
 
-    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
     $mv->visitCode();
     $l0 = new Label();
     $mv->visitLabel($l0);
     $mv->visitLineNumber(3, $l0);
     $mv->visitVarInsn(Opcodes::ALOAD, 0);
-    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
     $mv->visitInsn(Opcodes::RETURN_);
     $l1 = new Label();
     $mv->visitLabel($l1);
-    $mv->visitLocalVariable("this", "LAddFunction;", null, $l0, $l1, 0);
+    $mv->visitLocalVariable('this', 'LAddFunction;', null, $l0, $l1, 0);
     $mv->visitMaxs(1, 1);
     $mv->visitEnd();
 
-    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, 'main', '([Ljava/lang/String;)V', null, null);
     $mv->visitCode();
 
     $l0 = new Label();
     $mv->visitLabel($l0);
     $mv->visitLineNumber(6, $l0);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitIntInsn(Opcodes::BIPUSH, 10);
     $mv->visitIntInsn(Opcodes::BIPUSH, 10);
-    $mv->visitMethodInsn(Opcodes::INVOKESTATIC, "AddFunction", "add", "(II)I", false);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKESTATIC, 'AddFunction', 'add', '(II)I', false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(I)V', false);
 
     $l1 = new Label();
     $mv->visitLabel($l1);
@@ -59,11 +59,11 @@
 
     $l2 = new Label();
     $mv->visitLabel($l2);
-    $mv->visitLocalVariable("args", "[Ljava/lang/String;", null, $l0, $l2, 0);
+    $mv->visitLocalVariable('args', '[Ljava/lang/String;', null, $l0, $l2, 0);
     $mv->visitMaxs(3, 1);
     $mv->visitEnd();
 
-    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, "add", "(II)I", null, null);
+    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, 'add', '(II)I', null, null);
     $mv->visitCode();
 
     $l0 = new Label();
@@ -76,8 +76,8 @@
 
     $l1 = new Label();
     $mv->visitLabel($l1);
-    $mv->visitLocalVariable("a", "I", null, $l0, $l1, 0);
-    $mv->visitLocalVariable("b", "I", null, $l0, $l1, 1);
+    $mv->visitLocalVariable('a', 'I', null, $l0, $l1, 0);
+    $mv->visitLocalVariable('b', 'I', null, $l0, $l1, 1);
     $mv->visitMaxs(2, 2);
     $mv->visitEnd();
 
@@ -85,7 +85,7 @@
 
     $code = $cw->toByteArray();
 
-    $binarystring = pack("c*", ...$code);
+    $binarystring = pack('c*', ...$code);
 
     $file_w = fopen('AddFunction.class', 'w+');
 

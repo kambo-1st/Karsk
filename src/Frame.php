@@ -35,8 +35,8 @@ namespace Kambo\Karsk;
 /**
  * Information about the input and output stack map frames of a basic block.
  *
- * @author Eric Bruneton
- * @author Bohuslav Simek <bohuslav@simek.si>
+ * @author  Eric Bruneton
+ * @author  Bohuslav Simek <bohuslav@simek.si>
  * @license BSD-3-Clause
  */
 class Frame
@@ -289,7 +289,7 @@ class Frame
 
     public static function __staticinit()
     {
- // static class members
+        // static class members
         self::$DIM = 0xF0000000;
         self::$ARRAY_OF = 0x10000000;
         self::$ELEMENT_OF = 0xF0000000;
@@ -324,10 +324,10 @@ class Frame
     public static function calculate() : void
     {
         $size = [];
-        $s = "EFFFFFFFFGGFFFGGFFFEEFGFGFEEEEEEEEEEEEEEEEEEEEDEDEDDDDD"
-        . "CDCDEEEEEEEEEEEEEEEEEEEEBABABBBBDCFFFGGGEDCDCDCDCDCDCDCDCD"
-        . "CDCEEEEDDDDDDDCDCDCEFEFDDEEFFDEDEEEBDDBBDDDDDDCCCCCCCCEFED"
-        . "DDCDCDEEEEEEEEEEFEEEEEEDDEEDDEE";
+        $s = 'EFFFFFFFFGGFFFGGFFFEEFGFGFEEEEEEEEEEEEEEEEEEEEDEDEDDDDD'
+        . 'CDCDEEEEEEEEEEEEEEEEEEEEBABABBBBDCFFFGGGEDCDCDCDCDCDCDCDCD'
+        . 'CDCEEEEDDDDDDDCDCDCEFEFDDEEFFDEDEEEBDDBBDDDDDDCCCCCCCCEFED'
+        . 'DDCDCDEEEEEEEEEEFEEEEEEDDEEDDEE';
 
         for ($i = 0; $i < 202; ++$i) {
             $size[$i] = ord(self::charAt($s, $i)) - ord('E');
@@ -373,7 +373,7 @@ class Frame
             }
         }
 
-        $this->inputStack = array();
+        $this->inputStack = [];
         Frame::convert($cw, $nStack, $stack, $this->inputStack);
         $this->outputStackTop = 0;
         $this->initializationCount = 0;
@@ -415,7 +415,7 @@ class Frame
             } elseif (is_string($input[$j])) {
                 $output[++$i] = Frame::type($cw, Type::getObjectType($input[$j])->getDescriptor());
             } else {
-                $output[++$i] = (self::$UNINITIALIZED | $cw->addUninitializedType("", ($input[$j])::$position));
+                $output[++$i] = (self::$UNINITIALIZED | $cw->addUninitializedType('', ($input[$j])::$position));
             }
         }
 
@@ -475,12 +475,12 @@ class Frame
     protected function setLocalVariable(int $local, int $type) : void
     {
         if ($this->outputLocals === null) {
-            $this->outputLocals = array();
+            $this->outputLocals = [];
         }
 
         $n = count($this->outputLocals);
         if ($local >= $n) {
-            $t = array();
+            $t = [];
             foreach (range(0, ($n + 0)) as $_upto) {
                 $t[$_upto] = $this->outputLocals[$_upto - (0) + 0];
             } /* from: System.arraycopy(outputLocals, 0, t, 0, n) */;
@@ -500,12 +500,12 @@ class Frame
     protected function pushType($type) : void
     {
         if (($this->outputStack == null)) {
-            $this->outputStack = array();
+            $this->outputStack = [];
         }
 
         $n = count($this->outputStack) /*from: outputStack.length*/;
         if (($this->outputStackTop >= $n)) {
-            $t = array();
+            $t = [];
             foreach (range(0, ($n + 0)) as $_upto) {
                 $t[$_upto] = $this->outputStack[$_upto - (0) + 0];
             } /* from: System.arraycopy(outputStack, 0, t, 0, n) */;
@@ -524,7 +524,7 @@ class Frame
      *
      * @param ClassWriter $cw
      *                    the ClassWriter to which this label belongs.
-     * @param string $desc
+     * @param string      $desc
      *               the descriptor of the type to be pushed. Can also be a method
      *               descriptor (in this case this method pushes its return type
      *               onto the output frame stack).
@@ -676,11 +676,11 @@ class Frame
     protected function addType(int $var) : void
     {
         if (($this->initializations == null)) {
-            $this->initializations = array();
+            $this->initializations = [];
         }
         $n = count($this->initializations) /*from: initializations.length*/;
         if (($this->initializationCount >= $n)) {
-            $t = array();
+            $t = [];
             foreach (range(0, ($n + 0)) as $_upto) {
                 $t[$_upto] = $this->initializations[$_upto - (0) + 0];
             } /* from: System.arraycopy(initializations, 0, t, 0, n) */
@@ -742,8 +742,8 @@ class Frame
      */
     protected function initInputFrame(ClassWriter $cw, int $access, array $args, int $maxLocals) : void
     {
-        $this->inputLocals = array();
-        $this->inputStack = array();
+        $this->inputLocals = [];
+        $this->inputStack = [];
         $i = 0;
         if (((($access & Opcodes::ACC_STATIC)) == 0)) {
             if (((($access & MethodWriter::$ACC_CONSTRUCTOR)) == 0)) {
@@ -858,19 +858,19 @@ class Frame
                         break;
                     case ClassWriter::$CLASS:
                         /* match: I */
-                        $this->pushType((self::$OBJECT | $cw->addType("java/lang/Class")));
+                        $this->pushType((self::$OBJECT | $cw->addType('java/lang/Class')));
                         break;
                     case ClassWriter::$STR:
                         /* match: I */
-                        $this->pushType((self::$OBJECT | $cw->addType("java/lang/String")));
+                        $this->pushType((self::$OBJECT | $cw->addType('java/lang/String')));
                         break;
                     case ClassWriter::$MTYPE:
                         /* match: I */
-                        $this->pushType((self::$OBJECT | $cw->addType("java/lang/invoke/MethodType")));
+                        $this->pushType((self::$OBJECT | $cw->addType('java/lang/invoke/MethodType')));
                         break;
                     default:
                         /* match: I */
-                        $this->pushType((self::$OBJECT | $cw->addType("java/lang/invoke/MethodHandle")));
+                        $this->pushType((self::$OBJECT | $cw->addType('java/lang/invoke/MethodHandle')));
                 }
                 break;
             case Opcodes::ALOAD:
@@ -1181,7 +1181,7 @@ class Frame
             case Opcodes::JSR:
             case Opcodes::RET:
                 throw new \Kambo\Karsk\Exception\RuntimeException(
-                    "JSR/RET are not supported with computeFrames option"
+                    'JSR/RET are not supported with computeFrames option'
                 );
             case Opcodes::GETSTATIC:
                 /* match: ClassWriter_String */
@@ -1313,7 +1313,7 @@ class Frame
         $nLocal = count($this->inputLocals) /*from: inputLocals.length*/;
         $nStack = count($this->inputStack) /*from: inputStack.length*/;
         if (($frame->inputLocals == null)) {
-            $frame->inputLocals = array();
+            $frame->inputLocals = [];
             $changed =  true ;
         }
 
@@ -1334,7 +1334,8 @@ class Frame
                             $t = ($dim + $this->inputStack[($nStack - (($s & self::$VALUE)))]);
                         }
                         if ((((($s & self::$TOP_IF_LONG_OR_DOUBLE)) != 0)
-                            && ((($t == self::$LONG) || ($t == self::$DOUBLE))))) {
+                            && ((($t == self::$LONG) || ($t == self::$DOUBLE))))
+                        ) {
                             $t = self::$TOP;
                         }
                     }
@@ -1357,7 +1358,7 @@ class Frame
                 $changed |= $this->merge($cw, $t, $frame->inputLocals, $i);
             }
             if (($frame->inputStack == null)) {
-                $frame->inputStack = array();
+                $frame->inputStack = [];
                 $changed =  true ;
             }
             /* match: ClassWriter_I_aI_I */
@@ -1367,7 +1368,7 @@ class Frame
 
         $nInputStack = (count($this->inputStack) /*from: inputStack.length*/ + $this->owner->inputStackTop);
         if (($frame->inputStack == null)) {
-            $frame->inputStack = array();
+            $frame->inputStack = [];
             $changed =  true ;
         }
 
@@ -1447,14 +1448,14 @@ class Frame
                         | $cw->getMergedType(($t & self::$BASE_VALUE), ($u & self::$BASE_VALUE)));
                 } else {
                     $vdim = (self::$ELEMENT_OF + (($u & self::$DIM)));
-                    $v = (($vdim | self::$OBJECT) | $cw->addType("java/lang/Object"));
+                    $v = (($vdim | self::$OBJECT) | $cw->addType('java/lang/Object'));
                 }
             } elseif ((((($t & self::$BASE_KIND)) == self::$OBJECT) || ((($t & self::$DIM)) != 0))) {
                 $tdim = ((( (((((($t & self::$DIM)) == 0) || ((($t & self::$BASE_KIND)) == self::$OBJECT))))
                         ? 0 : self::$ELEMENT_OF )) + (($t & self::$DIM)));
                 $udim = (((($u & self::$DIM) == 0) || (($u & self::$BASE_KIND) == self::$OBJECT))
                         ? 0 : self::$ELEMENT_OF ) + (($u & self::$DIM));
-                $v = ((min($tdim, $udim) | self::$OBJECT) | $cw->addType("java/lang/Object"));
+                $v = ((min($tdim, $udim) | self::$OBJECT) | $cw->addType('java/lang/Object'));
             } else {
                 $v = self::$TOP;
             }

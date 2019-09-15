@@ -102,7 +102,7 @@ abstract class ClassVisitor
      *               {@link Type#getInternalName() getInternalName}). For
      *               interfaces, the super class is {@link Object}. May be
      *               <tt>null</tt>, but only for the {@link Object} class.
-     * @param array $interfaces
+     * @param array  $interfaces
      *              the internal names of the class's interfaces (see
      *              {@link Type#getInternalName() getInternalName}). May be
      *              <tt>null</tt>.
@@ -243,17 +243,17 @@ abstract class ClassVisitor
      * Visits information about an inner class. This inner class is not
      * necessarily a member of the class being visited.
      *
-     * @param string  $name
+     * @param string $name
      *                the internal name of an inner class (see
      *                {@link Type#getInternalName() getInternalName}).
-     * @param string  $outerName
+     * @param string $outerName
      *                the internal name of the class to which the inner class
      *                belongs (see {@link Type#getInternalName() getInternalName}).
      *                May be <tt>null</tt> for not member classes.
-     * @param string  $innerName
+     * @param string $innerName
      *                the (simple) name of the inner class inside its enclosing
      *                class. May be <tt>null</tt> for anonymous inner classes.
-     * @param int     $access
+     * @param int    $access
      *                the access flags of the inner class as originally declared in
      *                the enclosing class.
      *

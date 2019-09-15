@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<ruleset>
+    <arg name="basepath" value="."/>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="80"/>
+    <arg name="cache" value=".phpcs-cache"/>
+    <arg name="colors"/>
+
+    <exclude-pattern type="relative">vendor/*</exclude-pattern>
+
+    <ini name="memory_limit" value="512M"/>
+
+    <rule ref="PSR2"/>
+
+    <rule ref="Squiz.Strings.DoubleQuoteUsage"/>
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    <rule ref="Squiz.Commenting.DocCommentAlignment"/>
+</ruleset>

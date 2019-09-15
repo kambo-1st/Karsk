@@ -14,8 +14,8 @@ use Kambo\Tests\Karsk\Constraint\ExecutionResult;
  */
 abstract class ExecutionTestCase extends TestCase
 {
-    static private $disableDisassembler = false;
-    static private $disableDisassemblerReason = '';
+    private static $disableDisassembler = false;
+    private static $disableDisassemblerReason = '';
 
     const EXECUTION_COMMAND = 'java -cp #target-dir# #class-name#';
 

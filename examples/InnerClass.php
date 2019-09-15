@@ -1,6 +1,6 @@
 <?php
 
-    require_once("../vendor/autoload.php");
+    require_once('../vendor/autoload.php');
 
     use Kambo\Karsk\ClassWriter;
     use Kambo\Karsk\Opcodes;
@@ -33,46 +33,46 @@
         Opcodes::ACC_SUPER,
         'InnerClass$Inner_Demo',
         null,
-        "java/lang/Object",
+        'java/lang/Object',
         null
     );
-    $cw->visitSource("InnerClass.java", null);
+    $cw->visitSource('InnerClass.java', null);
     $cw->visitInnerClass(
         'InnerClass$Inner_Demo',
-        "InnerClass",
-        "Inner_Demo",
+        'InnerClass',
+        'Inner_Demo',
         Opcodes::ACC_PRIVATE + Opcodes::ACC_STATIC
     );
 
-    $mv = $cw->visitMethod(Opcodes::ACC_PRIVATE, "<init>", "()V", null, null);
+    $mv = $cw->visitMethod(Opcodes::ACC_PRIVATE, '<init>', '()V', null, null);
     $mv->visitCode();
 
     $l0 = new Label();
     $mv->visitLabel($l0);
     $mv->visitLineNumber(4, $l0);
     $mv->visitVarInsn(Opcodes::ALOAD, 0);
-    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
     $mv->visitInsn(Opcodes::RETURN_);
 
     $l1 = new Label();
     $mv->visitLabel($l1);
-    $mv->visitLocalVariable("this", 'LInnerClass$Inner_Demo;', null, $l0, $l1, 0);
+    $mv->visitLocalVariable('this', 'LInnerClass$Inner_Demo;', null, $l0, $l1, 0);
     $mv->visitMaxs(1, 1);
     $mv->visitEnd();
 
-    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "print", "()V", null, null);
+    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, 'print', '()V', null, null);
     $mv->visitCode();
 
     $l0 = new Label();
     $mv->visitLabel($l0);
     $mv->visitLineNumber(6, $l0);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-    $mv->visitLdcInsn("This is an inner class");
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
+    $mv->visitLdcInsn('This is an inner class');
     $mv->visitMethodInsn(
         Opcodes::INVOKEVIRTUAL,
-        "java/io/PrintStream",
-        "println",
-        "(Ljava/lang/String;)V",
+        'java/io/PrintStream',
+        'println',
+        '(Ljava/lang/String;)V',
         false
     );
 
@@ -84,7 +84,7 @@
     $l2 = new Label();
     $mv->visitLabel($l2);
     $mv->visitLocalVariable(
-        "this",
+        'this',
         'LInnerClass$Inner_Demo;',
         null,
         $l0,
@@ -96,7 +96,7 @@
 
     $mv = $cw->visitMethod(
         Opcodes::ACC_SYNTHETIC,
-        "<init>",
+        '<init>',
         '(LInnerClass$Inner_Demo;)V',
         null,
         null
@@ -110,8 +110,8 @@
     $mv->visitMethodInsn(
         Opcodes::INVOKESPECIAL,
         'InnerClass$Inner_Demo',
-        "<init>",
-        "()V",
+        '<init>',
+        '()V',
         false
     );
     $mv->visitInsn(Opcodes::RETURN_);
@@ -131,39 +131,39 @@
     $cw->visit(
         Opcodes::V1_8,
         Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER,
-        "InnerClass",
+        'InnerClass',
         null,
-        "java/lang/Object",
+        'java/lang/Object',
         null
     );
-    $cw->visitSource("InnerClass.java", null);
+    $cw->visitSource('InnerClass.java', null);
     $cw->visitInnerClass(
         'InnerClass$Inner_Demo',
-        "InnerClass",
-        "Inner_Demo",
+        'InnerClass',
+        'Inner_Demo',
         Opcodes::ACC_PRIVATE + Opcodes::ACC_STATIC
     );
 
-    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
     $mv->visitCode();
 
     $l0 = new Label();
     $mv->visitLabel($l0);
     $mv->visitLineNumber(3, $l0);
     $mv->visitVarInsn(Opcodes::ALOAD, 0);
-    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
     $mv->visitInsn(Opcodes::RETURN_);
 
     $l1 = new Label();
     $mv->visitLabel($l1);
-    $mv->visitLocalVariable("this", "LInnerClass;", null, $l0, $l1, 0);
+    $mv->visitLocalVariable('this', 'LInnerClass;', null, $l0, $l1, 0);
     $mv->visitMaxs(1, 1);
     $mv->visitEnd();
 
     $mv = $cw->visitMethod(
         Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC,
-        "main",
-        "([Ljava/lang/String;)V",
+        'main',
+        '([Ljava/lang/String;)V',
         null,
         null
     );
@@ -178,7 +178,7 @@
     $mv->visitMethodInsn(
         Opcodes::INVOKESPECIAL,
         'InnerClass$Inner_Demo',
-        "<init>",
+        '<init>',
         '(LInnerClass$Inner_Demo;)V',
         false
     );
@@ -194,8 +194,8 @@
     $mv->visitMethodInsn(
         Opcodes::INVOKEVIRTUAL,
         'InnerClass$Inner_Demo',
-        "print",
-        "()V",
+        'print',
+        '()V',
         false
     );
 
@@ -207,15 +207,15 @@
     $l3 = new Label();
     $mv->visitLabel($l3);
     $mv->visitLocalVariable(
-        "args",
-        "[Ljava/lang/String;",
+        'args',
+        '[Ljava/lang/String;',
         null,
         $l0,
         $l3,
         0
     );
     $mv->visitLocalVariable(
-        "inner",
+        'inner',
         'LInnerClass$Inner_Demo;',
         null,
         $l1,

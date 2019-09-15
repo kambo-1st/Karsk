@@ -1,6 +1,6 @@
 <?php
 
-    require_once("../vendor/autoload.php");
+    require_once('../vendor/autoload.php');
     
     use Kambo\Karsk\ClassWriter;
     use Kambo\Karsk\Opcodes;
@@ -31,27 +31,27 @@
     
     $cw = new ClassWriter(0);
 
-    $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, "Switch", null, "java/lang/Object", null);
+    $cw->visit(Opcodes::V1_8, Opcodes::ACC_PUBLIC + Opcodes::ACC_SUPER, 'Switch', null, 'java/lang/Object', null);
 
-    $cw->visitSource("Switch.java", null);
+    $cw->visitSource('Switch.java', null);
 
-    $mv =  $cw->visitMethod(Opcodes::ACC_PUBLIC, "<init>", "()V", null, null);
+    $mv =  $cw->visitMethod(Opcodes::ACC_PUBLIC, '<init>', '()V', null, null);
     $mv->visitCode();
 
     $l0 = new Label();
     $mv->visitLabel($l0);
     $mv->visitLineNumber(3, $l0);
     $mv->visitVarInsn(Opcodes::ALOAD, 0);
-    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKESPECIAL, 'java/lang/Object', '<init>', '()V', false);
     $mv->visitInsn(Opcodes::RETURN_);
 
     $l1 = new Label();
     $mv->visitLabel($l1);
-    $mv->visitLocalVariable("this", "Lkambo/Switch;", null, $l0, $l1, 0);
+    $mv->visitLocalVariable('this', 'Lkambo/Switch;', null, $l0, $l1, 0);
     $mv->visitMaxs(1, 1);
     $mv->visitEnd();
 
-    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+    $mv = $cw->visitMethod(Opcodes::ACC_PUBLIC + Opcodes::ACC_STATIC, 'main', '([Ljava/lang/String;)V', null, null);
     $mv->visitCode();
 
     $l0 = new Label();
@@ -72,7 +72,7 @@
     $mv->visitLabel($l2);
     $mv->visitLineNumber(10, $l2);
     $mv->visitFrame(Opcodes::F_APPEND, 1, [Opcodes::INTEGER], 0, null);
-    $mv->visitLdcInsn("January");
+    $mv->visitLdcInsn('January');
     $mv->visitVarInsn(Opcodes::ASTORE, 2);
 
     $l5 = new Label();
@@ -84,7 +84,7 @@
     $mv->visitLabel($l3);
     $mv->visitLineNumber(12, $l3);
     $mv->visitFrame(Opcodes::F_SAME, 0, null, 0, null);
-    $mv->visitLdcInsn("February");
+    $mv->visitLdcInsn('February');
     $mv->visitVarInsn(Opcodes::ASTORE, 2);
 
     $l7 = new Label();
@@ -95,15 +95,15 @@
     $mv->visitLabel($l4);
     $mv->visitLineNumber(14, $l4);
     $mv->visitFrame(Opcodes::F_SAME, 0, null, 0, null);
-    $mv->visitLdcInsn("Invalid month");
+    $mv->visitLdcInsn('Invalid month');
     $mv->visitVarInsn(Opcodes::ASTORE, 2);
 
     $mv->visitLabel($l6);
     $mv->visitLineNumber(18, $l6);
-    $mv->visitFrame(Opcodes::F_APPEND, 1, ["java/lang/String"], 0, null);
-    $mv->visitFieldInsn(Opcodes::GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+    $mv->visitFrame(Opcodes::F_APPEND, 1, ['java/lang/String'], 0, null);
+    $mv->visitFieldInsn(Opcodes::GETSTATIC, 'java/lang/System', 'out', 'Ljava/io/PrintStream;');
     $mv->visitVarInsn(Opcodes::ALOAD, 2);
-    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+    $mv->visitMethodInsn(Opcodes::INVOKEVIRTUAL, 'java/io/PrintStream', 'println', '(Ljava/lang/String;)V', false);
 
     $l8 = new Label();
     $mv->visitLabel($l8);
@@ -112,11 +112,11 @@
 
     $l9 = new Label();
     $mv->visitLabel($l9);
-    $mv->visitLocalVariable("args", "[Ljava/lang/String;", null, $l0, $l9, 0);
-    $mv->visitLocalVariable("month", "I", null, $l1, $l9, 1);
-    $mv->visitLocalVariable("monthString", "Ljava/lang/String;", null, $l5, $l3, 2);
-    $mv->visitLocalVariable("monthString", "Ljava/lang/String;", null, $l7, $l4, 2);
-    $mv->visitLocalVariable("monthString", "Ljava/lang/String;", null, $l6, $l9, 2);
+    $mv->visitLocalVariable('args', '[Ljava/lang/String;', null, $l0, $l9, 0);
+    $mv->visitLocalVariable('month', 'I', null, $l1, $l9, 1);
+    $mv->visitLocalVariable('monthString', 'Ljava/lang/String;', null, $l5, $l3, 2);
+    $mv->visitLocalVariable('monthString', 'Ljava/lang/String;', null, $l7, $l4, 2);
+    $mv->visitLocalVariable('monthString', 'Ljava/lang/String;', null, $l6, $l9, 2);
     $mv->visitMaxs(2, 3);
     $mv->visitEnd();
 
@@ -124,7 +124,7 @@
 
     $code = $cw->toByteArray();
 
-    $binarystring = pack("c*", ...$code);
+    $binarystring = pack('c*', ...$code);
 
     $file_w = fopen('Switch.class', 'w+');
 

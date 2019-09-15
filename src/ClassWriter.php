@@ -938,7 +938,7 @@ class ClassWriter extends ClassVisitor
         $this->superName = ( (($superName == null)) ? 0 : $this->newClass($superName) );
         if ((($interfaces != null) && (count($interfaces) > 0))) {
             $this->interfaceCount = count($interfaces);
-            $this->interfaces = array();
+            $this->interfaces = [];
             for ($i = 0; ($i < $this->interfaceCount); ++$i) {
                 $this->interfaces[$i] = $this->newClass($interfaces[$i]);
             }
@@ -1264,7 +1264,7 @@ class ClassWriter extends ClassVisitor
     public function toByteArray()
     {
         if ($this->index > 0xFFFF) {
-            throw new \RuntimeException("Class file too large!");
+            throw new \RuntimeException('Class file too large!');
         }
 
         // Get the basic size
@@ -1290,37 +1290,37 @@ class ClassWriter extends ClassVisitor
         if ($this->bootstrapMethods != null) {
             ++$attributeCount;
             $size += (8 + count($this->bootstrapMethods));
-            $this->newUTF8("BootstrapMethods");
+            $this->newUTF8('BootstrapMethods');
         }
 
         if (ClassReader::SIGNATURES && ($this->signature != 0)) {
             ++$attributeCount;
             $size += 8;
-            $this->newUTF8("Signature");
+            $this->newUTF8('Signature');
         }
 
         if ($this->sourceFile != 0) {
             ++$attributeCount;
             $size += 8;
-            $this->newUTF8("SourceFile");
+            $this->newUTF8('SourceFile');
         }
 
         if ($this->sourceDebug != null) {
             ++$attributeCount;
             $size += (count($this->sourceDebug) + 6);
-            $this->newUTF8("SourceDebugExtension");
+            $this->newUTF8('SourceDebugExtension');
         }
 
         if ($this->enclosingMethodOwner != 0) {
             ++$attributeCount;
             $size += 10;
-            $this->newUTF8("EnclosingMethod");
+            $this->newUTF8('EnclosingMethod');
         }
 
         if (($this->access & Opcodes::ACC_DEPRECATED) != 0) {
             ++$attributeCount;
             $size += 6;
-            $this->newUTF8("Deprecated");
+            $this->newUTF8('Deprecated');
         }
 
         if (($this->access & Opcodes::ACC_SYNTHETIC) != 0) {
@@ -1329,38 +1329,38 @@ class ClassWriter extends ClassVisitor
             ) {
                 ++$attributeCount;
                 $size += 6;
-                $this->newUTF8("Synthetic");
+                $this->newUTF8('Synthetic');
             }
         }
 
         if ($this->innerClasses != null) {
             ++$attributeCount;
             $size += (8 + count($this->innerClasses) /*from: innerClasses.length*/);
-            $this->newUTF8("InnerClasses");
+            $this->newUTF8('InnerClasses');
         }
 
         if (ClassReader::ANNOTATIONS && ($this->anns != null)) {
             ++$attributeCount;
             $size += (8 + $this->anns->getSize());
-            $this->newUTF8("RuntimeVisibleAnnotations");
+            $this->newUTF8('RuntimeVisibleAnnotations');
         }
 
         if (ClassReader::ANNOTATIONS && ($this->ianns != null)) {
             ++$attributeCount;
             $size += (8 + $this->ianns->getSize());
-            $this->newUTF8("RuntimeInvisibleAnnotations");
+            $this->newUTF8('RuntimeInvisibleAnnotations');
         }
 
         if (ClassReader::ANNOTATIONS && ($this->tanns != null)) {
             ++$attributeCount;
             $size += (8 + $this->tanns->getSize());
-            $this->newUTF8("RuntimeVisibleTypeAnnotations");
+            $this->newUTF8('RuntimeVisibleTypeAnnotations');
         }
 
         if (ClassReader::ANNOTATIONS && ($this->itanns != null)) {
             ++$attributeCount;
             $size += (8 + $this->itanns->getSize());
-            $this->newUTF8("RuntimeInvisibleTypeAnnotations");
+            $this->newUTF8('RuntimeInvisibleTypeAnnotations');
         }
 
         if ($this->attrs != null) {
@@ -1414,65 +1414,65 @@ class ClassWriter extends ClassVisitor
         // the class (for example the name of the sourcefile, etc.)
         $out->putShort($attributeCount);
         if ($this->bootstrapMethods != null) {
-            $out->putShort($this->newUTF8("BootstrapMethods"));
+            $out->putShort($this->newUTF8('BootstrapMethods'));
             $out->putInt((count($this->bootstrapMethods) + 2))->putShort($this->bootstrapMethodsCount);
             $out->putByteArray($this->bootstrapMethods->data, 0, count($this->bootstrapMethods));
         }
 
         if (ClassReader::SIGNATURES && ($this->signature != 0)) {
-            $out->putShort($this->newUTF8("Signature"))->putInt(2)->putShort($this->signature);
+            $out->putShort($this->newUTF8('Signature'))->putInt(2)->putShort($this->signature);
         }
 
         if ($this->sourceFile != 0) {
-            $out->putShort($this->newUTF8("SourceFile"))->putInt(2)->putShort($this->sourceFile);
+            $out->putShort($this->newUTF8('SourceFile'))->putInt(2)->putShort($this->sourceFile);
         }
 
         if ($this->sourceDebug != null) {
             $len = count($this->sourceDebug) /*from: sourceDebug.length*/;
-            $out->putShort($this->newUTF8("SourceDebugExtension"))->putInt($len);
+            $out->putShort($this->newUTF8('SourceDebugExtension'))->putInt($len);
             $out->putByteArray($this->sourceDebug->data, 0, $len);
         }
 
         if ($this->enclosingMethodOwner != 0) {
-            $out->putShort($this->newUTF8("EnclosingMethod"))->putInt(4);
+            $out->putShort($this->newUTF8('EnclosingMethod'))->putInt(4);
             $out->putShort($this->enclosingMethodOwner)->putShort($this->enclosingMethod);
         }
 
         if (($this->access & Opcodes::ACC_DEPRECATED) != 0) {
-            $out->putShort($this->newUTF8("Deprecated"))->putInt(0);
+            $out->putShort($this->newUTF8('Deprecated'))->putInt(0);
         }
 
         if (($this->access & Opcodes::ACC_SYNTHETIC) != 0) {
             if (((($this->version & 0xFFFF)) < Opcodes::V1_5)
                 || (($this->access & self::$ACC_SYNTHETIC_ATTRIBUTE) != 0)
             ) {
-                $out->putShort($this->newUTF8("Synthetic"))->putInt(0);
+                $out->putShort($this->newUTF8('Synthetic'))->putInt(0);
             }
         }
 
         if ($this->innerClasses != null) {
-            $out->putShort($this->newUTF8("InnerClasses"));
+            $out->putShort($this->newUTF8('InnerClasses'));
             $out->putInt((count($this->innerClasses) + 2))->putShort($this->innerClassesCount);
             $out->putByteArray($this->innerClasses->data, 0, count($this->innerClasses));
         }
 
         if (ClassReader::ANNOTATIONS && ($this->anns != null)) {
-            $out->putShort($this->newUTF8("RuntimeVisibleAnnotations"));
+            $out->putShort($this->newUTF8('RuntimeVisibleAnnotations'));
             $this->anns->put($out);
         }
 
         if (ClassReader::ANNOTATIONS && ($this->ianns != null)) {
-            $out->putShort($this->newUTF8("RuntimeInvisibleAnnotations"));
+            $out->putShort($this->newUTF8('RuntimeInvisibleAnnotations'));
             $this->ianns->put($out);
         }
 
         if (ClassReader::ANNOTATIONS && ($this->tanns != null)) {
-            $out->putShort($this->newUTF8("RuntimeVisibleTypeAnnotations"));
+            $out->putShort($this->newUTF8('RuntimeVisibleTypeAnnotations'));
             $this->tanns->put($out);
         }
 
         if (ClassReader::ANNOTATIONS && ($this->itanns != null)) {
-            $out->putShort($this->newUTF8("RuntimeInvisibleTypeAnnotations"));
+            $out->putShort($this->newUTF8('RuntimeInvisibleTypeAnnotations'));
             $this->itanns->put($out);
         }
 
@@ -1560,7 +1560,7 @@ class ClassWriter extends ClassVisitor
                 $h = $cst;
                 return $this->newHandleItem($h->tag, $h->owner, $h->name, $h->desc, $h->itf);
             default:
-                throw new IllegalArgumentException("value " . $cst);
+                throw new IllegalArgumentException('value ' . $cst);
         }
     }
 
@@ -1970,11 +1970,11 @@ class ClassWriter extends ClassVisitor
         $result = new Item($this->typeCount, $this->key);
         $this->put($result);
         if ($this->typeTable == null) {
-            $this->typeTable = array();
+            $this->typeTable = [];
         }
 
         if ($this->typeCount == count($this->typeTable)) {
-            $newTable = array();
+            $newTable = [];
             foreach (range(0, (count($this->typeTable) /*from: typeTable.length*/ + 0)) as $_upto) {
                 $newTable[$_upto] = $this->typeTable[$_upto - (0) + 0];
             }
@@ -2074,7 +2074,7 @@ class ClassWriter extends ClassVisitor
         if ((($this->index + $this->typeCount) > $this->threshold)) {
             $ll = count($this->items);
             $nl = (($ll * 2) + 1);
-            $newItems = array();
+            $newItems = [];
             for ($l = ($ll - 1); ($l >= 0); --$l) {
                 $j = $this->items[$l];
                 while (($j != null)) {
@@ -2154,7 +2154,7 @@ class ClassWriter extends ClassVisitor
             case 'string':
                 return $this->newString($cst);
             default:
-                throw new IllegalArgumentException("value " . $cst);
+                throw new IllegalArgumentException('value ' . $cst);
         }
     }
 }

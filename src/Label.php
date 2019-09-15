@@ -42,8 +42,8 @@ use Kambo\Karsk\Exception\NotImplementedException;
  * can be other elements between a label and the instruction it designates (such
  * as other labels, stack map frames, line numbers, etc.).
  *
- * @author  Eric Bruneton
- * @author  Bohuslav Simek <bohuslav@simek.si>
+ * @author Eric Bruneton
+ * @author Bohuslav Simek <bohuslav@simek.si>
  */
 class Label
 {
@@ -258,12 +258,12 @@ class Label
      *
      * @param MethodWriter $owner
      *            the code writer that calls this method.
-     * @param ByteVector $out
+     * @param ByteVector   $out
      *            the bytecode of the method.
-     * @param int $source
+     * @param int          $source
      *            the position of first byte of the bytecode instruction that
      *            contains this label.
-     * @param bool $wideOffset
+     * @param bool         $wideOffset
      *            <tt>true</tt> if the reference must be stored in 4 bytes, or
      *            <tt>false</tt> if it must be stored with 2 bytes.
      */
@@ -476,9 +476,9 @@ class Label
      *            a JSR block that jumps to this subroutine. If this JSR is not
      *            null it is added to the successor of the RET blocks found in
      *            the subroutine.
-     * @param Int $id
+     * @param Int   $id
      *            the id of this subroutine.
-     * @param Int $nbSubroutines
+     * @param Int   $nbSubroutines
      *            the total number of subroutines in the method.
      *
      * @return void
