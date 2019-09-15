@@ -13,7 +13,7 @@ use Kambo\Karsk\Type;
  * Test for the Kambo\Karsk\ClassWriter
  *
  * @author  Bohuslav Simek <bohuslav@simek.si>
- * @license MIT
+ * @license BSD-3-Clause
  */
 class ClassWriterTest extends TestCase
 {

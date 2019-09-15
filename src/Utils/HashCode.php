@@ -6,7 +6,7 @@ namespace Kambo\Karsk\Utils;
  * Simple hash function
  *
  * @author  Bohuslav Simek <bohuslav@simek.si>
- * @license MIT
+ * @license BSD-3-Clause
  */
 class HashCode
 {

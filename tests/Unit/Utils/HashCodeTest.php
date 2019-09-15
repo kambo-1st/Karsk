@@ -9,7 +9,7 @@ use Kambo\Karsk\Utils\HashCode;
  * Test for the Kambo\Karsk\Utils\HashCode
  *
  * @author  Bohuslav Simek <bohuslav@simek.si>
- * @license MIT
+ * @license BSD-3-Clause
  */
 class HashCodeTest extends TestCase
 {
