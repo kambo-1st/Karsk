@@ -577,10 +577,12 @@ class ClassReader
         $access     = $this->readUnsignedShort($u);
         $name       = $this->readClass(($u + 2), $c);
         $superClass = $this->readClass(($u + 4), $c);
-        $interfaces = []; // TODO [SIMEK, i] fix by String[] interfaces = new String[readUnsignedShort(u + 6)];
+
+        $countOfInterfaces = $this->readUnsignedShort($u + 6);
+        $interfaces        = [];
 
         $u += 8;
-        for ($i = 0; ($i < count($interfaces) /*from: interfaces.length*/); ++$i) {
+        for ($i = 0; $i < $countOfInterfaces; ++$i) {
             $interfaces[$i] = $this->readClass($u, $c);
             $u += 2;
         }
@@ -1223,13 +1225,15 @@ class ClassReader
                     $varTable = ($u + 8);
                     for ($j = $this->readUnsignedShort(($u + 8)), $v = $u; ($j > 0); --$j) {
                         $label = $this->readUnsignedShort(($v + 10));
-                        if (($labels[$label] == null)) {
+                        if (!array_key_exists($label, $labels)) {
                             $this->readLabel($label, $labels)->status |= Label::DEBUG;
                         }
+
                         $label += $this->readUnsignedShort(($v + 12));
-                        if (($labels[$label] == null)) {
+                        if (!array_key_exists($label, $labels)) {
                             $this->readLabel($label, $labels)->status |= Label::DEBUG;
                         }
+
                         $v += 10;
                     }
                 }
@@ -1239,9 +1243,10 @@ class ClassReader
                 if (((($context->flags & self::SKIP_DEBUG)) == 0)) {
                     for ($j = $this->readUnsignedShort(($u + 8)), $v = $u; ($j > 0); --$j) {
                         $label = $this->readUnsignedShort(($v + 10));
-                        if (($labels[$label] == null)) {
+                        if (!array_key_exists($label, $labels)) {
                             $this->readLabel($label, $labels)->status |= Label::DEBUG;
                         }
+
                         $l = $labels[$label];
                         while (($l->line > 0)) {
                             if (($l->next == null)) {
@@ -2247,7 +2252,7 @@ class ClassReader
      *
      * @return Label a non null Label, which must be equal to labels[offset].
      */
-    protected function readLabel(int $offset, array $labels) : Label
+    protected function readLabel(int $offset, array &$labels) : Label
     {
         if (!array_key_exists($offset, $labels) || $labels[$offset] == null) {
             $labels[$offset] = new Label();
