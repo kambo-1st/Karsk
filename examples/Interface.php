@@ -6,7 +6,18 @@
     use Kambo\Karsk\Opcodes;
     use Kambo\Karsk\Label;
     use Kambo\Karsk\Utils\FileWriter;
-    
+
+    /*
+    Generates the bytecode corresponding to the following Java class:
+
+    public class Interface implements Cloneable {
+
+        public static void main(String[] args) {
+            Interface sheep = new Interface();
+        }
+    }
+    */
+
     $cw = new ClassWriter(0);
 
     $cw->visit(
