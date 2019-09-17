@@ -133,7 +133,7 @@ abstract class ClassVisitor
      *               between source and compiled elements of the class. May be
      *               <tt>null</tt>.
      */
-    public function visitSource(string $source, string $debug)
+    public function visitSource(?string $source, ?string $debug)
     {
         if (($this->cv != null)) {
             $this->cv->visitSource($source, $debug);
