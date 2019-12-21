@@ -33,6 +33,7 @@
 namespace Kambo\Karsk;
 
 use Kambo\Karsk\Utils\HashCode;
+use Kambo\Karsk\Utils\Numbers;
 
 /**
  * A constant pool item. Constant pool items can be created with the 'newXXX'
@@ -207,9 +208,10 @@ class Item
     public function setFloat($floatVal) : void
     {
         $this->type     = ClassWriter::$FLOAT;
-        $this->intVal   = $floatVal; // TODO need more love //$Float->floatToRawIntBits($floatVal);
+        $this->intVal   = (new Numbers())->floatToRawIntBits($floatVal);
         $this->hashCode = (0x7FFFFFFF & (($this->type + $floatVal)));
     }
+
     /**
      * Sets this item to a double item.
      *

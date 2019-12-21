@@ -516,6 +516,7 @@ class MethodWriter extends MethodVisitor
     }
     public function visitIntInsn($opcode, $operand) // [final int opcode, final int operand]
     {
+        // TODO [SIMEK, i] validate operand
         $this->lastCodeOffset = count($this->code) /*from: code.length*/;
         if (($this->currentBlock != null)) {
             if ((($this->compute == self::$FRAMES) || ($this->compute == self::$INSERTED_FRAMES))) {

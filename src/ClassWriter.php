@@ -1529,6 +1529,9 @@ class ClassWriter extends ClassVisitor
             case $cst instanceof Type\Long:
                 $val = (float)$cst->getValue();
                 return $this->newLong($val);
+            case $cst instanceof Type\Float_:
+                $val = (float)$cst->getValue();
+                return $this->newFloat($val);
             case $cst instanceof Type\Integer:
                 $val = (int) $cst->getValue();
                 return $this->newInteger($val);
