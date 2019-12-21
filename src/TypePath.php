@@ -231,6 +231,6 @@ class TypePath
 
     private static function charAt($str, $pos)
     {
-        return $str{$pos};
+        return $str[$pos];
     }
 }
