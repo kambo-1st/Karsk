@@ -22,5 +22,5 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
 
-    - name: Run test suite
+    - name: Run checkstyle
       run: composer run-script checkstyle
