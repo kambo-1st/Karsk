@@ -9,7 +9,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: olafurpg/setup-scala@v5
     - name: Setup PHP
       uses: shivammathur/setup-php@v1
       with:
